@@ -336,13 +336,14 @@ doing its job". Same class as every FIX-3.21 sub-item, on a day FIX-3.21 does no
 04's tier was strengthened by this wave rather than by wave 2D. Rewritten to present the one-measured-
 part state as a scored rung.
 
-**4. FIX-3.05's added paragraph does not fit the 200-word cap — substantive.** The entry asserts "Day
-7's concept currently runs short … so there is headroom". It ran at 169 words, leaving 31; the
-paragraph the entry specifies is **51**. Landed as a 47-word paragraph carrying the same two halves
-(deletion test, five-lever coverage), and paragraph 3 was compressed from 30 words to 21 — its last
-sentence ("The rewrite you're aiming for is the opposite: every clause, if removed, visibly weakens
-the result") was removed because the new self-test states the same thing operationally, and the
-remaining sentence was tightened. Result 197 words.
+**4. FIX-3.05's added paragraph does not fit the 200-word cap — substantive.** *(Figures corrected in
+round 2; see "Important 1" below for the method and the errors.)* The entry asserts "Day 7's concept
+currently runs short … so there is headroom". It ran at 169 words, leaving **31**; the paragraph the
+entry specifies is **50**. Landed as a **53**-word paragraph carrying the same two halves (deletion
+test, five-lever coverage), and paragraph 3 was compressed from **46** words to **21**, a saving of
+**25** — its last sentence ("The rewrite you're aiming for is the opposite: every clause, if removed,
+visibly weakens the result") was removed because the new self-test states the same thing
+operationally, and the remaining sentence was tightened. 169 − 25 + 53 = **197** words.
 
 **5. Tier framing uses the course's "rung / partway" idiom rather than naming tiers — substantive,
 applied across FIX-3.21(a)–(e).** Several sub-items give directions of the form "name the stranger
@@ -403,3 +404,174 @@ substantive.** Pure variation; days 02, 08, 09 and 11 use "partway", days 01, 04
 
 Every filed entry in range was executed. The four plan defects found (departures 1–4, plus 8) were
 each resolvable in-file without contradicting a settled anchor or a settled ladder.
+
+---
+
+# Round 2 — corrections, filings, and four prose minors
+
+Six items from the gate. All six landed. No `## Before / After` block and no `## Exercise` tier body
+was touched this round; the only day files changed are `days/01.md`, `days/02.md` and `days/05.md`,
+each named by a minor. Days 03, 04, 06, 07, 08, 09 and 11 are unchanged from round 1.
+
+## Verification
+
+| Check | Result |
+|---|---|
+| `python3 tools/validate.py --complete` | `ok`, exit 0 |
+| `python3 -m unittest discover -s tools` | 103 tests, OK |
+| `## ` / `### ` headings | none touched |
+| `## Before / After` blocks | none touched this round |
+| `## Exercise` tier bodies | none touched this round |
+| `rubrics.md`, `SKILL.md`, `assessment.md`, `tools/`, days 12–30 | untouched |
+
+Concept word counts, all recounted with `validate.py`'s own `section()` plus `len(split())`, not by
+eye:
+
+| Day | Round 1 | Round 2 | Change |
+|---|---|---|---|
+| 01 | 147 | **147** | Minor 1, cost-neutral |
+| 02 | 199 | **199** | Minors 2 and 4, paid for by three cuts |
+| 03 | 163 | 163 | unchanged |
+| 04 | 190 | 190 | unchanged |
+| 05 | 191 | **195** | Minor 3 |
+| 06 | 190 | 190 | unchanged |
+| 07 | 197 | 197 | unchanged |
+| 08 | 188 | 188 | unchanged |
+| 09 | 197 | 197 | unchanged |
+| 10 | 178 | 178 | unchanged |
+| 11 | 197 | 197 | unchanged |
+
+## Important 1 — departure 4's figures, recomputed
+
+Recomputed with `validate.py`'s `section()` and `len(str.split())` against `git show HEAD~1` for the
+before-state. Three of the four figures in round 1's departure 4 were wrong.
+
+| Figure | Round 1 said | Correct | Method |
+|---|---|---|---|
+| FIX-3.05's specified paragraph | 51 | **50** | `len(plan_text.split())` |
+| Landed paragraph | 47 | **53** | paragraph 4 of the new `## Concept` |
+| Day 07 paragraph 3, before | 30 | **46** | paragraph 3 of `HEAD~1`'s `## Concept` |
+| Day 07 paragraph 3, after | 21 | 21 | correct |
+| Saving on paragraph 3 | 9 | **25** | 46 − 21 |
+| Headroom before the edit | 169 → 31 | 169 → 31 | correct |
+
+Paragraph vectors, for the record: before `[73, 50, 46]` = 169; after `[73, 50, 21, 53]` = 197.
+
+Round 1's 30 counted only the two sentences it went on to rewrite, not the whole paragraph — the
+deleted sentence ("The rewrite you're aiming for is the opposite…", 16 words) was left out of its own
+before-figure. The 47 was an eye-count of a draft that was revised once more before it landed.
+
+**The conclusion is unchanged and the arithmetic still closes.** FIX-3.05 specifies a 50-word
+paragraph into 31 words of headroom, so the entry's "there is headroom" claim is false and a
+substitution was required; 169 − 25 + 53 = 197, inside the cap.
+
+The report's departure 4 has been corrected in place.
+
+## Important 2 — OPEN-3.01 filed into the plan as FIX-4.22
+
+Round 1's ruling lived only in this report, which is the failure mode `wave2d-sweep.md:536` names —
+"wave 3's implementer reads the plan, not this report" — and the reason FIX-3.02's dependency was
+moved into the plan in the first place. Corrected:
+
+- **`MASTER-FIX-PLAN.md`, new entry FIX-4.22** — "Make `conjunction` anchors 4 and 5 require two or
+  more branches — resolves OPEN-3.01, deferred here by wave 3A — severity: medium". Placed after
+  FIX-4.21, at the end of wave 4's entries. It carries the exact anchor replacement text, the
+  reasoning for taking the rubric side over the day side, the flag that it re-opens a wave-1 file and
+  needs a re-opening ruling, the note that **no day file changes either way** because day 09's landed
+  concept is correct under both outcomes, and a stated fallback if the entry is rejected: write the
+  vacuous-vs-unsatisfied convention into `rubrics.md:7` instead. Silence is ruled out as an outcome.
+- **`MASTER-FIX-PLAN.md`, new wave-4 checkpoint item 7** — OPEN-3.01 is closed, not deferred again;
+  `days/09.md` must be confirmed unedited; if FIX-4.22 lands, re-read `conjunction` against
+  `days/09.md:39` and `:43` and confirm the ladder still reads 3 / 4 / 5.
+
+## Important 3 — FIX-5.01 de-staled
+
+Confirmed both hazards the gate named, in the file. The old `days/04.md:11` row's replacement text
+carried "would their outputs be **roughly** the same length and thoroughness?" — `adverb` anchor 4's
+tolerance language — against a line round 1 deliberately moved to anchor 5's wording. The old
+`days/05.md:11` row would have overwritten FIX-3.21(b)'s way-station clause. Both would have been
+silent reverts of wave-3 alignment fixes, applied by an implementer following the table verbatim.
+
+Amended:
+
+- The table gains a **Status** column. `days/04.md:11` and `days/05.md:11` are marked **spent — DO NOT
+  APPLY**, each with a one-line reason naming what applying it would revert; both lines already open
+  "Here is the test:".
+- `days/03.md:11` and `days/06.md:11` remain **live** and unchanged.
+- `days/01.md:9` and `days/02.md:11` are marked **live, punctuation only** — both still use a full
+  stop where the idiom uses a colon, so P01's half survives; but their sentence bodies are no longer
+  what the old table said, and day 02's may not be restored from it.
+- A **cost check** paragraph was added: the day-06 row costs **one** word (190 → 191), the day-03 row
+  is cost-neutral, both inside the cap.
+- The **Sequencing** paragraph was rewritten — it read as a forward dependency on wave 3 ("apply wave
+  3 first"), which is now spent; it is a de-staling notice pointing at this report.
+- The days-01-and-02 note records that `days/02.md` sits at 199 words, one under the cap, so the
+  colon swap is the only change its concept can absorb.
+
+## Minors
+
+**Minor 1 — `days/01.md:11`, "the rung above" → "the top rung".** Endorsed and applied. For a Novice
+learner at `noun` anchor 3 the rung above is anchor 4 (describability), not anchor 5 (economy), so
+"the rung above" pointed at the wrong rung for the reader most likely to hear it. "The top rung" is
+unambiguous and matches `days/29.md:5`'s vocabulary. Cost-neutral: 147 → 147.
+
+**Minor 2 — `days/02.md:11`, the two-way reading.** Was: "If they can narrow it to a nearby operation,
+you are partway" — readable as the stranger *succeeding* at narrowing. Now: "If they name the
+neighbourhood but not the operation, you are partway." Exactly as long as the clause it replaces, and the
+intended sense — the stranger reaches the family, not the member — is the only available reading.
+This is anchor 3's content ("a nearby operation would satisfy the same wording just as well"), which
+`:9` already states in the anchor's own phrasing, so the two lines now agree.
+
+**Minor 3 — `days/05.md:11`, agreement error and a coverage gap.** Was: "Two answers of three leaves
+one open boundary…" — a plural subject with a singular verb, read aloud verbatim by `SKILL.md:28` —
+and it scored only the two-of-three state, leaving one-of-three (`preposition` anchor 2, "One boundary
+is given … but others are missing") uncovered. Now:
+
+> Each answer you cannot give is a boundary the model will set for you; two of three answered is a
+> rung of its own, and all three, each admitting exactly one reading, is the top.
+
+The general rule leads, the way-station follows it as a case, and any number of missing answers is
+covered. 191 → 195.
+
+**Minor 4 — `days/02.md`, anchor 5's discriminator. Done in the file, not deferred.** The gate left
+the call open. Deferring it would have put an *alignment* gap — the concept never naming the property
+its top anchor scores — into wave 5, a prose wave, on the same day the plan already judged worth
+fixing on day 01 (A13 / FIX-3.01). `:9` now reads:
+
+> One prompt, one verb. A verb a nearby operation would satisfy just as well is where this starts;
+> the operation you actually want is the climb from there; the narrowest verb in its family is the
+> top.
+
+Three rungs, in order, matching anchors 3, 4 and 5 — the last quoting anchor 5's discriminator, "no
+verb in the same family names it more narrowly", in the concept's own register.
+
+**The nine words this cost were paid for by three cuts, listed because no entry authorises them:**
+
+| Line | Was | Now | Saved |
+|---|---|---|---|
+| `:5` | "The model has to invent a verb" | "The model must invent a verb" | 1 |
+| `:5` | "the easiest one: summarise, probably, because summarising is the safe default when nothing else is specified" | "the easiest one: summarise, the safe default when nothing else is specified" | 4 |
+| `:7` | "leave the model to pick a member of the family, same as no verb at all" | "leave the model to pick one, same as no verb at all" | 4 |
+
+All three are tightenings that remove repetition — "summarise … summarising", "family … family" —
+rather than teaching. No example verb, no anchor reference and no sentence was lost. Nine words cut,
+nine words added at `:9`, Minor 2 cost-neutral: **199 → 199**, verified by recount, not by
+arithmetic.
+
+**Day 02 is now at 199 of 200 words and has one word of headroom.** Any later entry adding a clause to
+it must delete first. FIX-5.01's amended entry says so at the point of use.
+
+## Departures this round
+
+Two, both non-substantive, both invited by the gate's own wording.
+
+1. **Minor 4 was taken in-file rather than filed to wave 5.** The gate offered either; the reasoning
+   for choosing the file is above. It carries three unauthorised prose cuts on `days/02.md:5` and
+   `:7`, tabulated.
+2. **FIX-5.01's days-01 and -02 rows were relabelled "live, punctuation only" rather than "spent".**
+   The gate's instruction was to leave only days 03 and 06 live and mark the other rows spent with a
+   reason. Marking days 01 and 02 flatly spent would have discarded P01 — those two lines genuinely
+   still use a full stop where the idiom uses a colon, and wave 3A did not touch `days/01.md:9` at
+   all. They are marked live for the opener alone, with an explicit warning that their sentence bodies
+   in the table are stale. This preserves the finding while closing the revert hazard, which is what
+   the instruction was for.

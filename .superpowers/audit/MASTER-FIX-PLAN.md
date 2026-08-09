@@ -3362,6 +3362,54 @@ strong on two of three and absent on the third has no correct score, with one ro
 **The sub-criteria remedy is rejected** — see "Not fixing". This wording keeps one score per rubric
 while requiring the tutor to *report* the split, which is the part the learner actually needs.
 
+### FIX-4.22 — Make `conjunction` anchors 4 and 5 require two or more branches — resolves OPEN-3.01, deferred here by wave 3A — severity: medium
+
+**This entry is the deferral checkpoint item 8 accepts, written where an implementer will see it.**
+Wave 3A ruled on OPEN-3.01 and deferred the edit to this wave; the ruling and its reasoning are in
+`.superpowers/audit/wave3a-concepts.md`, under "OPEN-3.01 — ruling". It is filed here and not left in
+that report for the reason `wave2d-sweep.md:536` states about FIX-3.02: **the implementer reads the
+plan, not the report.**
+
+**This re-opens a wave-1 file and therefore needs a re-opening ruling before it is applied.** It is
+the only entry in wave 4 that touches `rubrics.md`.
+
+`prompting-wizard/rubrics.md`, `conjunction` anchors 4 and 5. Current:
+
+> | 4 | Each branch stated with its condition and its fallback, though the wording leaves the order of checks ambiguous. |
+> | 5 | Each branch stated with its condition and its fallback, in an order that resolves without ambiguity. |
+
+Replace with:
+
+> | 4 | Two or more branches, each stated with its condition and its fallback, though the wording leaves the order of checks ambiguous. |
+> | 5 | Two or more branches, each stated with its condition and its fallback, in an order that resolves without ambiguity. |
+
+Genuinely single-branch tasks fall to the not-applicable rule at `rubrics.md:7` or to anchor 3,
+whichever the tutor judges; no third anchor moves.
+
+Why. Anchors 4 and 5 differ **only** by whether the order of checks is ambiguous. A single check has
+no order to be ambiguous about, so over one branch anchor 5's discriminator is silent — nothing in
+`rubrics.md` says whether it is *vacuously satisfied* or *not applicable*. Day 9's Working tier
+(`days/09.md:39`) asks for exactly one condition plus a fallback, so day 9's ladder is 3 / 4 / 5 only
+under the second reading, and Working's score is otherwise a matter of tutor convention. Wave 2A's
+FIX-2.08 recorded the same fact from the other side: Advanced is "the only tier where the 4-vs-5
+discriminator can be tested".
+
+**Why the rubric side, not the day side.** OPEN-3.01 names two resolutions. The day-side one — raise
+day 9's Working to two branches with the check order unstated — is cheaper but repairs one day and
+leaves every other single-branch prompt in the course scored by convention, and it moves a Working
+tier wave 2A built and wave 2D verified. The rubric side fixes the class. It is also the same shape
+as FIX-1.12's treatment of `particle` over an empty set, which is settled precedent in this file.
+
+**No day file needs to change either way.** Wave 3A checked this before landing FIX-3.21(d): day 9's
+concept as it now stands says only that the fallback is "the last one to close" and asserts nothing
+about where a one-branch prompt sits on the 4/5 boundary, so it is correct under **either** outcome —
+including the outcome where this entry is rejected and the vacuous-not-satisfied reading is simply
+written into `rubrics.md:7` instead. Day 9's tiers are untouched by this entry.
+
+**If this entry is rejected**, close OPEN-3.01 by recording the convention explicitly at
+`rubrics.md:7` — one clause saying an anchor clause with no instance in the prompt is unsatisfied,
+not vacuously met. Silence is the one outcome that must not survive wave 4.
+
 ---
 
 ## Wave 4 — checkpoint before wave 5
@@ -3379,6 +3427,12 @@ while requiring the tutor to *report* the split, which is the part the learner a
    post-update scores.
 5. Confirm `days/30.md` no longer writes `current_day`, and that `SKILL.md:20` is the sole writer.
 6. Grep `days/` for `{{TASK}}` inside a `## Concept` and confirm day 28 is no longer a hit.
+7. **OPEN-3.01 is closed, not deferred again.** FIX-4.22 has either landed in `rubrics.md` under a
+   re-opening ruling, or been rejected with the vacuous-vs-unsatisfied convention written into
+   `rubrics.md:7` instead. Whichever way it goes, confirm `days/09.md` was **not** edited — its
+   concept and its 3 / 4 / 5 ladder are correct under both outcomes, and wave 3A verified that before
+   landing FIX-3.21(d). If FIX-4.22 lands, re-read `rubrics.md`'s `conjunction` row against
+   `days/09.md:39` and `:43` and confirm the ladder still reads 3 / 4 / 5.
 
 ---
 
@@ -3398,26 +3452,40 @@ by FIX-4.12, P12 by FIX-4.11, P17 by FIX-4.19, and P04, P09, P14 and P16 are rej
 ### FIX-5.01 — Normalise the closing self-test opener on days 1–6 — closes: P01, P02 — severity: medium
 
 The dominant formulation is **"Here is the test: `<instruction>`"** — colon, one sentence — used
-verbatim on 23 of 30 days (8–30). Six days deviate:
+verbatim on 23 of 30 days (8–30). Six days deviated when this entry was written. **Wave 3A spent two of the six rows
+outright and reduced two more to punctuation.** Status is per row:
 
-| File:line | Current | Replace with |
-|---|---|---|
-| `days/01.md:9` | "Here is the test. Read your prompt and ask what physical thing lands when it finishes." | "Here is the test: read your prompt and ask what physical thing lands when it finishes." |
-| `days/02.md:11` | "Here is the test. Cover everything in your prompt except the verb." | "Here is the test: cover everything in your prompt except the verb." |
-| `days/03.md:11` | "Test it this way: for each adjective in your prompt, ask what output it would make you reject." | "Here is the test: for each adjective in your prompt, ask what output it would make you reject." |
-| `days/04.md:11` | "Test it by asking: if two competent people followed this manner word, would their outputs be roughly the same length and thoroughness?" | "Here is the test: if two competent people followed this manner word, would their outputs be roughly the same length and thoroughness?" |
-| `days/05.md:11` | "Test it by asking three questions of your prompt: in what, for whom, without what." | "Here is the test: ask three questions of your prompt — in what, for whom, without what." |
-| `days/06.md:11` | "Test it by removing each lever in turn." | "Here is the test: remove each lever in turn." |
+| File:line | Status | Current | Replace with |
+|---|---|---|---|
+| `days/01.md:9` | **live, punctuation only** | "Here is the test. Read your prompt and ask what physical thing lands when it finishes." | "Here is the test: read your prompt and ask what physical thing lands when it finishes." Sentence body unchanged by wave 3A; the full-stop-to-colon swap is P01's half and still applies. |
+| `days/02.md:11` | **live, punctuation only** | "Here is the test. Cover everything in your prompt except the verb." | "Here is the test: cover everything in your prompt except the verb." Opener only — the rest of `:11` was rewritten by wave 3A and must not be restored from this table. |
+| `days/03.md:11` | **live** | "Test it this way: for each adjective in your prompt, ask what output it would make you reject." | "Here is the test: for each adjective in your prompt, ask what output it would make you reject." |
+| `days/04.md:11` | **spent — DO NOT APPLY** | — | Wave 3A rewrote this line in full. The replacement text this table used to carry says "would their outputs be **roughly** the same length and thoroughness?"; "roughly" is `adverb` anchor **4**'s tolerance language, and wave 3A deliberately moved the line to anchor 5's ("would their outputs be the same length and thoroughness?"). Applying the old row verbatim would silently revert a wave-3 alignment fix. The line already opens "Here is the test:". |
+| `days/05.md:11` | **spent — DO NOT APPLY** | — | Wave 3A rewrote this line in full under FIX-3.21(b) and it already opens "Here is the test:". The old replacement text would overwrite the way-station clause that stops the concept condemning the state `days/05.md:31` mandates. |
+| `days/06.md:11` | **live** | "Test it by removing each lever in turn." | "Here is the test: remove each lever in turn." |
 
-In each case the sentence that follows the opener is unchanged.
+On the two live rows the sentence that follows the opener is unchanged.
+
+**Cost check before applying the day-06 row:** `days/06.md`'s `## Concept` stands at 190 words after
+wave 3A's FIX-3.04, and this row costs **one** word (190 → 191). `days/03.md` is at 163 and its row is
+cost-neutral. Both are inside the 200-word cap.
+
+**On days 01 and 02 (P01's half).** Both still open "Here is the test." — full stop, not colon — so
+the punctuation normalisation is available and costs nothing. What wave 3A spent is any assumption
+that the sentence *bodies* in the old table are current: `days/01.md:9` is unchanged, but
+`days/02.md:11` gained a closing way-station clause and lost one example word, and `days/02.md` sits
+at **199** words, one under the cap. On day 02 the colon-for-full-stop swap is the only change the
+concept can absorb, and nothing beyond the opener may be restored from this table.
 
 Why. Days 1 and 2 use a full stop where the idiom uses a colon; days 3–6 use a different opener
 entirely ("Test it..."). Nothing breaks, but `SKILL.md:28` reads these aloud verbatim and the course
 converges on one shape from day 8 onward — the first six days are the drift, not the standard.
 
-**Sequencing:** FIX-3.02(b) also edits `days/04.md`'s concept and FIX-3.04 edits `days/06.md:7`.
-Apply wave 3 first, then re-locate these lines; the paragraph indices are stable but the line
-numbers may not be.
+**Sequencing:** wave 3A has landed, so this is no longer a forward dependency — it is a de-staling.
+FIX-3.02, FIX-3.04 and FIX-3.21(b) all edited these concepts, which is why four rows moved. Re-read
+every line in the file before editing it; the paragraph indices are stable but the line numbers and
+the sentence bodies are not. Wave 3A's own record of what it changed and why is in
+`.superpowers/audit/wave3a-concepts.md`.
 
 ### FIX-5.02 — Give day 6 the standard title structure — closes: P06 — severity: medium
 
