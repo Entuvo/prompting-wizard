@@ -2006,10 +2006,19 @@ others. Do not reword the gate until this tier text is settled.
 
 1. `python3 tools/validate.py --complete` exits 0. The validator checks tier headings and a 200-word
    concept cap; wave 2 touches tier bodies only, so a failure means a `### ` heading was disturbed.
-2. For each of the 24 edited days, write out the anchor each tier now targets and confirm strictly
+2. For each of the **27** edited days, write out the anchor each tier now targets and confirm strictly
    rising 3/4/5. The summary table in `census-tiers.md` is the before state; produce an after state
-   and diff them.
-3. Confirm days 01, 23, 25 and 29 were **not** edited (`git diff --stat` should not list them).
+   and diff them. (12 days from batch A, 8 from batch B, 6 from batch C, plus **day 01** from batch D
+   — batch D's other eight days were already counted. The count read 24 before batch D and was never
+   reconciled.)
+3. Confirm days **23, 25 and 29** were **not** edited (`git diff --stat` should not list them).
+   **Day 01 is a sanctioned exception and *is* in the diff.** It was a model ladder and remains one,
+   but it failed the imitate-the-After test that batch C invented after batches A and B had shipped:
+   its After is `noun` anchor 5, its template has no truncation, and FIX-3.01 already recorded in
+   wave 1 that "the ceiling is currently reachable only by imitation, not by instruction". One
+   qualifier was added to `days/01.md:31`; shape, voice and template are unchanged, and the ladder is
+   still 3 / 4 / 5. The full derivation, and the finding that five of the eight days modelled on day
+   01's fill-a-blank shape inherited the same leak, is in `.superpowers/audit/wave2d-sweep.md`.
 4. Confirm no tier anywhere still contains the string "be ready to say" without the demanded output
    appearing in the prompt itself (rule 7). Expected surviving legitimate uses: none — days 12, 19,
    20 and 24 all had theirs removed or converted.
@@ -2017,6 +2026,13 @@ others. Do not reword the gate until this tier text is settled.
    is literally the anchor-5 clause (rule 1's exception).
 6. `days/21.md:47` now names four rubrics, and `days/28.md:42` no longer requires three `## Tasks`
    entries.
+7. **Recorded, not to be re-litigated.** Day 20's Novice tier holds at `negative-constraints` anchor 3
+   only under the reading that anchors 4 and 5 describe a *set* of exclusions, so a single exclusion
+   that happens to cite its incident is still anchor 3 by virtue of anchor 3's own distinguishing
+   clause ("a second, equally likely one is not") rather than being lifted to 5 by the citation. Batch
+   B used this reading to keep the tier off anchor 4; batch D re-derived it and reached the same
+   result. If a later wave rules that anchors 4 and 5 apply distributively to a single exclusion, day
+   20's Novice tier must be re-derived — nothing else in wave 2 depends on the ruling.
 
 ---
 
@@ -2096,6 +2112,25 @@ the style half carries a measure, the whole prompt lands at anchor 3, not the 5 
 score. It also fails the day's own self-test at `:11`. And `:9` blesses two bare manner words that
 `:7` has just ruled out, which is the seed of the contradiction. FIX-1.05 keeps anchor 2 untouched
 precisely so this fix stays necessary.
+
+**Dependency added during wave 2D — (a) re-opens day 4's Novice tier, and this entry is the only
+place a wave-3 implementer will see it.** Day 4 is one of only two template days batch D cleared
+without an edit, and it cleared for a reason (a) destroys: **the current After is itself an `adverb`
+anchor-3 prompt** — "exhaustively" is, in the gloss's own word, "open-ended", so a measure is attached
+to the style pass and to nothing else — and the three-blank template at `days/04.md:33` maps onto it
+one-to-one, so a learner imitating the After reproduces anchor 3, which is the rung the tier targets.
+Once (a) attaches "every function against its callers, one line per issue found" to the correctness
+pass, the After carries a measure on **both** parts. That is `adverb` anchor 4 at least, and an
+imitator filling the free-form blanks reaches 4–5 from the bottom rung against a Working tier at 4 —
+days 2 and 11's defect, exactly, re-created by a fix to the worked example.
+
+**Required with (a), in the same commit:** re-derive `days/04.md:31` against the new After and, if it
+leaks, add the foreclosure clause in the proven shape — negate `adverb` anchor 4's positive content
+("Depth and manner set with a measure attached **across the whole task**") in that anchor's own words,
+keeping the measure scoped to the one named part the template already isolates. The tier body is
+wave 2's file and wave 3's entry may not silently rewrite it, so land the re-derivation as an explicit
+wave-2 amendment rather than as a side effect. Wave-3 checkpoint item 19 gates this. The full
+before-state derivation is in `.superpowers/audit/wave2d-sweep.md`, under "Day 04".
 
 ### FIX-3.03 — Day 6: give the composed model answer's adverb a measure — closes: A02 — severity: high
 
@@ -2662,9 +2697,36 @@ universal rule. This is the identical class as FIX-3.11, FIX-3.12, FIX-3.13, FIX
 FIX-3.18, and it is resolved the same way: reframe the concept's absolute as the property the **upper
 rungs** add, in day 29's self-cap shape, without touching any `## Before / After`.
 
-**Explicit do-not-touch across all nine sub-items:** every `## Before / After` block. Each is the
-worked example the imitate test measures against, and moving one would invalidate the derivations in
-`.superpowers/audit/wave2d-sweep.md`. The 200-word `## Concept` cap applies to each edit.
+**The constraint on `## Before / After` across all nine sub-items — a floor, not a prohibition.** Each
+After is the worked example the imitate test is measured against, so **no `## Before / After` edit may
+change the anchor its day's wave-2D derivation is measured against**. It may rise; it may not fall
+below the floor named below. An earlier draft of this entry and of checkpoint item 18 stated a blanket
+do-not-touch, which contradicted four already-filed wave-3 entries and would have forced an
+implementer to drop them; the blanket form is withdrawn. The 200-word `## Concept` cap applies to
+each edit.
+
+**Sanctioned exceptions, each with the floor it must hold:**
+
+- **FIX-3.03 and FIX-3.04 — `days/06.md:21` (the After), `:23` (the gloss), `:7` (the concept).** Both
+  edits land in the same After sentence and must be applied together. **Floor: the After must not
+  fall below `noun` anchor 5 or `adjective` anchor 5.** Both fixes *raise* it — `adverb` 2 → 4–5 and
+  `preposition` 3 → 4–5 — which strengthens the day-06 result rather than weakening it, because the
+  Novice tier is held at 2–3 by its own clauses ("the first word that comes to hand", "still could not
+  describe the artifact it produces") and not by any weakness in the After. Keep counting words: the
+  Advanced tier's 40-word budget still binds.
+- **FIX-3.06 — `days/08.md:23` (the gloss), and optionally a fenced diff under `:21`.** The gloss is
+  not the scored artifact and may be replaced freely; it is *wrong today* and its replacement is
+  required. **Floor: the After prompt at `:21` must keep every reference resolving — anchor 4 or
+  above.** That is what makes copying it non-compliant with the Novice tier's mandated
+  still-guessable pronoun. FIX-3.06's optional fenced diff only strengthens the binding and is safe.
+- **FIX-3.09 — `days/19.md:23` (the gloss) and `:9` (the concept).** Neither touches the After prompt.
+  **Floor: the After prompt at `:21` must keep its ordering clause — the "then" between the assumption
+  list and the confirmation pass.** That clause is `reasoning-scaffolds` anchor 5's discriminator and
+  is precisely what the Novice mandate is calibrated against; remove it and day 19's derivation must
+  be re-run before the tier text can be trusted.
+
+No other `## Before / After` among days 1, 2, 5, 9, 11 and 13 has a filed wave-3 edit, so for those
+six the floor is simply "unchanged".
 
 **(a) Day 2 — medium.** `days/02.md:11`: "Cover everything in your prompt except the verb. Could a
 stranger predict what happens next from that word alone?" The Novice tier (`:31`) now requires a verb
@@ -2707,6 +2769,22 @@ the task") and `:11` ("swap the particle for a plausible alternative. If the tas
 The Novice tier (`:31`) now asks for "the phrasal verb you'd reach for by habit rather than one whose
 particle you've chosen deliberately". Deliberate choice is `particle` anchor **4** after FIX-1.12, so
 the concept teaches the Working rung to a tier capped at 3.
+
+**Tracking note, filed with (f) but independent of it — day 13's After scores 4 on its own rubric.**
+`days/13.md:21` is "Look up each external call in {{TASK}} and check it against its documented
+contract." Its particle is deliberate and swapping it changes the task, which is anchor 4; but anchor
+5 is conjunctive and additionally requires that "**no plain verb would have served**", and "consult
+the documentation for each external call" serves. So the worked example `SKILL.md:28` reads aloud is a
+prompt the day's own Advanced tier (`:41`, "replace the whole phrasal verb with a plain verb … if the
+plain verb serves just as well, use the plain verb instead") would send the learner back to rewrite.
+This is not new breakage and **not something (f) authorises touching** — the floor in this entry's
+preamble applies, and day 13's floor is "unchanged". It is filed because it was found during wave 2D
+while re-deriving the day-13 imitator result (which is 4, not 5 — see the disagreement recorded in
+`.superpowers/audit/wave2d-sweep.md`), because nothing else in the plan records it, and because it is
+the same class as A01/A02 (day 4's and day 6's model answers scoring below 5 on a rubric the day is
+graded on) which wave 3 is already fixing at FIX-3.02 and FIX-3.03. If a later wave chooses to raise
+it, the fix must not disturb the Novice template at `:33` — that template is a wave-2D-scored artifact
+and its derivation would need re-running.
 
 **(g) Day 19 — medium.** `days/19.md:11`: "check your named steps against that list. Anything named
 that isn't on it, cut. Anything on the list that isn't named, add." The Novice tier (`:31`) now
@@ -2784,9 +2862,21 @@ bottom rung down rather than the After's weakness.
     concept still states as a universal rule the property its own Novice tier is instructed to leave
     out. The two tracking-only sub-items are also checked: FIX-3.01 (day 1) was applied in a form
     that names economy as the Advanced rung's addition rather than a universal instruction, and day
-    6's concept has not been re-coupled to its rebuilt tiers. **No `## Before / After` on days 1, 2,
-    5, 6, 8, 9, 11, 13 or 19 was edited** — each is the worked example the imitate-the-After test is
-    measured against.
+    6's concept has not been re-coupled to its rebuilt tiers. **No `## Before / After` edit on days 1,
+    2, 5, 6, 8, 9, 11, 13 or 19 changed the anchor its day's wave-2D derivation is measured against.**
+    This is a floor, not a prohibition — FIX-3.03/FIX-3.04 (day 6), FIX-3.06 (day 8) and FIX-3.09
+    (day 19) are sanctioned exceptions and must still be applied; see FIX-3.21's preamble for the
+    floor each one has to hold. For days 1, 2, 5, 9, 11 and 13 no wave-3 entry edits the After at all,
+    so the floor there is "unchanged".
+19. FIX-3.02 has landed **and day 4's Novice tier has been re-derived against the new After**. Day 4
+    was not edited by wave 2D because its After is itself an `adverb` anchor-3 prompt and its
+    three-blank template maps onto it one-to-one; FIX-3.02(a) attaches a measure to the correctness
+    pass, which lifts the After to anchor 4–5 and re-opens the imitate-the-After leak days 2 and 11
+    were fixed for. Either the Novice tier at `days/04.md:31` gains a foreclosure clause in the
+    proven shape — negating `adverb` anchor 4's positive content ("a measure attached **across the
+    whole task**") in that anchor's own words, so the measure stays scoped to the one named part — or
+    a written derivation shows why the leak does not occur. Do not close this item by inspection of
+    the tier alone; the test is what an imitator of the **new** After reaches.
 
 ---
 
@@ -3443,6 +3533,40 @@ and every other lever in both files follows the teaching order.
 breaks and no `PROGRESS.md` `## Levers` key desynchronises — the eleven keys are matched by name, not
 position (`assessment.md:78`, "All 11 lever keys must be present"). Verify with
 `python3 tools/validate.py --complete` immediately after.
+
+### FIX-5.08 — Days 22–28: the flat stretch — deferred here by wave 2C, given a destination by wave 2D — severity: low, and it must be closed one way or the other
+
+**This entry is the destination for a deferral that previously had none.** `wave2c-tiers.md`'s
+closing section, "The flat stretch, days 22–28", recorded a finding, declined to act on it, and named
+"wave 5's concern" as its home — but no wave-5 entry existed, so the deferral pointed nowhere and
+would have been lost. Nothing here is a defect in a ladder: **every day from 22 to 28 rises 3 / 4 / 5
+within itself**, which the wave-2 final gate confirmed. The finding is about *absolute* demand across
+the stretch, which is pacing, which is this wave's.
+
+The finding, restated from `wave2c-tiers.md` so this entry stands alone. Each of days 22–28 asks for
+one artifact exercising one technique, and none is harder than day 21's reorder-a-200-word-prompt
+exercise, so the difficulty curve is level for seven consecutive days near the end of the course. Two
+places it is most visible:
+
+- **Day 26 Working** asks for less physical work than it did before wave 2C (one cut, no runs),
+  because the rerun correctly moved up to Advanced. That is right against `token-economy`'s anchors
+  and it does shorten the session.
+- **Day 27 Novice** asks for no new prompt at all — the artifact is the learner's existing failed
+  prompt, run unchanged. It is the lightest tier in the stretch, and `failure-diagnosis` gives no
+  honest way to make it heavier without lifting it off anchor 3 (any fix at all is anchor 4 or 5).
+
+**Two admissible closes, and no third.** Either (a) record the stretch as **accepted** — the ladders
+are correct, the rubrics permit nothing heavier at the rungs involved, and a level difficulty curve
+across seven late days is a deliberate cost of one-technique-per-day; or (b) change **pacing only** —
+session framing, ordering of the stretch, or what the tutor asks for alongside the artifact. What is
+**not** admissible is raising any tier's demand to make a day feel harder: every one of days 22–28 is
+pinned to a rubric anchor by a wave-2 derivation, and adding work to a tier moves it off its rung.
+Anything that touches a `### Novice`, `### Working` or `### Advanced` body on days 22–28 is a wave-2
+amendment and needs a written re-derivation, not a wave-5 edit.
+
+**Note on entry order:** FIX-5.07 remains **the last edit to make to the repository**, whatever its
+number. This entry is filed after it for numbering only and, if it results in any edit at all, that
+edit belongs before FIX-5.07's block move.
 
 ---
 
