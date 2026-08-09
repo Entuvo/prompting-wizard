@@ -10,7 +10,7 @@ Ask for three prompts, one at a time. Give no guidance beyond the brief. Do not 
 2. **Analysis task:** "Write the prompt you would send to get a model to tell you what is wrong with a piece of work you produced."
 3. **Open-ended task:** "Write the prompt you would send to get a model to help you think through a decision you are stuck on."
 
-Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree.
+Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree. Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take the median of the prompts that do give it something; if none of the three does, record 3 and note it, so the mean that sets `level` is not skewed by a property the learner's prompts never exercised. Day 0 is the one place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
 
 ## Part 2 — Diagnosis (4 min)
 

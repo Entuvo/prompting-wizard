@@ -99,8 +99,8 @@ If the task has no instance of the property the rubric measures — no branch to
 | 1 | Branching cases collapsed into one instruction, so edge cases silently pick a branch. |
 | 2 | One branch is acknowledged but its condition or its outcome is missing. |
 | 3 | Branches and conditions are named, but the fallback (the otherwise) is missing. |
-| 4 | Each branch stated with its condition and its fallback, though the wording leaves the order of checks ambiguous. |
-| 5 | Each branch stated with its condition and its fallback, in an order that resolves without ambiguity. |
+| 4 | Each branch stated with its condition and its fallback, but the order of checks is not fixed — either only one branch is stated, or the wording leaves the order between them ambiguous. |
+| 5 | Two or more branches, each stated with its condition and its fallback, in an order that resolves without ambiguity. |
 
 **Fastest fix:** write down the if/then/otherwise you are holding in your head.
 

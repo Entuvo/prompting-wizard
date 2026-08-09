@@ -3250,6 +3250,18 @@ the check does not need repeating for the sentences recorded above — but wave 
 collision, and any wave-4 or wave-5 edit to a `## Concept`, a self-test line or a `## Before / After`
 on those days must re-run this check against the tier text before landing.
 
+**Wave 4's result, recorded here as this entry requires.** Five files opened, five checks run, all
+clean: `days/09.md` (read-only, for the FIX-4.22 ruling), `days/17.md` (read-only), `days/27.md`
+(`## Before / After` edited), `days/28.md` (`## Concept` and `## Before / After` edited), `days/30.md`
+(`## Exercise` preamble and `## Completion` edited — neither is a concept, self-test or Before/After,
+so the re-check trigger was not tripped; run anyway). One close call recorded rather than left for the
+next wave to re-derive: `days/17.md:16`'s "'list the results with a status and a note' can't be
+checked that way at all" describes something near the Novice tier's mandated output, but it is a true
+statement about mechanical checkability laddered by `:18` ("fields enumerated … is a rung of its own")
+and matched by `output-schemas` anchor 3. **Wave 5 opens `days/17.md` for prose: if it edits `:16` or
+`:18`, this check must be re-run, because `:18` is what ladders `:16`.** Per-file detail in
+`.superpowers/audit/wave4-state.md`.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -3867,6 +3879,18 @@ written into `rubrics.md:7` instead. Day 9's tiers are untouched by this entry.
 **If this entry is rejected**, close OPEN-3.01 by recording the convention explicitly at
 `rubrics.md:7` — one clause saying an anchor clause with no instance in the prompt is unsatisfied,
 not vacuously met. Silence is the one outcome that must not survive wave 4.
+
+**Landed by wave 4 in corrected form, under a written re-opening ruling — OPEN-3.01 is closed.** The
+literal replacement above is wrong: putting "two or more branches" on anchor **4** as well as 5
+strands `days/09.md`'s single-branch Working tier below both, and it cannot fall to anchor 3 (which
+requires the fallback to be missing, and Working mandates one), so the settled ladder becomes 3/3/5
+or 3/N-A/5 — failing checkpoint item 7's own test. Landed instead as plurality on anchor 5 only, with
+anchor 4 rewritten to admit the single-branch case in its own words: "Each branch stated with its
+condition and its fallback, but the order of checks is not fixed — either only one branch is stated,
+or the wording leaves the order between them ambiguous." Day 9's ladder re-read and confirmed
+3 / 4 / 5; `days/09.md` unedited; no global vacuous-vs-unsatisfied clause added at `rubrics.md:7`,
+which would have applied to all 26 rubrics unverified. Full ruling in
+`.superpowers/audit/wave4-state.md`.
 
 ---
 
