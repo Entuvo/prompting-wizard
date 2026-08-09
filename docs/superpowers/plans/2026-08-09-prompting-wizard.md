@@ -181,6 +181,51 @@ if __name__ == "__main__":
     sys.exit(1 if problems else 0)
 ```
 
+- [ ] **Step 1b: Apply the three amendments below**
+
+> **Amendment — human ruling, 2026-08-09.** The Task 1 review raised three findings against the source above. The ruling was to fix all three. Apply these on top of the code as written; the expected problem counts in Steps 3 and 4 are unchanged, because none of these paths fire against an empty skill directory.
+
+**(a) Fenced code blocks must not be parsed as headings.** `section()`'s boundary lookahead `^#{1,2} ` matches any line starting with `# `, so a comment line inside a fenced example (day 17 requires a filled-in output schema) would truncate the section and report tiers as missing that are present. Add after `slugify()`:
+
+```python
+FENCE = re.compile(
+    r"^(?P<fence>`{3,}|~{3,})[^\n]*\n.*?^(?P=fence)[`~]*[ \t]*$",
+    re.M | re.S,
+)
+
+
+def strip_fences(text):
+    """Blank out fenced code blocks, preserving line count so line numbers hold."""
+    return FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+```
+
+Then make `h2_slugs()` and `section()` operate on stripped text — each begins with `text = strip_fences(text)`. The absolute-path scan keeps reading raw text: a bad path inside a fenced install snippet still has to be caught.
+
+**(b) Unreadable files must report, not crash.** Add:
+
+```python
+def read_text(path, errors, label):
+    """Return the file's text, or None after recording why it could not be read."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        errors.append(f"{label}: unreadable ({type(exc).__name__})")
+        return None
+```
+
+Route all three read sites through it. `rubrics.md`: `text = read_text(rubrics_path, errors, "rubrics.md")`, then `rubric_slugs = h2_slugs(text) if text else set()`. Day files and the absolute-path scan: `continue` when it returns `None`.
+
+**(c) The absolute-path allowlist must be match-local.** `not any(a in line for a in ABS_PATH_ALLOWED)` exempts the whole line, so `~/.codex/config.toml` sitting beside a real absolute path hides it. Replace the loop body with:
+
+```python
+        for i, line in enumerate(text.splitlines(), 1):
+            for match in ABS_PATH.finditer(line):
+                tail = line[match.start():]
+                if not any(tail.startswith(a) for a in ABS_PATH_ALLOWED):
+                    errors.append(f"{path.relative_to(SKILL)}:{i}: absolute path in shipped file")
+                    break
+```
+
 - [ ] **Step 2: Create the days directory placeholder**
 
 ```bash
