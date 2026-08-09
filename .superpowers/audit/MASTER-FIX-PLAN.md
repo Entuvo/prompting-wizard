@@ -1634,7 +1634,9 @@ Leave Advanced as written.
 ### FIX-2.17 — Day 18: reserve the verbatim seam for Advanced — closes: T15 — severity: high
 
 **Written against FIX-1.16**, which puts "verbatim, nothing added, nothing re-explained" at anchor 5
-and "the previous output plus at most one added instruction" at anchor 4.
+and "the previous output plus exactly one added instruction" at anchor 4. (Wave 1 round 2 bounded
+this from both sides: "at most one" admitted zero, so an anchor-5 prompt satisfied anchor 4 in full.
+See the round-2 correction below before writing the Working tier.)
 
 `prompting-wizard/days/18.md:41` and `:45`. Current:
 
