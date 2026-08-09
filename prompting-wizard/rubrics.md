@@ -4,6 +4,8 @@ One rubric per lever and per technique. Every lesson scores against a rubric her
 
 Scores are 1–5. Anchors are given for every point. Score the prompt as written, not the intent behind it.
 
+Where an anchor carries a negative clause — "but has no written evaluation criteria", "but at least one could be applied two ways" — that clause names the shortfall which holds a prompt at that rung rather than a condition the prompt has to satisfy, so score the highest anchor whose positive requirements are met.
+
 If the task has no instance of the property the rubric measures — no branch to state, no phrasal verb, no competing instructions, no case where an example would teach anything — score the lever N/A rather than 1, and leave its `PROGRESS.md` entry untouched.
 
 ## Noun
