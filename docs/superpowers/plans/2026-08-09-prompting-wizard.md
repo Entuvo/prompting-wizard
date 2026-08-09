@@ -181,6 +181,51 @@ if __name__ == "__main__":
     sys.exit(1 if problems else 0)
 ```
 
+- [ ] **Step 1b: Apply the three amendments below**
+
+> **Amendment — human ruling, 2026-08-09.** The Task 1 review raised three findings against the source above. The ruling was to fix all three. Apply these on top of the code as written; the expected problem counts in Steps 3 and 4 are unchanged, because none of these paths fire against an empty skill directory.
+
+**(a) Fenced code blocks must not be parsed as headings.** `section()`'s boundary lookahead `^#{1,2} ` matches any line starting with `# `, so a comment line inside a fenced example (day 17 requires a filled-in output schema) would truncate the section and report tiers as missing that are present. Add after `slugify()`:
+
+```python
+FENCE = re.compile(
+    r"^(?P<fence>`{3,}|~{3,})[^\n]*\n.*?^(?P=fence)[`~]*[ \t]*$",
+    re.M | re.S,
+)
+
+
+def strip_fences(text):
+    """Blank out fenced code blocks, preserving line count so line numbers hold."""
+    return FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+```
+
+Then make `h2_slugs()` and `section()` operate on stripped text — each begins with `text = strip_fences(text)`. The absolute-path scan keeps reading raw text: a bad path inside a fenced install snippet still has to be caught.
+
+**(b) Unreadable files must report, not crash.** Add:
+
+```python
+def read_text(path, errors, label):
+    """Return the file's text, or None after recording why it could not be read."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        errors.append(f"{label}: unreadable ({type(exc).__name__})")
+        return None
+```
+
+Route all three read sites through it. `rubrics.md`: `text = read_text(rubrics_path, errors, "rubrics.md")`, then `rubric_slugs = h2_slugs(text) if text else set()`. Day files and the absolute-path scan: `continue` when it returns `None`.
+
+**(c) The absolute-path allowlist must be match-local.** `not any(a in line for a in ABS_PATH_ALLOWED)` exempts the whole line, so `~/.codex/config.toml` sitting beside a real absolute path hides it. Replace the loop body with:
+
+```python
+        for i, line in enumerate(text.splitlines(), 1):
+            for match in ABS_PATH.finditer(line):
+                tail = line[match.start():]
+                if not any(tail.startswith(a) for a in ABS_PATH_ALLOWED):
+                    errors.append(f"{path.relative_to(SKILL)}:{i}: absolute path in shipped file")
+                    break
+```
+
 - [ ] **Step 2: Create the days directory placeholder**
 
 ```bash
@@ -479,6 +524,22 @@ Append one line per completed day:
 ```
 ````
 
+- [ ] **Step 1b: Two corrections found by Task 10's dry runs**
+
+> **Amendment, 2026-08-09.** Task 10's behavioural traces found two places where the `SKILL.md` text above fails to implement this plan's own requirements. These are corrections, not rulings — the plan's Error Handling section and Lesson file format section already state the intended behaviour; the `SKILL.md` prose did not deliver it.
+
+**(a) `{{TASK}}` substitution is scoped too narrowly.** Step 1 of the daily loop substitutes `{{TASK}}` when presenting `## Before / After`, but step 2 presents the `## Exercise` tier with no substitution instruction — and every day file carries `{{TASK}}` inside its tiers. As written, the learner is shown a literal `{{TASK}}` in the exercise they are asked to complete.
+
+Make substitution global rather than per-step. Add this line immediately under the `## The daily loop — 20 minutes` heading, before step 1:
+
+> Wherever `{{TASK}}` appears in any text you present, substitute the learner's first `## Tasks` entry. Never show the raw token to the learner.
+
+Step 1 may keep its existing clause; the global rule is what guarantees the tiers are covered.
+
+**(b) An absent `PROGRESS.md` must not silently restart the course.** The current text sends every absent-file case straight into the assessment. This plan's Error Handling section requires that a file lost mid-course be reported rather than silently restarted at day 1. An absent file carries no information about which case it is, so the skill must ask. Replace the **Absent** bullet with:
+
+> - **Absent** → the file is missing either because the learner is new or because it was lost mid-course, and an absent file cannot tell you which. Ask. If they are starting fresh, read `assessment.md` and run it; writing `PROGRESS.md` ends the session. If they were mid-course, accept a day number they state and rebuild the file from it, or re-run the assessment if they prefer. Never silently restart at day 1.
+
 - [ ] **Step 2: Write AGENTS.md**
 
 Create `prompting-wizard/AGENTS.md`:
@@ -751,6 +812,25 @@ Day 27 has no seed of its own: the tutor asks the learner for a prompt of theirs
 Day 29's `## Exercise` instructs the tutor to record the learner's chosen task in the day-29 `## Log` line, so day 30 can pick it up. Day 30 reads that line rather than asking again.
 
 Day 30 ends the course: after the critique step, the tutor sets `current_day` to 31 and shows the learner their day-0 lever scores against their current ones.
+
+- [ ] **Step 1b: Apply the two amendments below**
+
+> **Amendment — human ruling, 2026-08-09.** The Task 9 review found four concept–rubric misalignments. Two of the fixes collided with this plan's own text; the rulings are below. The other two (day 30's inverted ladder, day 29's missing capstone axis) are straightforward defects with no plan conflict.
+
+**(a) Day 23 — the rubric governs, not the brief's advanced constraint.** The table above gives day 23's advanced constraint as "State the stop condition before naming a single tool." That line is `rubrics.md#agent-and-tool-prompting`'s **Fastest fix** heuristic, not a scored anchor — the rubric scores whether the tools, their timing, and the done-condition are stated, and whether the done-condition is gameable. Ordering is scored nowhere.
+
+Replace day 23's advanced constraint with: **the done-condition must be un-gameable — the learner must be able to say how a model could satisfy it without doing the work, and close that hole.** Build the concept around the scored properties. Ordering may appear as the practical heuristic it is, but must not be the lesson's spine or its Advanced tier.
+
+**(b) The day-0 lever baseline must survive.** `SKILL.md` updates `## Levers` in place, and day 14 re-scores all eleven levers at once — so the day-0 baseline is destroyed by day 14, and day 30's "then versus now" comparison cannot be made. `## Log` is append-only and does survive.
+
+Amend `prompting-wizard/assessment.md` so the day-0 `## Log` entry carries all eleven baseline scores. Its example block becomes:
+
+```markdown
+## Log
+- Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, pronoun 2, preposition 4, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
+```
+
+The instruction accompanying it must state that all eleven baseline scores are recorded on this line, that the line is never edited afterwards, and that it is the only surviving record of the learner's starting point. Day 30 reads its "before" figures from this line rather than from `## Levers`.
 
 - [ ] **Step 2: Remove the placeholder**
 
