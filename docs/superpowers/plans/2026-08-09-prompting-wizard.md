@@ -797,6 +797,25 @@ Day 29's `## Exercise` instructs the tutor to record the learner's chosen task i
 
 Day 30 ends the course: after the critique step, the tutor sets `current_day` to 31 and shows the learner their day-0 lever scores against their current ones.
 
+- [ ] **Step 1b: Apply the two amendments below**
+
+> **Amendment — human ruling, 2026-08-09.** The Task 9 review found four concept–rubric misalignments. Two of the fixes collided with this plan's own text; the rulings are below. The other two (day 30's inverted ladder, day 29's missing capstone axis) are straightforward defects with no plan conflict.
+
+**(a) Day 23 — the rubric governs, not the brief's advanced constraint.** The table above gives day 23's advanced constraint as "State the stop condition before naming a single tool." That line is `rubrics.md#agent-and-tool-prompting`'s **Fastest fix** heuristic, not a scored anchor — the rubric scores whether the tools, their timing, and the done-condition are stated, and whether the done-condition is gameable. Ordering is scored nowhere.
+
+Replace day 23's advanced constraint with: **the done-condition must be un-gameable — the learner must be able to say how a model could satisfy it without doing the work, and close that hole.** Build the concept around the scored properties. Ordering may appear as the practical heuristic it is, but must not be the lesson's spine or its Advanced tier.
+
+**(b) The day-0 lever baseline must survive.** `SKILL.md` updates `## Levers` in place, and day 14 re-scores all eleven levers at once — so the day-0 baseline is destroyed by day 14, and day 30's "then versus now" comparison cannot be made. `## Log` is append-only and does survive.
+
+Amend `prompting-wizard/assessment.md` so the day-0 `## Log` entry carries all eleven baseline scores. Its example block becomes:
+
+```markdown
+## Log
+- Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, pronoun 2, preposition 4, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
+```
+
+The instruction accompanying it must state that all eleven baseline scores are recorded on this line, that the line is never edited afterwards, and that it is the only surviving record of the learner's starting point. Day 30 reads its "before" figures from this line rather than from `## Levers`.
+
 - [ ] **Step 2: Remove the placeholder**
 
 ```bash
