@@ -519,3 +519,159 @@ Every filed entry in range was executed. Day 17 was read and left alone: FIX-3.1
 conditions hold in the file — `:7`'s "shows what an empty value looks like" is still a description of
 the goal, and the `"note": ""` example is not coupled to the Working tier — and no defect was found
 that would have required filing.
+
+---
+
+# Round 2 — the day-20 coverage finding, one corrected premise, five minors
+
+Seven items from the gate. All seven landed. **Three day-file lines changed this round:**
+`days/15.md:7` and `:23`, and `days/16.md:11`. No tier body, no `## Rubric` line, and no
+`## Before / After` outside day 15's `:23` was touched.
+
+## Verification
+
+| Check | Result |
+|---|---|
+| `python3 tools/validate.py --complete` | `ok`, exit 0 |
+| `python3 -m unittest discover -s tools` | 103 tests, OK |
+| `## ` / `### ` headings | none touched |
+| `## Exercise` tier bodies | none touched this round |
+| `## Rubric` sections | none touched; `days/21.md:47` still its single citation |
+| `## Before / After` | `days/15.md:23` only — the gloss the gate authorised |
+| days 12, 13, 18, 19, 21 | unchanged from round 1 |
+
+Concept counts, recounted with `section()` + `len(split())`, not by arithmetic:
+
+| Day | Round 1 | Round 2 | Change |
+|---|---|---|---|
+| 12 | 195 | **195** | unchanged |
+| 13 | 194 | **194** | unchanged |
+| 15 | 197 | **198** | Minor 1 (`:7`), +1 |
+| 16 | 190 | **191** | Minor 4 (`:11`), +1 |
+| 18 | 184 | **184** | unchanged |
+| 19 | 196 | **196** | unchanged |
+| 21 | 196 | **196** | unchanged |
+
+Day 15 now has **2** words of headroom, the tightest in the course after day 02's 1.
+
+## Important 1 — the FIX-3.21 coverage hole, filed as FIX-3.22
+
+Filed as a new wave-3 entry, `MASTER-FIX-PLAN.md` → **FIX-3.22**, immediately after FIX-3.21.
+
+**Cause, as filed.** FIX-3.21 was compiled by wave 2D, which re-read the `## Concept` only of the
+nine days it had just edited. Days whose Novice foreclosure clause arrived in wave **2B** or **2C**
+never got that read. The list is a wave-2D artifact, not an inventory of the collision class. Three
+days sit in the hole: **16**, **20**, **28** — and one of the three (16) was genuinely defective,
+which is why the other two are ruled on rather than assumed.
+
+**Day 20 — checked and CLEAN, with the evidence recorded in the plan**, because day 20 falls in no
+wave-3 batch's range and an unrecorded "we looked" is indistinguishable from never having looked —
+which is exactly how day 16 survived four waves.
+
+- Novice `:31` mandates "**one exclusion only, even if a second failure comes to mind**" =
+  `negative-constraints` anchor 3, "One real failure mode is excluded, but a second, equally likely
+  one is not."
+- `:9` — "Two exclusions, each tied to something the model actually did wrong on this task, **do more
+  than** ten generic ones" — is **comparative, not a verdict**. It ranks two specific exclusions above
+  ten generic ones; it never calls one specific exclusion a failure. What it condemns is genericness,
+  which is anchors 1–2, *below* the Novice rung, so it discriminates rungs instead of condemning the
+  tier.
+- `:11` — "for each exclusion in your prompt, ask whether you've watched the model actually do that.
+  If you're guessing, cut it" — is quantified over the exclusions the learner wrote, not over a
+  required count. A compliant Novice writing one seen-it exclusion **passes**.
+
+No edit proposed, and the entry says explicitly: do not couple `:9` to the tier.
+
+**Day 28 — left to batch C to confirm**, as the gate directs. `days/28.md:9` already supplies the rung
+in the course's own idiom ("Marking the slot without the failure **gets you partway**"). The entry
+notes CONFLICT-07 forbids editing `days/28.md:11`, so confirmation is what is being asked for, not
+repair.
+
+The entry closes with the standing consequence: absence from FIX-3.21's list is not evidence a day is
+clean, and any wave editing a 01–21 day file should re-read that day's concept against its own tiers.
+
+## Important 2 — FIX-3.07(b)'s premise corrected in the plan
+
+The note said the plan's replacement After "names the mechanism for **none** of the three
+dimensions". It names it for **one** — "skip style commentary — *it isn't what gets you paged*".
+Corrected in place to "for only one of the three dimensions … where anchor 5 requires it for **each**",
+with an explicit round-2 marker so the correction is visible to anyone re-deriving from it.
+
+**The conclusion is unchanged and still closes.** `role-framing` anchor 5 requires the mechanism for
+*each* of includes / excludes / assumes; one of three satisfies anchor 4 ("names at least one thing
+… **but not how the role produces it**") and not anchor 5. Checkpoint item 3 requires 5. Departure 2
+stands exactly as landed, and the As-landed After is unchanged by this correction.
+
+This is the third recomputation error caught across waves 2D → 3A → 3B by the same mechanism (assert
+a figure, get it re-derived at the gate). Recorded as such.
+
+## Minors
+
+**Minor 1 — `days/15.md:7`, two framings of one property. Fixed in file, 197 → 198.** It read "A role
+earns its place when **it changes what gets** included, excluded, **and** assumed" — output-effect and
+*conjunctive* — sitting one line above `:11`'s text-property, *disjunctive* ladder. Now: "A role
+earns its place when **its text names** what gets included, excluded, **or** assumed." One word, and
+it is anchor 4's own construction ("The role text names at least one thing the output includes,
+excludes **or** assumes"). FIX-3.14 scoped batch B to `:11` and `:21`, so this is an unfiled edit and
+is recorded in the plan under FIX-3.07.
+
+**Minor 2 — `days/15.md:23`, mixed polarity in the gloss. Fixed.** Two of the three items were failure
+states the role *prevents* ("unflagged issues you'd regret", "unverified assumptions left silent")
+and the third was something the role *does* ("style notes left out") — read aloud verbatim by
+`SKILL.md:28`. All three are now things the output does: "issues you'd regret **get flagged** …
+assumptions you can't verify **get called out** … style notes **get left out**". Each still carries
+its mechanism, so the After's anchor-5 demonstration is unaffected.
+
+**Minor 3 — FIX-5.09's SYS-2 deviation named in the entry.** SYS-2 requires an unscored demand be
+declared "in the day's `## Concept`, in the form day 23 already uses"; FIX-5.09 puts the disclaimer at
+`days/21.md:31`, the `## Exercise` preamble. The entry now carries a **"Deliberate deviation from
+SYS-2 — do not 'correct' it"** block giving both reasons: the lever material is created at `:31` and
+appears nowhere in the concept, so a concept-side disclaimer would have to introduce the mechanic
+before disclaiming it; and day 21's concept has **4** words of headroom, so the sentence does not fit
+there without a compensating deletion. A wave-5 implementer following SYS-2 literally would breach the
+cap. The entry's constraint list now also says "Do not touch the `## Concept`", which the earlier text
+did not.
+
+**Minor 4 — `days/16.md:11`, the missing bridge. Fixed in file, 190 → 191.** Replacing "If yes, it
+isn't earning its place" with the ladder left the retained question un-answered before the rungs
+began. The ladder now opens on the answer: "…without changing what the model would learn? **If both
+could, you have variety and no edge** — a rung of its own; a boundary case is the climb from there;
+the boundary case and the failure case together is the top." One word, and the question is now graded
+rather than merely followed.
+
+**Minor 5 — the FIX-2.21(b) ruling's reason 1 tightened, and the gate's third reason added.** The
+ruling now reads **four** reasons.
+
+- Reason 1 was overstated: `days/21.md:35` (Novice) never says "without deleting a word" — only `:39`
+  and `:43` do. Corrected to the accurate split: Working and Advanced **forbid** the lever repair
+  outright, Novice simply never **requests** it (it asks only that the instruction move to the top
+  "leaving every constraint exactly where it falls", and scores placement alone). Two tiers of three
+  prohibit, the third omits — the ruling is unaffected.
+- New reason 3, from the gate, and it is the strongest of the four: **FIX-2.21(a)'s own Advanced
+  replacement text was internally contradictory and could never have been applied as written.** It
+  says both "reorder … **without deleting a word**" and "**fix the three levers named as weakest**
+  wherever they surface in the reordered material" — two instructions that cannot both be obeyed, for
+  reason 1's reason. So wave 2B's removal of the lever half was not a loss of scored work; it was the
+  only coherent reading available. (b)'s premise — that Advanced would score lever work — never held.
+- The former reason 3 (the material earns its place unscored) is renumbered 4, unchanged.
+
+**The ruling itself is unchanged: FIX-2.21(b) rejected, the review-day gap accepted, residue at
+FIX-5.09.**
+
+## Departures this round
+
+**One, non-substantive.** Minor 1 was taken **in file** rather than filed as a wave-5 entry — the
+gate offered either ("Harmonise it if you can do so within the cap; if not, file it"). It fit in one
+word, day 15 was already being edited this round for Minor 2, and leaving two framings of one
+property in a concept `SKILL.md:28` reads aloud is an alignment gap, not a prose one, so wave 5 is the
+wrong home for it. Day 15 is now at 198 of 200 and the plan records that under FIX-3.07.
+
+## Round-2 filings in `MASTER-FIX-PLAN.md`
+
+| Location | What was filed |
+|---|---|
+| **FIX-3.22** (new, wave 3) | The coverage hole: cause, the three days, day 20's clean verdict with its three pieces of evidence, day 28 assigned to batch C, and the standing consequence that absence from FIX-3.21's list proves nothing. |
+| **FIX-3.07** | Premise corrected ("none" → "only one of the three"), with a visible round-2 marker; plus both day-15 round-2 edits recorded as unfiled, with the new 198-word count. |
+| **FIX-3.08** | Day 16's bridge restoration and the corrected 191-word count. |
+| **FIX-3.13** | Reason 1 tightened against `days/21.md:35`; the gate's contradiction reason added as reason 3; count changed to four. |
+| **FIX-5.09** | The SYS-2 deviation block, and "Do not touch the `## Concept`" added to its constraints. |

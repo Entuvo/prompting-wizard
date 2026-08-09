@@ -2274,9 +2274,13 @@ model answer. FIX-2.14 fixes the third leg, the Working tier's "or".
   nothing —") to pay for it inside the 200-word cap; the remaining sentence teaches the same point
   and no longer reads as a verdict on a prompt whose role text names nothing.
 - **(b)'s After was carried past the plan's replacement text, to anchor 5.** The plan's version adds
-  the exclusion but still names the mechanism for none of the three dimensions, so it lands at anchor
-  4 — while FIX-3.14 makes it "load-bearing rather than cosmetic" that the After demonstrate anchor 5,
-  and checkpoint item 3 requires every edited After to score 5. Landed as: "Answer as a reviewer who
+  the exclusion and names the mechanism **for only one of the three dimensions** — "skip style
+  commentary — *it isn't what gets you paged*" — where anchor 5 requires it for **each**, so it lands
+  at anchor 4 — while FIX-3.14 makes it "load-bearing rather than cosmetic" that the After demonstrate anchor 5,
+  and checkpoint item 3 requires every edited After to score 5. (Round-2 correction: an earlier draft
+  of this note said the plan's After names the mechanism for *none* of the three dimensions. It names
+  it for one. The conclusion is unchanged — one of three is anchor 4, not 5 — but a later wave
+  re-deriving from the wrong premise would reach a different number.) Landed as: "Answer as a reviewer who
   has to sign off on {{TASK}} and will be paged if it breaks. Sign-off puts your name on it, so flag
   anything you wouldn't want attached to you; the page comes to you, so call out any assumption you
   can't verify from what's given; and skip style commentary — it isn't what gets you paged." The
@@ -2284,6 +2288,19 @@ model answer. FIX-2.14 fixes the third leg, the Working tier's "or".
   **unchanged at 3**: the Novice tier forecloses by name ("without saying anywhere in it what the
   output should include, exclude, or assume differently"), so a copier is non-compliant however strong
   the After is.
+
+**Wave 3B round 2 added two more edits to day 15, 197 → 198 words.** Both are recorded here because
+FIX-3.14 scopes this day to `:11` and `:21`, so neither is filed by any entry.
+
+- **`:7`** read "A role earns its place when it changes what gets **included, excluded, and
+  assumed**" — an *output-effect*, *conjunctive* framing sitting one line above `:11`'s text-property,
+  disjunctive ladder, i.e. two framings of one property in one concept. Now: "A role earns its place
+  when **its text names** what gets included, excluded, **or** assumed." One word, and it matches
+  anchor 4's "The role text names at least one thing … includes, excludes **or** assumes".
+- **`:23`** (the gloss) mixed polarity: two failure states the role *prevents* ("unflagged issues",
+  "unverified assumptions left silent") beside one thing the role *does* ("style notes left out"),
+  read aloud verbatim by `SKILL.md:28`. All three are now things the output does: "issues you'd regret
+  get flagged … assumptions you can't verify get called out … style notes get left out."
 
 ### FIX-3.08 — Day 16: make the two examples actually disagree — closes: A09 — severity: medium
 
@@ -2323,7 +2340,12 @@ required each example to earn its place by disagreeing with the other. `SKILL.md
 aloud immediately before the tier. Resolved the same way as the rest of the class: "Anything softer
 is padding." deleted, and `:11` given the three-rung ladder — "Two examples that show variety but no
 edge is a rung of its own; a boundary case is the climb from there; the boundary case and the failure
-case together is the top." Concept 178 → 190 words. **Do not restore either sentence.**
+case together is the top." Concept 178 → 191 words. **Do not restore either sentence.**
+
+Round 2 restored the bridge between `:11`'s retained question and the ladder, which the deleted "If
+yes, it isn't earning its place" had been carrying: the ladder now opens "**If both could, you have
+variety and no edge** — a rung of its own", so the question's answer is graded rather than merely
+followed by a ladder. One word.
 
 The gloss at `:26` was split into two sentences rather than joined by the semicolon this entry's text
 implies, because the replacement clause itself carries an em-dash pair; the wording is otherwise the
@@ -2578,21 +2600,32 @@ to Advanced, or record the review-day gap as accepted. It must not be closed sil
 **Ruled by wave 3B — closed as ACCEPTED. FIX-2.21(b) is rejected; wave-3 checkpoint item 10 is
 satisfied by this paragraph, and `days/21.md:47` keeps its single rubric citation.**
 
-Three reasons, in order of weight.
+Four reasons, in order of weight.
 
 1. **Scoring the three levers would score work no tier asks for.** `:31` builds the *material* around
    the learner's three weakest levers — an unresolved "it", a quantity buried in prose, an unstated
-   fallback. All three tiers then require a **pure reorder**: Novice moves the instruction "leaving
-   every constraint exactly where it falls", Working and Advanced both say "**without deleting a
-   word**". A learner who obeys their tier cannot repair a single one of those levers, so naming
-   `#pronoun`, `#numeral` and `#conjunction` at `:47` would score them on a defect the exercise
-   planted and forbade them to fix. That is worse than the gap it closes.
+   fallback. No tier then asks for one of them to be repaired. Working (`:39`) and Advanced (`:43`)
+   forbid it outright — both say "**without deleting a word**", and replacing an unresolved "it" with
+   its noun, or "a few" with a number, deletes a word. Novice (`:35`) does **not** carry that phrase;
+   it asks only that the instruction move to the top "**leaving every constraint exactly where it
+   falls**", and scores placement alone. So on two tiers of three the repair is prohibited and on the
+   third it is simply never requested. Naming `#pronoun`, `#numeral` and `#conjunction` at `:47` would
+   grade a defect the exercise plants and — on the two tiers that reach the top of the ladder —
+   forbids fixing. That is worse than the gap it closes.
 2. **Restoring the lever work to Advanced re-opens a settled, verified ladder.** Wave 2B removed it
    under rule 7 and wave 2D re-derived the day at 3 / 4 / 5 with imitator 3. Nothing in the day is
    internally inconsistent as it stands, and SYS-2 forbids an Advanced tier whose added demand is not
    the cited rubric's own 4→5 discriminator — which for `context-ordering` is "constraints grouped
    last", not lever repair.
-3. **`:31`'s lever-targeted material still earns its place unscored**, the same way day 23's
+3. **FIX-2.21(a)'s own Advanced text was internally contradictory and could never have been applied
+   as written**, so (b)'s premise never held. Its replacement Advanced tier (above, `:43`) says both
+   "reorder … **without deleting a word**" *and* "**fix the three levers named as weakest** wherever
+   they surface in the reordered material" — two instructions that cannot both be obeyed, for the
+   reason in 1. Wave 2B's removal of the lever half was not a loss of scored work; it was the only
+   coherent reading of a tier that asked for a pure reorder and a rewrite in the same sentence.
+   Restoring the rubric citation at `:47` would re-attach a score to work no applicable tier text ever
+   successfully demanded.
+4. **`:31`'s lever-targeted material still earns its place unscored**, the same way day 23's
    condition-before-tools habit does: it makes the reorder concrete and it surfaces the learner's weak
    levers for the day-28 review, without pretending to be graded.
 
@@ -2931,6 +2964,52 @@ to hand" and `:35` now carries `noun` anchor 4's describability clause, and does
 Note also that day 6's After is an anchor-5 prompt on the rubrics it is scored against; FIX-3.03 and
 FIX-3.04 both edit it, and neither may lower it, because the Novice foreclosure is now what holds the
 bottom rung down rather than the After's weakness.
+
+### FIX-3.22 — FIX-3.21's day list has a coverage hole; days 16, 20 and 28 fall in it — filed during wave 3B — severity: medium, and two thirds closed
+
+**Cause.** FIX-3.21 was compiled by wave 2D, and wave 2D re-read the `## Concept` only of the **nine
+days it had just edited**. Days whose Novice foreclosure clause arrived in wave **2B** or **2C**
+never got that read at all, so the concept-vs-mandated-shortfall collision was never checked on them.
+The hole is not a judgement that those days are clean; it is that nobody looked. Three days sit in
+it: **16**, **20** and **28**.
+
+This was surfaced when wave 3B found and fixed the collision on day 16 — a day carrying a wave-2B
+foreclosure, listed by no FIX-3.21 sub-item, and defective. One of three in the hole was broken,
+which is why the other two are ruled on here rather than assumed.
+
+**Day 16 — was defective, now closed.** `:9`'s "Anything softer is padding" and `:11`'s
+earn-its-place test both condemned the state the Novice tier (`:34`) mandates. Fixed by wave 3B and
+recorded under FIX-3.08. No further action.
+
+**Day 20 — checked and CLEAN. This verdict is the point of this entry: day 20 falls in no wave-3
+batch's range and would otherwise carry an unrecorded "we looked and it was fine", which is
+indistinguishable from never having looked.** Evidence, read from the file:
+
+- Novice (`:31`) mandates "**one exclusion only, even if a second failure comes to mind**" —
+  `negative-constraints` anchor 3, "One real failure mode is excluded, but a second, equally likely
+  one is not."
+- `:9` reads "Two exclusions, each tied to something the model actually did wrong on this task, **do
+  more than** ten generic ones." That is **comparative, not a verdict**: it ranks two specific
+  exclusions above ten generic ones without calling one specific exclusion a failure. A compliant
+  Novice writes one exclusion tied to something the model actually did wrong, which the sentence
+  does not condemn — the thing it condemns is genericness, and genericness is anchors 1–2, below the
+  Novice rung.
+- `:11`'s self-test — "for each exclusion in your prompt, ask whether you've watched the model
+  actually do that. If you're guessing, cut it" — is quantified over the exclusions the learner
+  wrote, not over a required count, so a compliant Novice **passes** it.
+
+No way-station is needed and **no edit is proposed**. Do not couple `:9` to the tier.
+
+**Day 28 — batch C's to confirm.** `days/28.md:9` already supplies the rung in the course's own idiom
+("Marking the slot without the failure **gets you partway**"), which is why this entry does not rule
+on it: it is in batch C's range and batch C must confirm it against day 28's Novice tier and record
+the result. Note CONFLICT-07 forbids editing `days/28.md:11`; confirmation, not repair, is what is
+being asked for.
+
+**Standing consequence.** FIX-3.21's nine-day list is a wave-2D artifact and is **not** a complete
+inventory of the collision class. Any wave editing a day file in the 01–21 range should re-read that
+day's `## Concept` against its own Novice and Working tiers rather than relying on absence from the
+list.
 
 ---
 
@@ -3776,10 +3855,20 @@ the lever work is unscored, so a tutor reading it aloud can imply a grade that `
 This is the same disclosure day 23 already makes at `days/23.md:9` and the same one wave 3B put into
 `days/21.md:11` for the prediction test.
 
+**Deliberate deviation from SYS-2 — do not "correct" it.** SYS-2's rule says an unscored demand must
+be declared "in the day's `## Concept`, in the form day 23 already uses", and this entry puts the
+disclaimer in the `## Exercise` preamble instead. Two reasons. The lever material is *created* at
+`:31` and appears nowhere in the concept, so a concept-side disclaimer would have to introduce the
+three-lever mechanic before disclaiming it. And `days/21.md`'s `## Concept` stands at **196** of 200
+words after wave 3B — four words of headroom — so the sentence does not fit there without a
+compensating deletion, which is a worse trade for a low-severity disclosure. A wave-5 implementer
+following SYS-2 literally would breach the cap; follow this entry instead. The concept already carries
+its own day-23-form disclaimer, for the prediction test, at `:11`.
+
 **Constraints.** Do not touch `### Novice`, `### Working` or `### Advanced` on day 21 — the ladder is
 3 / 4 / 5 with imitator 3, derived in `wave2d-sweep.md`. Do not add a rubric to `:47`; see FIX-3.13's
 ruling for why scoring the three levers would grade a defect the exercise plants and forbids fixing.
-`days/21.md`'s `## Concept` stands at **196** words after wave 3B, and this entry does not touch it.
+Do not touch the `## Concept`.
 
 ---
 
