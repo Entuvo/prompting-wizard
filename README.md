@@ -23,14 +23,9 @@ git clone https://github.com/Entuvo/prompting-wizard.git
 
 Then, from the inner `prompting-wizard` directory, ask: "read AGENTS.md and start the prompting course".
 
-For the run step to happen automatically, enable multi-agent support in `~/.codex/config.toml`:
+For the run step to happen automatically, Codex needs to expose an isolated-agent dispatch tool (for example `spawn_agent`). The course detects whether one is actually available to it rather than checking any config setting — Codex can expose one without a matching entry in `~/.codex/config.toml`.
 
-```toml
-[features]
-multi_agent = true
-```
-
-Without it the course still works — it asks you to run each prompt in a fresh chat and paste the output back.
+Without one available the course still works — it asks you to run each prompt in a fresh chat and paste the output back.
 
 ## How it works
 
