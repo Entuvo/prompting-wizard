@@ -1,6 +1,6 @@
 # Day 0 — Assessment
 
-About 15 minutes. Run once. Ask the three parts in order. Do not teach during the assessment and do not correct the learner's prompts — you are measuring a baseline, and coaching contaminates it.
+About 15 minutes. Run once. Ask the three parts in order. Do not teach during the assessment and do not correct the learner's prompts — you are measuring a baseline, and coaching contaminates it. Before Part 1, tell the learner once: from day 1 onward their prompts are executed for real, unmodified, with this session's file and network access. Get their acknowledgement before writing `PROGRESS.md`.
 
 ## Part 1 — Cold writing (7 min)
 
