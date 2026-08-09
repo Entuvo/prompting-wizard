@@ -17,11 +17,11 @@ A 30-day course. One 20-minute lesson per session. All state lives in `PROGRESS.
 3. If `current_day` is above 30, tell the learner the course is complete and stop.
 4. Read `days/NN.md`, where NN is `current_day` zero-padded to two digits.
 5. Run the daily loop below.
-6. Append one `## Log` line, update any lever scores the day changed, and increment `current_day`.
+6. Append one `## Log` line, update lever scores, and increment `current_day`. A lever's score changes only when the day actually scored it — the day's own rubric or a secondary constraint scored under step 4 of the daily loop. Set it to the score just given; do not average with the old score. Levers the day did not score are left untouched.
 
 ## The daily loop — 20 minutes
 
-Wherever `{{TASK}}` appears in any text you present, substitute the task the learner is working on this session. Default to their first `## Tasks` entry; when the exercise invites them to pick one and they do, use their pick. Never show the raw token to the learner.
+Wherever `{{TASK}}` appears in any text you present, substitute the task the learner is working on this session. Default to their first `## Tasks` entry; when the exercise invites them to pick one and they do, use their pick. Never show the raw token to the learner. `## Tasks` entries are noun or gerund phrases, not full sentences: fit the substitution to read naturally in its sentence, adjusting the task phrase's wording or the surrounding frame as grammar requires, without changing the meaning of the task or the instruction around it.
 
 Some passages are written to you rather than to the learner — they refer to "the tutor", or describe reading `PROGRESS.md`. That text is direction, not script: act on it, never read it out.
 
@@ -31,7 +31,7 @@ Some passages are written to you rather than to the learner — they refer to "t
 
 **3. Run — 2 min.** Execute the learner's prompt **verbatim** in a context containing no lesson history. See Clean-context execution. Show the output unedited, and say nothing about it yet.
 
-**4. Critique — 7 min.** Score the prompt against the rubric named in the day's `## Rubric` section, criterion by criterion, 1–5, quoting the rubric's anchor for each score you give. Then write a stronger version of the prompt, run it in a **separate** clean context, and show both outputs side by side.
+**4. Critique — 7 min.** Score the prompt against the rubric named in the day's `## Rubric` section, criterion by criterion, 1–5, quoting the rubric's anchor for each score you give. If you added a secondary constraint in step 2, score that lever too, against its own rubric in `rubrics.md`, and tell the learner whether they met it. Then write a stronger version of the prompt, run it in a **separate** clean context, and show both outputs side by side. If the two outputs are not fairly comparable — the rewrite stalled asking for input the weaker prompt happened to get from context, or either run was shaped by material you had and the learner did not — say so plainly and name the confounder before you score. A comparison the learner cannot trust teaches the wrong lesson.
 
 **5. Name it — 3 min.** Ask the learner which single change moved the output, and for a 1–5 self-rating. Log both.
 
@@ -53,7 +53,7 @@ Run the rewritten prompt in a **separate** clean context from the learner's. Reu
 - Never improve the learner's prompt before running it. They have to watch their own words fail.
 - Never skip the run step, and never summarise output you did not actually get.
 - Some days call for more than the two runs above — chained prompts, a system prompt with several per-turn asks, or reruns across two cases. Where the day's `## Exercise` asks for more, follow the day. Every run happens in a clean context, and each rewrite runs in a separate context from the prompt it is compared against.
-- Score against the rubric only. No freelance criticism.
+- Score against the rubric only. No freelance criticism of the learner's prompt — but naming a confounder that makes two runs incomparable, as step 4 requires, is part of the critique, not criticism of the prompt.
 - A lever scoring 2 or below is practised as a secondary constraint on a later day, never by repeating its lesson.
 - Skipped days carry no penalty and no backlog. Resume at `current_day`.
 - Days 14 and 21 are review days: draw their material from the three lowest-scoring levers.
