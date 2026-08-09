@@ -269,3 +269,92 @@ The file wins in both cases; wave 1 is settled.
   tier. That is deliberate — it is the anchor-5 discriminator — but it means a compliant Advanced
   learner may hand in a prompt with zero phrasal verbs, scored N/A under the preamble's
   not-applicable rule. Worth a sentence in the day's Concept if wave 3 touches it.
+
+---
+
+# Round 2 — the day 12 Novice formatting leak
+
+Two edits, both tier body, both in scope. Days 02–11 and 13 were **not** touched this round
+(`git diff --stat` for round 2 lists `days/04.md`, `days/12.md` and `MASTER-FIX-PLAN.md` only).
+
+## The leak, and why round 1 missed it
+
+Round 1's Novice closed the *positional* reading ("where it sits, without moving it") but said nothing
+about **line breaks**. A five-sentence prompt written as five lines — an ordinary prompt shape, and
+the very shape round 1's own Working tier presupposes when it says "standing alone on its own line" —
+produces a marked instruction that is the only marker in the prompt, on the highest-stakes
+instruction, standing alone as its own line. That is `interjection` anchor 5 clause for clause, from
+the lowest tier. For any learner who happens to format that way the ladder read **5 / 4 / 5**, an
+inversion, and the same class of defect FIX-2.11 was escalated to remove.
+
+The paragraph reading was the intended one and the day's Before / After at `:17,21` writes the
+five-sentence prompt as a single paragraph, so the day supports it — but the tier text never said it,
+and the tier text is what the learner is given.
+
+**Fixed at `days/12.md:31`:**
+
+> Write a five-sentence prompt for {{TASK}} as a single paragraph, containing one instruction you'd be angriest to see ignored. Mark that instruction IMPORTANT: where it sits — inline in the paragraph, not moved and not on a line of its own — then send the completed prompt.
+
+Two independent closures, deliberately belt-and-braces: "as a single paragraph" fixes the shape up
+front, and "not on a line of its own" forecloses the own-line reading even if a learner ignores the
+first. The clause now negates the *exact* words shared by anchors 4 and 5 — "stands alone",
+"standing alone as its own line" — rather than the position, so there is no ordinary formatting under
+which the completed prompt reaches either.
+
+## Day 12 re-derived against `rubrics.md` `## Interjection`
+
+| Tier | Anchor | Anchor text (verbatim from the file) | Why it lands there, and not a rung higher or lower |
+|---|---|---|---|
+| Novice | **3** | "The critical instruction is marked, but the marker sits inline in a paragraph with other instructions rather than on a line of its own." | The tier now instructs literally this: a single paragraph, marked where it sits, inline, not on a line of its own. **Not 4**: anchor 4 requires the instruction to "stand alone rather than sitting mid-paragraph", which the tier now forbids in as many words. **Not 5**: anchor 5 requires "standing alone as its own line", forbidden by the same clause. **Reaches 2** if the learner marks a sentence other than the one they name as the one they'd be angriest to see ignored — rule 3 room to fail, preserved. |
+| Working | **4** | "The must-not-fail instruction is marked and stands alone rather than sitting mid-paragraph, but competes with one other marked item." | Two marked instructions, the must-not-fail one standing alone on its own line, plus one other marker. Every clause of anchor 4, including the competing item. **Not 5**: see shortfall below. **Not 3**: the critical marker no longer sits inline. |
+| Advanced | **5** | "Exactly one marker in the prompt, on the instruction the writer names as highest-stakes, standing alone as its own line." | Exactly one marker, on the instruction you'd be angriest to see ignored, standing alone as its own line, "Every other instruction carries no marker" — all four clauses, nothing added. |
+
+**Working leaves open:** *"but competes with one other marked item."* The tier **mandates** the second
+marker, so anchor 5's opening clause — "Exactly one marker in the prompt" — is unreachable from this
+tier by any compliant learner. Anchor 4 is Working's ceiling, not its floor.
+
+Strictly rising, each anchor occupiable, no two tiers on the same anchor, and no ordinary formatting
+choice moves any tier off its rung.
+
+## Minor — `days/04.md:31`
+
+"Fill **the blank**" governed a three-blank frame (inherited from FIX-2.03's replacement text).
+Pluralised, and each blank named so the mapping to the frame is unambiguous:
+
+> Fill the blanks with a manner word, the one part of the task where depth matters most, and a measure for that part only — then send the completed line as your prompt.
+
+Anchor unchanged at **3** — "Depth or manner is set for part of the task, but another part is left to
+guess" — since the measure is still explicitly scoped to one named part. Naming the blanks makes that
+scoping harder to misread, if anything reinforcing the rung.
+
+## Wave-3 entries filed in `MASTER-FIX-PLAN.md`
+
+Both added after FIX-3.10, with the wave-3 file list and checkpoint updated to match.
+
+- **FIX-3.11 — Day 12: reconcile the concept with the rebuilt tier ladder** (severity: high). Three
+  collisions documented with current text and required direction: `:7` position (anchor 4 is
+  position-independent after FIX-1.10 — but keep "Standing alone, the same sentence becomes the
+  hardest thing to have missed", which is the property anchor 4 now measures); `:9` the one-marker
+  absolute versus a Working tier that mandates two, with the `SKILL.md:30` single-tier-visibility
+  consequence spelled out and the required reframing as a *scored way-station*; `:11` "move it or
+  mark it" versus the Novice tier's "not moved". Carries an explicit **do not touch** on the Before /
+  After and gloss at `:17,21,23`, and a note about the 200-word `## Concept` cap.
+- **OPEN-3.01 — Day 9's Working tier may be scoreable at `conjunction` anchor 5** (question, not a
+  fix). Logged with the anchor text, the tier text, and the reasoning: anchors 4 and 5 differ only by
+  order-of-checks ambiguity, and a single condition plus fallback is one check whose order is
+  trivially unambiguous, so day 9 is 3/4/5 only under the reading that anchor 5's ordering clause is
+  *vacuous* rather than *satisfied* at one branch — a reading `rubrics.md` does not state. Two
+  candidate resolutions recorded (rubric side, day side) with the trade-off, plus the contrast with
+  `interjection`'s mirror-image defect that explains why this is a question rather than a fix. Marked
+  **do not change the rubric — wave 1 is settled**, and added to the wave-3 checkpoint so it cannot
+  be closed without a ruling.
+
+## Round 2 verification
+
+| Check | Result |
+|---|---|
+| `python3 tools/validate.py --complete` | `ok`, exit 0 |
+| `python3 -m unittest discover -s tools` | 103 tests, OK |
+| Round-2 diff scope | `days/04.md` (1 line), `days/12.md` (1 line), `MASTER-FIX-PLAN.md` — days 02–11 and 13 untouched |
+| Day 12 ladder | 3 / 4 / 5, Novice admits no anchor-5 reading under any ordinary formatting |
+| Headings | none touched |

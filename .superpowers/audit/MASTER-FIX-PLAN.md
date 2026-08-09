@@ -2022,7 +2022,8 @@ others. Do not reword the gate until this tier text is settled.
 
 ## Wave 3 — concepts and worked examples
 
-**Files touched: 9 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `15`, `16`, `19`, `21`.
+**Files touched: 10 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `12`, `15`, `16`, `19`, `21`.
+(`days/12.md` was added by FIX-3.11, filed during wave 2A — see that entry.)
 
 Two rules govern this wave. First, `SKILL.md:28` has the tutor read `## Concept` **verbatim** to the
 learner, so a wrong sentence here is taught aloud, thirty times over. Second, `validate.py` enforces
@@ -2287,6 +2288,103 @@ deleted anything to make the new version read better", which is a `token-economy
 (`rubrics.md:317`), not a placement one. It is correct as *teaching* — the day is emphatic that this
 is a pure reorder — so leave it; it is not presented as the day's scored test.
 
+### FIX-3.11 — Day 12: reconcile the concept with the rebuilt tier ladder — filed during wave 2A — severity: high
+
+**New entry. Not derived from any census finding** — created by FIX-1.10, FIX-1.11 and FIX-2.11
+between them. The concept was written against the pre-wave-1 anchors and against the pre-wave-2A
+tiers; all three of its operative sentences now contradict the day as it stands. `SKILL.md:28` has
+the tutor read `## Concept` verbatim, so each contradiction is taught aloud immediately before the
+learner is instructed to do the opposite.
+
+Three collisions, in the order they appear.
+
+**(a) `prompting-wizard/days/12.md:7` — position.** Current:
+
+> But marking alone isn't enough: buried mid-paragraph, it still competes for attention. Position matters as much as the word. Standing alone, the same sentence becomes the hardest thing to have missed.
+
+FIX-1.10 deliberately removed the positional direction from `interjection` anchor 4 to resolve the
+interjection / context-ordering contradiction (CONFLICT-02), and FIX-1.11 rewrote anchor 5 to turn on
+*exclusivity plus standing alone as its own line* — not on where in the prompt that line sits. The
+concept still teaches position as co-equal with the marker. Keep the mid-paragraph point, which is
+exactly anchor 3 and is still scored; drop the claim that *where* in the prompt it sits carries
+weight. The third sentence ("Standing alone, the same sentence becomes the hardest thing to have
+missed") is the one FIX-1.10 cites as the property anchor 4 now measures — **keep it verbatim.**
+
+**(b) `prompting-wizard/days/12.md:9` — the one-marker rule.** Current:
+
+> The marker is only honest if rare. If everything is IMPORTANT, nothing is. One marker, on the instruction whose failure you'd actually be angry about, makes the word mean something.
+
+The rebuilt Working tier (`days/12.md:35`) **mandates two** marked instructions, because anchor 4's
+defining clause is "competes with one other marked item" and the tier has to occupy it. `SKILL.md:30`
+shows the learner only the one tier they are routed to, so a Working-tier learner hears "one marker"
+read aloud from the concept and is then told to write two. This is the sharpest of the three: it
+reads as an error in the lesson rather than a progression. The concept must present the
+competing-second-marker state as a **scored way-station** — a real rung on the ladder, above marking
+inline and below sole-marker — rather than as the failure mode "if everything is IMPORTANT, nothing
+is" currently frames it as. The one-marker rule survives as the *destination*, not as the only
+legitimate state.
+
+**(c) `prompting-wizard/days/12.md:11` — the self-test.** Current:
+
+> Here is the test: find the sentence you'd be angriest to see ignored. Is it marked, and could a skimming reader still miss it? If yes, move it or mark it until the answer is no.
+
+The rebuilt Novice tier (`:31`) says "where it sits — inline in the paragraph, not moved and not on a
+line of its own". "Move it or mark it" instructs the opposite of the tier the learner is about to be
+given, and "could a skimming reader still miss it" is the unfalsifiable outcome-test FIX-1.11 removed
+from anchor 5 for being unscoreable ("missed by whom, over what output?"). Recast the test on the two
+countable properties the anchors now use: **how many markers are in the prompt**, and **whether the
+critical one stands alone on its own line**.
+
+Not to be touched. The Before / After at `:17,21` and the gloss at `:23` place the marked instruction
+last and are **correct** — FIX-1.10 made anchor 4 position-independent precisely so they could stay,
+and FIX-2.11's closing note says so. Do not "fix" them to match (a).
+
+Watch the 200-word `## Concept` cap: day 12's concept is dense and (b) is likely to need a clause
+added rather than substituted. Trim from (a), where a sentence is being removed anyway.
+
+### OPEN-3.01 — Day 9's Working tier may be scoreable at `conjunction` anchor 5 — filed during wave 2A — **question, not a fix**
+
+**Logged for a wave-3 ruling. Do not act on it inside wave 3 without one, and do not change the
+rubric — wave 1 is settled.**
+
+The evidence. `conjunction` anchors 4 and 5 read:
+
+> | 4 | Each branch stated with its condition and its fallback, though the wording leaves the order of checks ambiguous. |
+> | 5 | Each branch stated with its condition and its fallback, in an order that resolves without ambiguity. |
+
+They differ only by whether the order of checks is ambiguous. `days/09.md:39` (Working, unchanged by
+wave 2A) reads:
+
+> Write a prompt for {{TASK}} that states one condition, its outcome, and an explicit fallback for everything else — no edge case left for the model to invent.
+
+**One** condition plus a fallback is a single check. A single check has no order to be ambiguous
+about, so its order is *trivially* unambiguous — which means a compliant Working prompt arguably
+satisfies anchor 5's text as written, and certainly cannot be shown to satisfy anchor 4's
+distinguishing clause. Day 9's ladder is 3 / 4 / 5 only under the reading that anchor 5's ordering
+clause is **vacuous, not satisfied**, when there is one branch. Nothing in `rubrics.md` says which.
+
+FIX-2.08 left `:39` and `:43` alone on the judgement that Advanced (two branches, fixed check
+sequence, no overlap) is "the only tier where the 4-vs-5 discriminator, order ambiguity, can be
+tested" — which is correct, and is also precisely the problem: if the discriminator cannot be tested
+at Working, Working's score is a matter of tutor convention.
+
+The question: **should `conjunction` anchors 4 and 5 require two or more branches explicitly?** Two
+candidate resolutions, both cheap, neither taken here:
+
+- **Rubric side** (a wave-1-class edit, so it needs a re-opening ruling): make the plurality explicit
+  — anchor 4 "Two or more branches, each stated with its condition and its fallback, though the
+  wording leaves the order of checks ambiguous", anchor 5 likewise, with the not-applicable rule
+  (`rubrics.md:7`) or anchor 3 absorbing genuinely single-branch tasks. This is the honest fix, and
+  it is the same shape as FIX-1.12's treatment of `particle` over an empty set.
+- **Day side** (a wave-2-class edit): raise day 9's Working to two branches with the check order left
+  unstated, and let Advanced add the fixed sequence. Cheaper, but it repairs one day and leaves every
+  other single-branch prompt in the course scored by convention.
+
+Related but distinct, and already settled: `interjection` anchor 4 had the mirror-image defect — a
+clause no tier could occupy — and was fixed on the tier side (FIX-2.11), because there the anchor
+text was coherent and the tiers were not. Here the tiers are coherent and the anchor text is silent.
+That asymmetry is why this is filed as a question rather than as a fix.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -2300,6 +2398,11 @@ is a pure reorder — so leave it; it is not presented as the day's scored test.
 4. Grep `days/` for "exhaustively" and confirm every surviving instance carries a measure.
 5. Confirm `days/14.md:9` and `days/28.md:11` were **not** edited (CONFLICT-03, CONFLICT-07).
 6. Day 15's self-test, Working tier and After now all name three properties, not one or two.
+7. Day 12's concept no longer contradicts its own tiers (FIX-3.11): no "one marker" absolute where
+   the Working tier mandates two, no "move it" where the Novice tier says "not moved", and no
+   positional claim that FIX-1.10 removed from anchor 4. Its Before / After and gloss at
+   `days/12.md:17,21,23` are **unchanged**.
+8. OPEN-3.01 has been ruled on, or explicitly deferred to a named wave, before wave 3 closes.
 
 ---
 
