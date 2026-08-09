@@ -36,16 +36,38 @@ def slugify(heading):
     return re.sub(r"[^a-z0-9]+", "-", heading.strip().lower()).strip("-")
 
 
+FENCE = re.compile(
+    r"^(?P<fence>`{3,}|~{3,})[^\n]*\n.*?^(?P=fence)[`~]*[ \t]*$",
+    re.M | re.S,
+)
+
+
+def strip_fences(text):
+    """Blank out fenced code blocks, preserving line count so line numbers hold."""
+    return FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+
+
 def h2_slugs(text):
+    text = strip_fences(text)
     return {slugify(h) for h in re.findall(r"^## (.+)$", text, re.M)}
 
 
 def section(text, heading):
     """Body of one section, up to the next heading of the same or higher level."""
+    text = strip_fences(text)
     level = len(heading) - len(heading.lstrip("#"))
     pattern = rf"^{re.escape(heading)}\s*$\n(.*?)(?=^#{{1,{level}}} |\Z)"
     match = re.search(pattern, text, re.M | re.S)
     return match.group(1) if match else None
+
+
+def read_text(path, errors, label):
+    """Return the file's text, or None after recording why it could not be read."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:
+        errors.append(f"{label}: unreadable ({type(exc).__name__})")
+        return None
 
 
 def check(require_all_days=False):
@@ -58,7 +80,8 @@ def check(require_all_days=False):
             errors.append(f"{name}: missing")
 
     rubrics_path = SKILL / "rubrics.md"
-    rubric_slugs = h2_slugs(rubrics_path.read_text()) if rubrics_path.is_file() else set()
+    text = read_text(rubrics_path, errors, "rubrics.md") if rubrics_path.is_file() else None
+    rubric_slugs = h2_slugs(text) if text else set()
     for expected in LEVERS + TECHNIQUES:
         if expected not in rubric_slugs:
             errors.append(f"rubrics.md: no rubric for '{expected}'")
@@ -71,7 +94,9 @@ def check(require_all_days=False):
                 errors.append(f"{label}: missing")
             continue
 
-        text = day.read_text()
+        text = read_text(day, errors, label)
+        if text is None:
+            continue
         for heading in DAY_SECTIONS:
             if section(text, heading) is None:
                 errors.append(f"{label}: missing '{heading}'")
@@ -96,9 +121,15 @@ def check(require_all_days=False):
                 errors.append(f"{label}: rubric '{ref}' not in rubrics.md")
 
     for path in sorted(SKILL.rglob("*.md")):
-        for i, line in enumerate(path.read_text().splitlines(), 1):
-            if ABS_PATH.search(line) and not any(a in line for a in ABS_PATH_ALLOWED):
-                errors.append(f"{path.relative_to(SKILL)}:{i}: absolute path in shipped file")
+        text = read_text(path, errors, str(path.relative_to(SKILL)))
+        if text is None:
+            continue
+        for i, line in enumerate(text.splitlines(), 1):
+            for match in ABS_PATH.finditer(line):
+                tail = line[match.start():]
+                if not any(tail.startswith(a) for a in ABS_PATH_ALLOWED):
+                    errors.append(f"{path.relative_to(SKILL)}:{i}: absolute path in shipped file")
+                    break
 
     return errors
 
