@@ -458,3 +458,132 @@ Two candidates were considered and resolved rather than escalated.
   prompt-producing anchor-3 tier impossible (any fix at all lands at 4 or 5), so the tier now runs the
   existing failed prompt instead. Recorded as a non-substantive departure rather than a stop, since
   `SKILL.md:32` gets its artifact either way.
+
+---
+
+# Round 2 — day 22's Novice bounded to lines, and three declarations corrected
+
+Two tier-body edits, both in scope. Days 24, 27, 28 and 30 were **not** touched this round
+(round-2 `git diff --stat` against the round-1 commit: `days/22.md` 1 line, `days/26.md` 2 lines,
+`MASTER-FIX-PLAN.md`).
+
+## Critical — `days/22.md:37` did not reliably reach anchor 3
+
+Round 1 mandated "two **details** true only of this one request". `rubrics.md` `## System prompts`
+counts **lines**: anchor 3 is "two or more **lines** are on the wrong side — in either direction",
+anchor 4 "exactly one line", anchor 5 "no line". Two details commonly live in one sentence — "Summarise
+the 12 May budget.xlsx figures" carries both — and the same tier sends "the request itself" to the
+per-turn ask, so the details travel down with the request and the split comes out clean: **anchor 5,
+from the bottom rung**, against a Working tier mandated down to 4. The unit the tier counted was not
+the unit the rubric counts.
+
+Round 1 also failed to apply its own day-23 clearance criterion to day 22. Days 24, 26, 27, 28 and 30
+all ask the learner to do *less* than the day's After; day 22 alone asked for *more* — find or
+fabricate two turn-specific details, then deliberately strand them — while `:9` had just been read
+aloud telling them a promoted detail "is a landmine for the next request". Drift to the After was
+both cheaper than compliance and endorsed by the concept, which is exactly the least-effort test that
+cleared day 23.
+
+**Fixed at `days/22.md:37`:**
+
+> Take a prompt you've sent more than once for {{TASK}}. If it doesn't already carry two lines, each carrying a detail true only of this request — a date, a file name, this week's numbers — add them, kept separate from the request line. Then split it into two blocks: the request line goes in the per-turn ask, and every other line, those two included, goes in the system prompt. Send both blocks.
+
+One clause does both jobs. Counting in **lines** matches the rubric's unit, and "kept separate from
+the request line" plus "the **request line** goes in the per-turn ask" makes the two lines
+un-smuggleable: they cannot ride down with the request, because the request is now a named single
+line. The effort gradient flattens with it — the learner adds two short lines to a prompt they
+already have and then splits on a line boundary, which is less work than reproducing the After's
+judgement about which rules are durable.
+
+## Day 22 re-derived against `rubrics.md` `## System prompts`
+
+| Tier | Anchor | Anchor text (verbatim from the file) | Why it lands there, and not a rung higher or lower |
+|---|---|---|---|
+| Novice | **3** | "Standing behaviour and per-turn request are separated into two blocks, but two or more lines are on the wrong side — in either direction." | Exactly two lines carrying request-only detail sit in the system block, by instruction, and they are lines by construction. **Not 4**: anchor 4 needs *exactly one* line wrong; the tier mandates two, and they can no longer collapse into one line or ride down with the request. **Not 5**: same clause. **Not 2**: every durable rule is in the system block, so the separation is not partial. **Reaches 2** if the learner also leaves durable rules in the per-turn ask — room to fail preserved. |
+| Working | **4** | "Standing behaviour and per-turn request are separated into two blocks, and exactly one line is on the wrong side — in either direction." | "Leave **exactly one** rule that would still be true on a future turn sitting in the per-turn ask." Anchor 4's state, mandated, in the opposite direction to Novice's. |
+| Advanced | **5** | "Standing behaviour and per-turn request are separated into two blocks, and no line is on the wrong side — in either direction." | The three-ask stress test run in both directions, revised "until neither move is left to make" — which is anchor 5's clause restated as a stopping condition. |
+
+**Imitate-the-After test, revised Novice:** the After (`:21-27`) splits three durable rules from one
+request with nothing on the wrong side — **anchor 5**. A learner who copies it is now visibly
+non-compliant twice over: the tier requires two request-only lines to exist and requires them to be
+in the system block, and neither can be satisfied by the After's shape. A compliant imitator lands at
+**3**, and the cheaper path is now compliance rather than drift.
+
+## Declarations corrected — the departure count is thirteen, not eleven
+
+Both were real edits past plan text and both were mis-filed in round 1. Neither is withdrawn; each is
+now declared.
+
+12. **`days/30.md:29` was substantively rewritten past FIX-2.27's replacement text.** The plan's
+    Novice reads "run it on a **second case of the same task** and score it against those checks".
+    Two clauses were added that the plan does not contain: "**a close variant, not a case it was
+    never built for**", which forecloses anchor 5's "holds on a case it was not designed for", and
+    "**Record the scores only; nothing about what broke gets written down at this tier**", which
+    forecloses anchors 4 and 5 at their shared failure-modes-noted gate. Without them the imitating
+    Novice reaches 4–5, since the day's After documents what broke, fixes and re-runs. These two
+    clauses are what hold day 30's bottom rung at 3; filing them as "the plan's text" understated the
+    edit.
+
+13. **`days/27.md:29` was edited where FIX-2.25 says explicitly "Novice (`:29`) is correctly at
+    anchor 3 … Leave it."** Round 1 filed the change as non-substantive on the grounds that the run
+    step was a rule-4 formality. That contradicts round 1's own imitate-the-After paragraph, which
+    says the added "**no fix today**" caps an imitating learner at 3. A clause that moves a learner
+    from 4–5 to 3 changes an anchor, and it is the clause that makes the day's ladder rise at all.
+    Declared here as substantive: the plan's "leave it" was written against a tier read in isolation
+    from its own `## Before / After`, which is tutor instruction telling the learner to write down
+    "what they'd change".
+
+`days/27.md:29`'s run clause ("then run the failed prompt unchanged to confirm what it produces")
+remains what the non-substantive list described — rule 4's artifact — but it travels with the
+substantive clause and is no longer listed separately.
+
+**Corrected ledger: thirteen substantive departures, four non-substantive** (`days/22.md:37`,
+`24.md:31`, `26.md:31`, `28.md:34` — the send steps, none of which appears in plan text). The
+round-1 "Departures from literal plan text, non-substantive" list is superseded by this paragraph on
+its `days/27.md:29` and `days/30.md:37` entries; the latter recorded no change of substance and is
+withdrawn as a non-departure (the plan's Advanced text was used verbatim).
+
+## Wave-3 filings corrected
+
+- **FIX-3.16 completed.** Round 1 named `days/22.md:7` and `:11` but not `:9` — "a turn-specific
+  detail promoted into the system prompt is a landmine for the next request" — which is the sentence
+  the rebuilt **Novice** tier now has every bottom-tier learner violate, deliberately and twice, and
+  the collision this batch actually created. It is now the entry's first and most acute item, with
+  the reason the mandate is unavoidable (anchor 5 is the absence of error, so every sub-5 rung must
+  be specified as an error state) recorded alongside it. Wave-3 checkpoint item 13 now requires all
+  three sentences.
+- **FIX-3.20 re-graded from "low, tracking only" to medium, with a mandated edit.** The `days/27.md:21`
+  versus `:29` collision is not the concept-versus-anchor tension days 22, 24, 26 and 30 have, where
+  the After is an illustrative model prompt a learner may aim below. Day 27's After is **tutor
+  instruction about the learner's own actions** — `SKILL.md:28` reads it aloud and `days/27.md:25`
+  directs the tutor to run the exercise "per `## Before / After`" — so the learner is told to write
+  down what they'd change and then told "no fix today". The mandated direction is to scope `:21`'s
+  "and what they'd change" to Working and above, keeping the written prediction itself, which is the
+  day's method for the upper tiers. The `:9` half stays tracking-only. Checkpoint item 17 rewritten
+  to match.
+- **Wave-3 file-list convention stated.** A day is listed when some entry mandates an edit to it;
+  tracking-only entries mandate nothing and their days are not listed. Day 27 is listed because
+  FIX-3.20 now mandates its `:21` edit; `days/17.md` (FIX-3.15) remains the only excluded day. The
+  convention is written into the file-list paragraph so the next batch does not have to re-derive it.
+
+## Minors folded in
+
+- **`days/26.md:31`** — "Cut the parts you can point to no use for at all" replaced with the plan's
+  own phrasing, "Cut the parts you can't point to a use for". Same foreclosure, plainer sentence; the
+  anchor-3 clause that follows ("keep the one section you're least sure about") is unchanged.
+- **`days/26.md:35`** — "Send the cut version." added. It was the only tier on its day without a send
+  step after round 1 gave one to Novice and Advanced; rule 4 applies to every tier, not only to
+  Novice.
+
+## Round 2 verification
+
+| Check | Result |
+|---|---|
+| `python3 tools/validate.py --complete` | `ok`, exit 0 |
+| `python3 -m unittest discover -s tools` | 103 tests, OK |
+| Round-2 diff scope | `days/22.md` (1 line), `days/26.md` (2 lines), `MASTER-FIX-PLAN.md` — days 24, 27, 28 and 30 untouched this round |
+| Days 01, 23, 25, 29 | still not edited, in either round |
+| `## ` / `### ` headings | none touched |
+| Day 22 ladder | 3 / 4 / 5, counted in the rubric's own unit (lines), with no formatting or smuggling route to anchor 5 from Novice |
+| Riders in 22–30 | still none |
+| Advanced word/item budgets in 22–30 | still none |
