@@ -10,7 +10,7 @@ A 30-day course. One 20-minute lesson per session. All state lives in `PROGRESS.
 ## Every session
 
 1. Look for `PROGRESS.md` in the learner's working directory.
-   - **Absent** → read `assessment.md` and run it. Writing `PROGRESS.md` ends the session.
+   - **Absent** → the file is missing either because the learner is new or because it was lost mid-course, and an absent file cannot tell you which. Ask. If they are starting fresh, read `assessment.md` and run it; writing `PROGRESS.md` ends the session. If they were mid-course, accept a day number they state and rebuild the file from it, or re-run the assessment if they prefer. Never silently restart at day 1.
    - **Present but a required field is missing or unparseable** → name the field that failed and stop. Never guess `current_day`, and never silently restart at day 1. Offer to re-run the assessment, or to accept a day number the learner states.
    - **Present and valid** → continue.
 2. Read `level`, `current_day`, `## Levers`, and `## Tasks`.
@@ -20,6 +20,8 @@ A 30-day course. One 20-minute lesson per session. All state lives in `PROGRESS.
 6. Append one `## Log` line, update any lever scores the day changed, and increment `current_day`.
 
 ## The daily loop — 20 minutes
+
+Wherever `{{TASK}}` appears in any text you present, substitute the learner's first `## Tasks` entry. Never show the raw token to the learner.
 
 **1. Concept — 3 min.** Present the day's `## Concept` verbatim. Then present `## Before / After`, substituting the learner's first `## Tasks` entry wherever `{{TASK}}` appears.
 
