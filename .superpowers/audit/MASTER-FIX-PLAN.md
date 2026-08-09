@@ -2728,6 +2728,31 @@ this entry is the largest of the wave-2C filings.
 200-word `## Concept` cap applies: `days/22.md`'s concept is currently well inside it, but both
 edits are additions.
 
+**Landed by wave 3C, 176 → 192 words, `## Before / After` at `:15-29` untouched.** All three
+sentences moved.
+
+- `:7` — the two absolutes became descriptions of the two wrong-side states rather than instructions
+  against them: "**A durable rule left in the per-turn slot gets retyped forever; a turn-specific
+  detail left in the system prompt silently governs requests it was never written for.**" (was "Move
+  a durable rule into the per-turn slot and you retype it forever; leave a turn-specific detail in
+  the system prompt and it silently governs…"). **Do not restore the imperative form** — the Working
+  tier at `:41` mandates exactly the first state.
+- `:9` — the "landmine" sentence was **replaced in full** by a three-rung ladder counted in the unit
+  `rubrics.md` `## System prompts` actually uses, which wave 2C round 2 established is **lines**, not
+  details: "**The rubric counts lines on the wrong side, in either direction: two or more is where
+  this starts; exactly one is the climb from there; no line on the wrong side is the top.**" Anchors
+  3, 4 and 5 are quoted by their discriminating clauses. The deleted sentence is the one the rebuilt
+  Novice tier has every bottom-tier learner violate twice; **do not restore it.**
+- `:11` — the second direction was **added** rather than the partiality disclaimer this entry offers
+  as an alternative, because the rebuilt Advanced tier (`:45`) now runs both moves and a one-
+  directional test would no longer match it: "…If yes, it belongs in the per-turn ask. **Then the
+  other way: a line you would retype next turn belongs in the system prompt.**"
+- **Unfiled cut that paid for the additions, inside the cap:** `:5`'s "Three of those four
+  **sentences** would be true on any turn you sent **this prompt** again. Only the fourth changes."
+  → "Three of those four would be true on any turn you sent it again; only the fourth changes."
+  Two words. No anchor reference and no worked example lost; the quoted four-sentence prompt is
+  kept.
+
 ### FIX-3.17 — Day 24: the concept states the anchor-5 action as the only acceptable one — filed during wave 2C — severity: medium
 
 `prompting-wizard/days/24.md:9` reads "The loop isn't finished until it says what to do when the
@@ -2749,6 +2774,23 @@ if it fails"), which `:9` currently calls an unfinished loop. **Do not touch** t
 one sentence, what your output would look like if it failed your check") is a bar on the *check*,
 not on the action, and is correct at every rung.
 
+**Landed by wave 3C, 179 → 189 words, `## Before / After` at `:15-23` untouched and `:11` untouched.**
+`:9`'s "The loop isn't finished until it says what to do when the check fails…" was replaced in full
+by the three-rung ladder this entry asks for, quoting all three anchors rather than paraphrasing
+them:
+
+> **A named check with no stated action when it fails is a rung of its own**: the model finds the
+> problem and reports it anyway, unfixed. **An action that names no operation — "fix it", "try
+> again" — is the climb from there**; "replace it, or flag it as unverified" **names what to do to
+> the failing element**, and that is the top.
+
+No action (anchor 3, the rung the Novice tier mandates), an unnamed action in anchor 4's own two
+examples (the rung the Working tier mandates), and anchor 5's named operation. The old sentence
+called the first two states an unfinished loop; **do not restore it.**
+
+**Unfiled cut that paid for it:** `:7` lost ", one you could point to on a bad day" (8 words), which
+restated "a property the output could plausibly lack" in the same sentence.
+
 ### FIX-3.18 — Day 26: the concept makes the rerun universal; two of three tiers now forbid it — filed during wave 2C — severity: medium
 
 `prompting-wizard/days/26.md:7` ("Cutting is not the same as guessing. Delete a section, rerun, and
@@ -2767,6 +2809,31 @@ cutting by inspection is where the ladder starts and the rerun is what the top o
 shape day 29's `:9` uses to declare its own cap. `:11`'s self-test is the Advanced tier's test and
 should stay pointed there. **Do not touch** the Before / After at `:15-23`: `:23` ("cutting it
 changed nothing when tested … Keeping it wasn't a guess; it was confirmed") is the anchor-5 model.
+
+**Landed by wave 3C, 179 → 192 words, `## Before / After` at `:15-23` untouched.** `:7` is kept, as
+this entry requires. Two edits inside `:9` and one inside `:11`:
+
+- `:9`'s opener — "**The test is the cut, not the eyeballing.**" — is the sentence that calls the
+  Working tier's *mandated* method ("Make every cut by inspection alone") a non-test, and it was
+  replaced by the three-rung ladder in day 29's self-cap shape: "**A section kept "just in case" is a
+  rung of its own. Every token left earning its place on inspection is the climb from there; the
+  rerun that confirms the output held is the top.**" All three anchors quoted — 3's "just in case",
+  4's "earns its place on inspection", 5's "rerun and the output held". **Do not restore the
+  opener.**
+- `:9`'s closing sentence — "Neither is obvious from staring at the prompt before you run it."
+  (12 words) — was **deleted**, not moved. With the ladder above it, it is the same verdict on
+  inspection-only cutting in weaker words, and it paid for the addition inside the cap. Do not
+  restore. The two illustrative clauses it followed are kept: they are why the rerun is worth a rung,
+  which is what this entry preserves `:9` for.
+- `:11` stays pointed at the rerun, as this entry directs, and gained an eight-word scope clause
+  naming the rung it belongs to: "Whatever changed tells you what the missing third was doing **— the
+  evidence the top rung asks for.**" **Departure — this entry files no `:11` edit.** Without it the
+  self-test is still read aloud (`SKILL.md:28`) as *the* test of the day, immediately before a tier
+  that forbids the comparison; with it, checkpoint item 15's "the rerun is what the top rung adds,
+  not what every tier does" holds in `:11` as well as in `:9`. The standard "Here is the test:"
+  opener is untouched, so FIX-5.01's normalisation (days 1–6 only) is unaffected.
+- **Unfiled cut:** `:7` lost "and now you can say which one, instead of assuming" (9 words), which
+  restates "that section mattered" in the same sentence. `:7` is otherwise as this entry requires.
 
 ### FIX-3.19 — Day 30: the concept quotes anchor text FIX-1.27 replaced — filed during wave 2C — severity: high
 
@@ -2796,6 +2863,31 @@ longest paragraph in the file, so requoting should replace text rather than add 
 prompt passes both" (`:45`) can be reworded. Note for wave 4: under the rebuilt Novice tier there is
 no revised prompt and no second case that the prompt is fixed against, so a tier-independent trigger
 is required, exactly as FIX-4.07 argues.
+
+**Landed by wave 3C, 184 → 191 words, `## Before / After` at `:15-21` untouched. FIX-4.07 is
+unblocked.** `:9` was **replaced, not extended**, as this entry requires:
+
+> The rubric's rungs are exact. Day 29's target — "specified and works on varied cases" — sits at
+> anchor 3 only because it has "no written evaluation criteria" yet. Add the criteria and note what
+> breaks: anchor 4, "**failure modes noted but not specifically enough for someone else to recognise
+> them**." **Anchor 5 adds a second axis** — the prompt "**holds on a case it was not designed
+> for**" — and asks that its failure modes be "**documented specifically enough that someone else
+> could recognise each one**."
+
+Both dead quotes are gone — "not systematically" and "documented" as a bare contrast with "noted" —
+and every phrase now in the file is lifted verbatim from `rubrics.md`'s `## Capstone`. The robustness
+axis FIX-1.27 carried into the ladder is named at anchor 5, which is where it discriminates. "not
+impressionistic" was dropped from the opening sentence as part of the replacement.
+
+`:7`'s third part was reframed from a universal to the top rung's addition: "…and **writing down what
+that case breaks, specifically enough that someone else would recognise it, is the top rung's
+addition**." (was "and when that case breaks something, the failure mode gets written down, specific
+enough not to relearn later"). The Novice tier at `:29` forecloses exactly that writing-down; **do
+not restore the universal form.**
+
+**Unfiled cut that paid for the additions:** `:5` lost "— not until tested against a case you didn't
+design for." (11 words), restated by `:7`'s "an unfamiliar case tests whether the prompt generalises"
+and by `:11` in full.
 
 ### FIX-3.20 — Day 27: the After instructs the learner to do what the Novice tier forbids — filed during wave 2C, re-graded in round 2 — severity: medium
 
@@ -2829,6 +2921,36 @@ standard 4-or-5-by-learner shape wave 2 accepts on days 14, 16, 17, 19, 20 and 2
 collateral damage would teach the opposite of the day. But an editor tightening `:9` into a
 tier-level demand would close anchor 4 again, so leave it as a description of the target rather than
 a requirement on the fix.
+
+**Landed by wave 3C. `:21` scoped; `## Concept` 177 → 174 words.**
+
+**Mandated half — `:21`.** Landed without naming a tier, per `SKILL.md:30` (the learner is shown
+exactly one) and wave 3A's departure 5:
+
+> The learner names, in writing, which lever or technique they believe was underspecified — before
+> anyone touches the prompt or runs anything. **Where the tier also asks for a fix, the change they'd
+> make goes in the same writing, still before anything runs.** Only after that prediction is recorded
+> does the tutor run the original prompt if it hasn't already been run, confirm what actually broke,
+> and check whether the learner's diagnosis, **and any fix**, targeted the thing that was actually
+> wrong.
+
+The written prediction itself is kept, as this entry requires; only its fix half is conditioned. The
+imitate-the-After result is **unchanged at 3** and strengthened: previously only "no fix today" held
+the imitator down, and the After now declines to push them past it. Checkpoint item 18's floor —
+no `## Before / After` edit may change the anchor its day's derivation is measured against — holds.
+
+**Tracking half — `:9` — confirmed.** "The fix has to target **only** what you named" is **unchanged**
+and is still a description of the target, not a tier-level demand. `failure-diagnosis` anchor 4 stays
+open.
+
+**Plus one unfiled `:9` edit this entry does not file, and it is the same collision `:21` was
+re-graded for.** `:9` closed on "Diagnose on paper first, **predicting the fix** before you run
+anything — then run to see if **the prediction** held", which instructs every learner to predict the
+fix one paragraph before a Novice tier that ends "**no fix today**". Now: "Diagnose on paper first,
+before you run anything — then run to see whether **the diagnosis** held." **Do not restore the
+fix-prediction clause**; the fix prediction lives at `:21`, where it is now scoped. This is the
+FIX-3.22 class on a day whose foreclosure came from wave 2C — day 27 is not on FIX-3.21's list for
+the same reason day 16 was not.
 
 ### FIX-3.21 — Days 1, 2, 5, 6, 8, 9, 11, 13, 19: the concept states as universal the thing the rebuilt Novice tier now mandates as absent — filed during wave 2D — severity: medium (sub-items graded individually)
 
@@ -3000,16 +3122,44 @@ indistinguishable from never having looked.** Evidence, read from the file:
 
 No way-station is needed and **no edit is proposed**. Do not couple `:9` to the tier.
 
-**Day 28 — batch C's to confirm.** `days/28.md:9` already supplies the rung in the course's own idiom
-("Marking the slot without the failure **gets you partway**"), which is why this entry does not rule
-on it: it is in batch C's range and batch C must confirm it against day 28's Novice tier and record
-the result. Note CONFLICT-07 forbids editing `days/28.md:11`; confirmation, not repair, is what is
-being asked for.
+**Day 28 — checked by wave 3C and CLEAN. No edit made, and none is proposed.** `days/28.md:9`
+already supplies the rung in the course's own idiom, and the confirmation was run against the file,
+not assumed. Evidence:
+
+- Novice (`:34`) mandates "every variable part marked as a named slot — **the slots only, nothing yet
+  about how it has failed**" = `prompt-library` anchor 3, "Saved prompts mark their variable slots,
+  but don't record how they've failed before."
+- `:9` opens on exactly that state and scores it as a position, not an error: "**Marking the slot
+  without the failure gets you partway**: a template a stranger could reuse, but one still liable to
+  fail the same silent way." It then names what the climb adds — "The failure note turns reusable
+  into reliable — specific enough that reading it once prevents a repeat" — which is anchor 5's
+  "specifically enough that a stranger would recognise" in the day's own words. A compliant Novice
+  hears their mandated state called *partway*, which is what it is.
+- **Two rungs, not three, and that is correct here.** The three-rung form is required where the
+  Working tier *mandates* anchor 4's shortfall. Day 28's Working tier leaves it **silent** — the
+  shortfall is privative and mandating vagueness is not available (wave 2C) — so there is no mandated
+  middle state for the concept to legitimise, and a learner who writes specifically may reach 5.
+- `:7`'s "A saved prompt **stays low on the shelf** until two more things are marked" is positional
+  and comparative, quantified over the whole ladder; it never calls the slots-only state wrong. Same
+  form as day 20's `:9`, ruled clean above.
+- `:11` is **untouched**, per CONFLICT-07 and wave-3 checkpoint item 5. A compliant Novice answers
+  "no" to its second half; that locates them on the ladder rather than condemning them, which is the
+  ruling CONFLICT-07 already made when it dissolved A14.
+
+**The hole is now fully closed: 16 fixed, 20 clean, 28 clean.**
 
 **Standing consequence.** FIX-3.21's nine-day list is a wave-2D artifact and is **not** a complete
-inventory of the collision class. Any wave editing a day file in the 01–21 range should re-read that
-day's `## Concept` against its own Novice and Working tiers rather than relying on absence from the
-list.
+inventory of the collision class. Any wave editing a day file — **in any range, not only 01–21** —
+should re-read that day's `## Concept` against its own Novice and Working tiers rather than relying
+on absence from the list.
+
+**Amended by wave 3C: the hole is wider than three days.** Wave 3C found a live instance of the same
+collision on **day 27**, which sits outside the 01–21 range this entry originally scoped the
+consequence to: `days/27.md:9` instructed every learner to predict the fix ("Diagnose on paper first,
+predicting the fix before you run anything") one paragraph before a Novice tier that ends "no fix
+today". Day 27 carries a wave-2C foreclosure, appears on no FIX-3.21 sub-item, and FIX-3.20 named
+only its `:21` and its "only what you named" clause. Fixed under FIX-3.20; recorded here because it
+is the second confirmed instance found by looking rather than by list.
 
 ---
 
@@ -3076,6 +3226,23 @@ list.
     whole task**") in that anchor's own words, so the measure stays scoped to the one named part — or
     a written derivation shows why the leak does not occur. Do not close this item by inspection of
     the tier alone; the test is what an imitator of the **new** After reaches.
+
+**Concept-cap census, recounted by wave 3C at the close of wave 3 — not a checkpoint item, a standing
+budget constraint for waves 4, 5 and 6.** All thirty `## Concept` bodies were recounted with
+`validate.py`'s own `section()` plus `len(str.split())`. The cap is 200 and `validate.py` fails above
+it. **Sixteen of thirty now have ten words or less of headroom:**
+
+| Headroom | Days |
+|---|---|
+| 1–3 | 02 (199), 15 (198), 07 / 09 / 11 (197) |
+| 4–6 | 19 / 21 (196), 05 / 12 (195), 13 (194) |
+| 8–10 | 22 / 26 (192), 16 / 30 (191), 04 / 06 (190) |
+
+The other fourteen have 11 or more; the roomiest are 01 (147), 03 (163), 23 (172) and 27 (174). **Any
+wave-4 or wave-5 entry that adds a clause to one of the sixteen must name the deletion that pays for
+it, in the entry.** FIX-5.01's two live rows are already inside budget and this was re-checked in the
+file: `days/03.md` is at 163 and its row is cost-neutral; `days/06.md` is at 190 and its row costs
+one word. FIX-5.09 already carries this constraint for day 21 in its SYS-2 deviation block.
 
 ---
 
