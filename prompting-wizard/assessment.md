@@ -10,7 +10,7 @@ Ask for three prompts, one at a time. Give no guidance beyond the brief. Do not 
 2. **Analysis task:** "Write the prompt you would send to get a model to tell you what is wrong with a piece of work you produced."
 3. **Open-ended task:** "Write the prompt you would send to get a model to help you think through a decision you are stuck on."
 
-Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree. Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take the median of the prompts that do give it something; if none of the three does, record 3 and note it, so the mean that sets `level` is not skewed by a property the learner's prompts never exercised. Day 0 is the one place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
+Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree. Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take the median of the prompts that do give it something. Where none of the three gives it anything, record 3 and note it, and leave that lever out of the mean under "Setting the level": average only the levers the three prompts actually exercised, so the level is not skewed by a property they never touched. An imputed 3 counted in an eleven-lever mean drags it toward 3, and the bands either side of 3 are not symmetric, so counting it can move the learner a whole tier. Day 0 is the one place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
 
 ## Part 2 — Diagnosis (4 min)
 
@@ -48,6 +48,8 @@ Extract 3–5 recurring, concrete tasks. Write them in the learner's words, not 
 | Mean lever score below 2.5 | `novice` |
 | Mean lever score 2.5 to 3.9 | `working` |
 | Mean lever score 4.0 or above | `advanced` |
+
+The mean is taken over the levers the three prompts actually exercised, per Part 1 — not over any lever recorded as an imputed 3.
 
 Then apply one adjustment: if the Part 2 diagnosis count is 8 or more but the mean lever score is below 2.5, set `working` instead. The learner already recognises weak prompting and needs practice, not first principles.
 

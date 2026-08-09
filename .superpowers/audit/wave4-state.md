@@ -483,4 +483,162 @@ applies") and the exception stated ("Day 0 is the one place `N/A` is not written
   opens `days/17.md` for prose; if it edits `:16` or `:18`, the FIX-3.22 check must be re-run,
   because `:18` is what ladders `:16`.
 - `SKILL.md:14` is now a long line carrying five distinct failure rules. Wave 5 may want to break it
-  into a list; that is formatting, not contract.
+  into a list; that is formatting, not contract. **Filed as FIX-5.12(e).**
+
+---
+---
+
+# Wave 4 — round 2
+
+Three items from the gate. One shipped-file change, in `assessment.md` only. `rubrics.md`, all thirty
+day files, every `## Exercise` tier body and every heading are untouched this round — verified with
+`git diff --name-only -- prompting-wizard/rubrics.md prompting-wizard/days/`, which returns nothing.
+No `## Concept` word count changed, by construction: no day file was opened for edit.
+
+`python3 tools/validate.py --complete` → `ok` (exit 0). `python3 -m unittest discover -s tools` →
+103 tests, OK.
+
+## 1. `assessment.md`'s no-skew claim — the arithmetic is now true
+
+**The finding is correct and the shipped text was false.** Round 1 recorded 3 for an unexercised
+lever "so the mean that sets `level` is not skewed", and then counted that 3 in an eleven-lever mean
+whose bands (2.5 and 4.0) are not symmetric about 3. The imputation moved learners in both
+directions, and it did so on the one number the sentence told the tutor was safe.
+
+Both of the gate's worked cases, re-run against the landed text:
+
+| Case | Round 1 | Round 2 |
+|---|---|---|
+| Ten exercised levers summing to 40, one imputed 3 | 43/11 = 3.909 → `working` — **demoted** | 40/10 = **4.0** → `advanced` |
+| Nine exercised summing to 22, two imputed 3s | 28/11 = 2.545 → `working` — **promoted** | 22/9 = **2.44** → `novice` |
+
+The imputation no longer moves anyone. Landed at `assessment.md:13`:
+
+> Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take
+> the median of the prompts that do give it something. Where none of the three gives it anything,
+> record 3 and note it, and leave that lever out of the mean under "Setting the level": average only
+> the levers the three prompts actually exercised, so the level is not skewed by a property they
+> never touched. An imputed 3 counted in an eleven-lever mean drags it toward 3, and the bands either
+> side of 3 are not symmetric, so counting it can move the learner a whole tier. Day 0 is the one
+> place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
+
+`assessment.md:78`'s "All 11 lever keys must be present" is preserved — the 3 still goes into
+`## Levers`; it is only excluded from the average.
+
+**One addition beyond the single clause requested, and why.** A tutor can reach "Setting the level"
+and read its table — "Mean lever score below 2.5" — without carrying `:13`'s qualifier with them, and
+the table is where the mean is actually taken. One sentence was added directly above the adjustment
+paragraph: *"The mean is taken over the levers the three prompts actually exercised, per Part 1 — not
+over any lever recorded as an imputed 3."* Without it the fix lives only at the site that computes the
+scores, not at the site that consumes them — the same split-contract shape as the defects this wave
+exists to close. `assessment.md` carries no word cap.
+
+**Residue filed, not fixed: FIX-5.13(b).** `SKILL.md:20`'s day-14 re-derivation still averages all
+eleven `## Levers` entries, and a lever imputed at day 0, never taught on days 1–13, and N/A again on
+the day-14 prompt still sits in that mean as a 3. The window is narrow — day 14 rescores all eleven,
+so only a lever N/A *on that prompt* survives — and closing it properly needs a state field recording
+which levers have ever been exercised, which is a contract change, not a clause. Filed with that
+reasoning so wave 5 decides rather than inherits it silently. The two means now differ and nothing in
+the file explains why; that is the part which must not stand unaddressed.
+
+## 2. M-7 — the thirteenth departure
+
+**D13 — FIX-4.20(b)'s first N/A clause was rewritten, not appended. Substantive, and undocumented in
+round 1.** The plan's literal text reads:
+
+> If none of the three prompts gives a lever anything to score, take the median of the ones that do;
+> if none does, record 3 and note it…
+
+The first clause is self-defeating: its condition is "none of the three gives the lever anything to
+score" and its instruction is "take the median of the ones that do" — of which, by that condition,
+there are none. The two halves are the *same* condition with different remedies. Landed as two
+separate conditions — partial coverage takes the median of the prompts that do score it, total
+absence records 3 — which is plainly what the entry intends. Round 1 described D12 as covering only
+the reconciling clause added at the end of the sentence; the rewrite of the opening clause was a
+second, independent departure and is now on the list. **Departure count for wave 4: thirteen, five
+substantive** (D1, D5, D6, D9, D13).
+
+## 3. M-8 — FIX-3.22 run on the four files opened without recording it
+
+`days/06.md`, `days/07.md`, `days/14.md` and `days/21.md` were opened in round 1 to verify D2 and
+FIX-4.08's day list, and the check was not recorded. The mandate reads "any wave opening a day file
+**for any reason**", and it exists precisely because two defects survived being named by an entry.
+Run in full; results recorded in `MASTER-FIX-PLAN.md` under FIX-3.22's standing consequence, and
+summarised here. **The likely outcome — all four clean — did not hold.**
+
+**`days/06.md` — clean; one close call.** `:5`, `:7`, `:9` describe composition and the Novice tier
+sets all five levers too, weakly, so nothing it mandates is condemned. `:11`'s deletion test ("If the
+sentence still reads as a full instruction with one gap, that lever wasn't pulling weight") is an
+Advanced-rung diagnostic — `:39` is the tier it tests — presented as "the test" on a day whose Novice
+tier is built to produce levers that fail it, and day 06's concept carries no rung or partway language
+anywhere. It names a property rather than instructing a state, so it is not a mandate-vs-foreclosure
+collision. Recorded against FIX-5.01's live `days/06.md:11` row, which already rewrites that exact
+line; budget after the opener swap is 191 of 200, so nine words are available if wave 5 wants a
+scoping clause.
+
+**`days/07.md` — DEFECT. Filed as new entry FIX-5.11.** `:7` reads "The job is to work out which of
+the five levers … was left open, and rewrite until none of them are." `:29`, the Novice tier, reads
+"State which **one** of the five levers … was most clearly missing … then rewrite **only that lever**
+in." `## Concept` is read aloud verbatim (`SKILL.md:28`) and is in the second person, so a Novice
+learner is told the job is to close all five and then told to close one. The day's self-test at `:11`
+does not cover it: "Setting all five levers is the climb; leaving no clause whose deletion changes
+nothing is the rung above" ladders Working against Advanced and is silent on the one-lever rung. That
+sentence was **added by FIX-3.05** — the wave-3 entry that opened this file wrote the laddering
+sentence and still left `:7` uncovered, which is the exact failure mode FIX-3.22 names.
+
+Not fixed in this wave: it is a `## Concept` edit on a day no wave-4 entry opens, and the budget is
+tight — `days/07.md` is at **197** of 200. Filed with two counted candidates so wave 5 does not have
+to re-derive them: "was left open; one closed is a rung, all five the climb" → **199**, and "was left
+open; closing one is a rung, closing all five the climb" → 200. Both recount with `validate.py`'s own
+`section()` plus `len(str.split())`.
+
+**`days/14.md` — clean; one close call.** `:9` is CONFLICT-03-protected and untouched. The Novice
+tier goes through all eleven levers, which is exactly what `:9` requires ("every lever considered"),
+and sets three. `:11`'s "A score of 2 or below is a dimension you thought you'd covered and hadn't"
+mildly misdescribes the Novice tier's *deliberate* leaving of eight — the tier has the learner state
+what each currently sets — but it names, it does not instruct. Worth recording: `:17` and `:21` are
+third-person direction about the learner and so are **not read aloud**, per `SKILL.md:26` as extended
+by FIX-4.11. That is what stops `:21`'s "deliberately setting all eleven levers" reaching a learner
+whose tier tells them to set three — a collision FIX-4.11 closed as a side effect, on a day nobody
+filed it against.
+
+**`days/21.md` — clean.** `:11` ladders all three tiers explicitly and in order — "Constraints
+scattered through the material is where this starts; all but one grouped at the end is the climb from
+there; every one grouped last is the top" — matching `:35` / `:39` / `:43` one to one, which is
+FIX-3.13's landed work and the cleanest example of the pattern in the course. `:9`'s "pure reorder,
+not a trim" is what all three tiers mandate. `:5` condemns the buried-instruction state, which the
+Novice tier *constructs* as its starting material and then moves; the tier's product has the
+instruction at the top, so nothing it mandates is condemned. The Before/After models the Advanced
+state and both lower tiers are foreclosed in their own words.
+
+## Filed for wave 5
+
+Three new entries in `MASTER-FIX-PLAN.md`, placed after FIX-5.10, plus wave 5's "Files touched" list
+corrected — it omitted `days/07.md`, `days/10.md`, `days/21.md`, `days/30.md` and `SKILL.md`, which
+FIX-5.09 through FIX-5.13 now require.
+
+- **FIX-5.11** — day 07's concept-vs-Novice collision above. Severity medium; carries the counted
+  replacement candidates and the do-not-touch constraints.
+- **FIX-5.12** — the six harness prose seams, as lettered sub-items: **(a)** M-2, field 2 undetermined
+  on days 6, 7 and 14, which makes `SKILL.md:75`'s recoverability claim inexact there; **(b)** M-3,
+  `days/30.md:45` and `SKILL.md:38` wording the Completion trigger differently, where the day file's
+  reading reproduces the S10 defect FIX-4.10 closed; **(c)** M-4, no forward pointer from session step
+  6 to the deferred Completion; **(d)** M-5, `SKILL.md:38`'s "whatever the learner's tier" trailing
+  three em-dash clauses; **(e)** M-6, the rebuild path's missing output specification, paired with
+  breaking `SKILL.md:14` into a list; **(f)** M-9, `SKILL.md:24` and `:28` still stating substitution
+  differently, which now matters because FIX-4.12 made the pick real.
+- **FIX-5.13** — the level-arithmetic residues: **(a)** M-1, half-integer lever scores reachable at day
+  0 via a two-prompt median against an otherwise-integer contract; **(b)** the day-14 mean still
+  counting a day-0 imputation, described above; **(c)** gate item 7, a learner promoted by the day-0
+  diagnosis adjustment and visibly demoted at day 15 when the re-derivation drops it — specified
+  behaviour with nothing preparing the learner for it.
+
+## Round-2 verification
+
+- `python3 tools/validate.py --complete` → `ok`, exit 0.
+- `python3 -m unittest discover -s tools` → 103 tests, OK.
+- No `## Concept` word count changed: `git diff --name-only -- prompting-wizard/days/` is empty, so no
+  concept was opened for edit.
+- No tier body changed, no heading in any shipped file changed, and `rubrics.md` was not touched —
+  `git diff --name-only -- prompting-wizard/rubrics.md` is empty.
+- Shipped-file diff for this round: `prompting-wizard/assessment.md` only, 3 insertions, 1 deletion.
