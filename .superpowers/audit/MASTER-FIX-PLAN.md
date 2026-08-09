@@ -2022,8 +2022,9 @@ others. Do not reword the gate until this tier text is settled.
 
 ## Wave 3 — concepts and worked examples
 
-**Files touched: 10 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `12`, `15`, `16`, `19`, `21`.
-(`days/12.md` was added by FIX-3.11, filed during wave 2A — see that entry.)
+**Files touched: 11 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `12`, `15`, `16`, `18`, `19`,
+`21`. (`days/12.md` was added by FIX-3.11, filed during wave 2A; `days/18.md` by FIX-3.12, and
+`days/15.md`/`days/21.md` gained FIX-3.14/FIX-3.13, all filed during wave 2B — see those entries.)
 
 Two rules govern this wave. First, `SKILL.md:28` has the tutor read `## Concept` **verbatim** to the
 learner, so a wrong sentence here is taught aloud, thirty times over. Second, `validate.py` enforces
@@ -2385,6 +2386,80 @@ clause no tier could occupy — and was fixed on the tier side (FIX-2.11), becau
 text was coherent and the tiers were not. Here the tiers are coherent and the anchor text is silent.
 That asymmetry is why this is filed as a question rather than as a fix.
 
+### FIX-3.12 — Day 18: reconcile the concept with a Working tier that mandates one added line — filed during wave 2B — severity: medium
+
+`prompting-wizard/days/18.md:7` and `:11`. Wave 2B put day 18's Working tier at
+`task-decomposition` anchor 4 by **mandating** the shortfall — "each step's input is the previous
+step's output plus exactly one line of added instruction" — because anchor 4's shortfall is a
+positive state (something present in the seam), not an omission, and the FIX-2.17 round-2 correction
+forbids "at most one" (which admits zero and therefore anchor 5).
+
+The concept now contradicts the tier a Working learner is shown. `:7` reads "Splitting into three
+prompts **only fixes this** if each step's input is exactly the last step's output: nothing added,
+nothing re-explained", and the self-test at `:11` reads "check whether each half's input is
+**verbatim** the other half's output". `SKILL.md:30` shows exactly one tier, so a Working learner
+reads a concept telling them the thing their own tier instructs is not a decomposition at all.
+
+Required direction: reframe `:7`'s absolute as the *top* of a ladder rather than a pass/fail gate —
+the same device day 12 needs after FIX-3.11 — e.g. one added line of instruction is the common
+half-step, and the verbatim seam is what removes the last of the interference. Keep the verbatim
+language: it is anchor 5 and FIX-1.16 deliberately homed it here.
+
+**Do not touch the Before / After at `:15-33`** — it models the verbatim seam correctly and is what
+Advanced now targets. Watch the 200-word `## Concept` cap.
+
+### FIX-3.13 — Day 21: reconcile the concept with the rebuilt ladder, and re-home the prediction test — filed during wave 2B — severity: medium
+
+`prompting-wizard/days/21.md:7` and `:11`. Two collisions, both created by wave 2B's ladder.
+
+(a) `:7` states the recipe as a single move — "Reordering the same content — task first, material
+second, constraints last". The Working tier now **mandates** anchor 4's shortfall (one constraint
+left mid-material), because anchor 4's "except for one placed early" is a positive state and silence
+would put Working at anchor 5. As with day 12 and day 18, the concept needs the way-station framing:
+grouping most constraints is a real, scored improvement; grouping all of them is the last step.
+
+(b) `:11`'s self-test — "before you run the reordered version, predict what changes about the
+output" — no longer appears in any tier. Wave 2B removed it from Working and Advanced under rule 7:
+the prediction never lands in the prompt text, so `rubrics.md:5` cannot see it and
+`SKILL.md:32-34` scores nothing for it. It is good practice and it is the day's own test, so it
+belongs in the concept, declared unscored in day 23's exact form ("a useful habit, not a scored
+one"), rather than in a tier.
+
+**Also open on day 21, and not a concept edit: FIX-2.21(b) was not applied.** Wave 2B's brief
+restricted the batch to `## Exercise` tier bodies, so `days/21.md:47` still reads "Score against
+`rubrics.md#context-ordering`." alone, and wave 2's checkpoint item 6 ("`days/21.md:47` now names
+four rubrics") is **not** satisfied. Wave 2B removed the three-weakest-lever work from the Advanced
+tier rather than leave an unscored rider, so the day is internally consistent as it stands — but the
+`:31` framing still builds the material around those three levers and nothing scores them, which is
+T19 / A12 / S13's original complaint. Either apply FIX-2.21(b) in wave 3 and restore the lever work
+to Advanced, or record the review-day gap as accepted. It must not be closed silently.
+
+### FIX-3.14 — Day 15: the ladder was repaired against FIX-1.13's anchors, and the concept's test no longer matches — filed during wave 2B — severity: medium
+
+FIX-1.13 rewrote `role-framing` anchor 4 to "The role text names **at least one** thing the output
+includes, excludes **or** assumes because of the role, but not how the role produces it" — a
+*disjunctive, at-least-one* bar, and a text property rather than an output property. That silently
+moved day 15, one of the six model ladders, from 3/4/5 to **4/4/4**:
+
+- Novice (`:31`, before wave 2B) ended "then list one thing the output will contain because of that
+  role" — literally anchor 4's positive content, from the lowest tier.
+- Advanced (`:39`, before wave 2B) ended "be ready to name both, and to say how the role produces
+  each one" — a rule-7 rider. Anchor 5 now requires the **role text** to say how, so readiness to
+  say it scores nothing and the tier sat at 4.
+
+Wave 2B edited Novice and Advanced to restore 3/4/5 and left Working untouched. **FIX-2.14 was
+rejected** — see the wave-2B report's departures. Consequences for wave 3:
+
+- `:11`'s self-test ("name your prompt's role, then list two things the output contains because of
+  it") is a two-item *output-effect* test. Anchor 4 now asks for one item and anchor 5 for three
+  dimensions plus the mechanism, all in the prompt text. The self-test matches no rung. Re-aim it at
+  the text property the rubric now scores.
+- The After (`:21`) names no exclusion and no mechanism, so it does not demonstrate anchor 5 —
+  FIX-3.07 already owns this; it is now load-bearing rather than cosmetic.
+- Wave 3's checkpoint item 6 ("Day 15's self-test, Working tier and After now all name three
+  properties") must be re-derived: the **Working tier legitimately names one**, not three, because
+  anchor 4 is disjunctive. Only the self-test and the After move.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -2397,7 +2472,15 @@ That asymmetry is why this is filed as a question rather than as a fix.
    before-state failures are day 4 (3), day 6 (adverb 2, preposition 3); both must now be 5.
 4. Grep `days/` for "exhaustively" and confirm every surviving instance carries a measure.
 5. Confirm `days/14.md:9` and `days/28.md:11` were **not** edited (CONFLICT-03, CONFLICT-07).
-6. Day 15's self-test, Working tier and After now all name three properties, not one or two.
+6. Day 15's self-test and After now match the settled anchors. **Amended by FIX-3.14:** the Working
+   tier is *not* moved to three properties — anchor 4 is disjunctive and at-least-one, so Working is
+   correct naming one. Only `:11` and `:21` change.
+9. FIX-3.12 (day 18) and FIX-3.13 (day 21) have landed: neither concept still states as an absolute
+   the thing its own Working tier is instructed to violate, and day 21's prediction test is either
+   in the concept with a day-23-style "not a scored one" disclaimer or explicitly dropped.
+10. Wave 2's checkpoint item 6 has been closed one way or the other: `days/21.md:47` either names
+    four rubrics (FIX-2.21(b) applied, lever work restored to Advanced) or the review-day gap is
+    recorded as accepted. See FIX-3.13.
 7. Day 12's concept no longer contradicts its own tiers (FIX-3.11): no "one marker" absolute where
    the Working tier mandates two, no "move it" where the Novice tier says "not moved", and no
    positional claim that FIX-1.10 removed from anchor 4. Its Before / After and gloss at
