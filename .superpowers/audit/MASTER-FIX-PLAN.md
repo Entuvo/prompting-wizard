@@ -2022,11 +2022,13 @@ others. Do not reword the gate until this tier text is settled.
 
 ## Wave 3 — concepts and worked examples
 
-**Files touched: 16 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `12`, `15`, `16`, `18`, `19`,
-`21`, `22`, `24`, `26`, `27`, `30`. (`days/12.md` was added by FIX-3.11, filed during wave 2A;
-`days/18.md` by FIX-3.12, and `days/15.md`/`days/21.md` gained FIX-3.14/FIX-3.13, all filed during
-wave 2B; `days/22.md`, `24`, `26`, `27`, `30` were added by FIX-3.16–FIX-3.20, all filed during
-wave 2C — see those entries.)
+**Files touched: 21 day files** — `days/01.md`, `02`, `04`, `05`, `06`, `07`, `08`, `09`, `11`, `12`,
+`13`, `15`, `16`, `18`, `19`, `21`, `22`, `24`, `26`, `27`, `30`. (`days/12.md` was added by FIX-3.11,
+filed during wave 2A; `days/18.md` by FIX-3.12, and `days/15.md`/`days/21.md` gained
+FIX-3.14/FIX-3.13, all filed during wave 2B; `days/22.md`, `24`, `26`, `27`, `30` were added by
+FIX-3.16–FIX-3.20, all filed during wave 2C; `days/02.md`, `05`, `09`, `11`, `13` were added by
+FIX-3.21, filed during wave 2D, which also adds a second, independent edit to `days/08.md` and
+`days/19.md` — see that entry.)
 
 **Counting convention for this list:** a day is listed when some entry mandates an edit to it.
 Entries that are tracking-only mandate nothing and their days are **not** listed — currently
@@ -2650,6 +2652,88 @@ collateral damage would teach the opposite of the day. But an editor tightening 
 tier-level demand would close anchor 4 again, so leave it as a description of the target rather than
 a requirement on the fix.
 
+### FIX-3.21 — Days 1, 2, 5, 6, 8, 9, 11, 13, 19: the concept states as universal the thing the rebuilt Novice tier now mandates as absent — filed during wave 2D — severity: medium (sub-items graded individually)
+
+Wave 2D applied the **imitate-the-After** test retroactively to days 01–21 and closed nine leaks by
+adding an explicit foreclosure clause to the Novice tier — the same device used on days 12, 15, 16,
+17, 18, 20, 21, 22, 24, 26, 27, 28 and 30. On seven of the nine days the day's own `## Concept` — read
+aloud verbatim by `SKILL.md:28` immediately before the tier — states the foreclosed property as a
+universal rule. This is the identical class as FIX-3.11, FIX-3.12, FIX-3.13, FIX-3.16, FIX-3.17 and
+FIX-3.18, and it is resolved the same way: reframe the concept's absolute as the property the **upper
+rungs** add, in day 29's self-cap shape, without touching any `## Before / After`.
+
+**Explicit do-not-touch across all nine sub-items:** every `## Before / After` block. Each is the
+worked example the imitate test measures against, and moving one would invalidate the derivations in
+`.superpowers/audit/wave2d-sweep.md`. The 200-word `## Concept` cap applies to each edit.
+
+**(a) Day 2 — medium.** `days/02.md:11`: "Cover everything in your prompt except the verb. Could a
+stranger predict what happens next from that word alone?" The Novice tier (`:31`) now requires a verb
+"loose enough that a nearby operation would satisfy your wording just as well" — a verb that fails
+`:11`'s test by instruction. `:9`'s "One prompt, one verb, doing the operation you actually want" has
+the same problem. Direction: name the stranger test as what Working and Advanced are graded on, not
+as a floor every tier clears.
+
+**(b) Day 5 — medium.** `days/05.md:11`: "ask three questions of your prompt: in what, for whom,
+without what. If any answer is missing, that's an open boundary the model will set for you." The
+Novice tier (`:31`) now mandates exactly one missing answer ("those two only, with nothing ruled
+out"). Note this collision is **older than wave 2D**: FIX-2.04 already cut the exclusion blank out of
+the template, so a compliant Novice already produced two relations of three. Wave 2D only made the
+foreclosure explicit, which is what surfaced it.
+
+**(c) Day 8 — medium.** `days/08.md:11`: "for each it/this/that/these in your prompt, point at the
+exact word or quoted block it refers to. If you can't, replace the pronoun with the noun itself."
+The Novice tier (`:31`) now mandates leaving exactly one pronoun unreplaced. `days/08.md` is already
+on the wave-3 list for FIX-3.06; this is a second, independent edit to the same file. Direction: the
+replace-it rule is the anchor-4/5 discipline; anchor 3 is the state where exactly one reference is
+still guessable, and the concept should say so.
+
+**(d) Day 9 — medium.** `days/09.md:9`: "the fallback can be missing, exactly as underspecified as no
+branching at all, since it's the branch everything else defaults to", and `:13`'s test "ask which of
+condition, outcome, and fallback is missing." The Novice tier (`:33`) now mandates the missing
+fallback. Same pre-existing-then-made-explicit shape as (b): FIX-2.08 removed the fallback blank.
+**Interacts with OPEN-3.01** — if that question is resolved by moving day 9's Working tier, re-read
+this sub-item first.
+
+**(e) Day 11 — medium, and the newest of the nine.** `days/11.md:13`: "for each quantity in your
+prompt, ask whether you could check it with a count, not a feeling. If the answer is 'a few' or
+'several', replace it." The Novice tier (`:33`) now mandates words rather than a number for the
+length bound. Unlike (b) and (d) this is genuinely new: batch A's Novice merely *permitted* a vague
+bound, and permission was not enough to stop an imitator reproducing the After's "each under 40
+words". Direction: `:9`'s "Vague quantifiers … feel like constraints but aren't" is the anchor-3→4
+lesson; say the count is where the bottom rung practises it and the length is what Working adds.
+
+**(f) Day 13 — medium.** `days/13.md:9` ("A particle earns its place only if changing it would change
+the task") and `:11` ("swap the particle for a plausible alternative. If the task changed, keep it").
+The Novice tier (`:31`) now asks for "the phrasal verb you'd reach for by habit rather than one whose
+particle you've chosen deliberately". Deliberate choice is `particle` anchor **4** after FIX-1.12, so
+the concept teaches the Working rung to a tier capped at 3.
+
+**(g) Day 19 — medium.** `days/19.md:11`: "check your named steps against that list. Anything named
+that isn't on it, cut. Anything on the list that isn't named, add." The Novice tier (`:31`) now
+mandates that "at least one thing it depends on goes unnamed". `days/19.md` is already on the wave-3
+list for FIX-3.09; this is a second, independent edit. Also record here that wave 2D **removed "in
+any order"** from the Working tier (`:35`): after FIX-1.17 the ordering shortfall is privative, and
+rule 2 prefers silence to a mandate, so Working is now 4-or-5-by-learner rather than pinned at 4.
+FIX-3.09's round-2 amendment (checkpoint item 11) is unaffected and still required.
+
+**(h) Day 1 — low, tracking only, and it constrains FIX-3.01.** `days/01.md:11` currently reads
+"Nouns compound with counts and formats, but those are later levers. Today, just name the thing" —
+which **supports** the rebuilt Novice tier ("but not the count or the format"). No collision exists
+today. But **FIX-3.01 proposes appending "— in as few words as pin it down"**, which is `noun` anchor
+5's economy clause taught to every tier, including a Novice tier now foreclosed below anchor 4. Apply
+FIX-3.01 only in a form that names economy as the Advanced rung's addition (`days/01.md:41`), not as
+a universal instruction. FIX-3.01's own *Why* already concedes the operative fact — "the After
+(`:21`) does score 5, so the ceiling is currently reachable only by imitation, not by instruction" —
+which is the wave-2D finding, recorded in wave 1 and never acted on.
+
+**(i) Day 6 — low, tracking only.** No concept sentence collides: `days/06.md:11`'s remove-each-lever
+test is tier-independent, and `:9`'s "not five sentences bolted together" is still what Working
+demands. Filed so a wave-3 editor knows that `days/06.md:31` now mandates "the first word that comes
+to hand" and `:35` now carries `noun` anchor 4's describability clause, and does not re-couple them.
+Note also that day 6's After is an anchor-5 prompt on the rubrics it is scored against; FIX-3.03 and
+FIX-3.04 both edit it, and neither may lower it, because the Novice foreclosure is now what holds the
+bottom rung down rather than the After's weakness.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -2696,6 +2780,13 @@ a requirement on the fix.
     above, so a Novice learner is no longer told aloud to write the fix their tier forbids. Its
     tracking half still holds — confirm `:9`'s "only what you named" has not been turned into a
     tier-level demand, which would reclose `failure-diagnosis` anchor 4.
+18. FIX-3.21 has landed on its seven mandated sub-items — days 2, 5, 8, 9, 11, 13 and 19 — so that no
+    concept still states as a universal rule the property its own Novice tier is instructed to leave
+    out. The two tracking-only sub-items are also checked: FIX-3.01 (day 1) was applied in a form
+    that names economy as the Advanced rung's addition rather than a universal instruction, and day
+    6's concept has not been re-coupled to its rebuilt tiers. **No `## Before / After` on days 1, 2,
+    5, 6, 8, 9, 11, 13 or 19 was edited** — each is the worked example the imitate-the-After test is
+    measured against.
 
 ---
 
