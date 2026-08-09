@@ -524,6 +524,22 @@ Append one line per completed day:
 ```
 ````
 
+- [ ] **Step 1b: Two corrections found by Task 10's dry runs**
+
+> **Amendment, 2026-08-09.** Task 10's behavioural traces found two places where the `SKILL.md` text above fails to implement this plan's own requirements. These are corrections, not rulings — the plan's Error Handling section and Lesson file format section already state the intended behaviour; the `SKILL.md` prose did not deliver it.
+
+**(a) `{{TASK}}` substitution is scoped too narrowly.** Step 1 of the daily loop substitutes `{{TASK}}` when presenting `## Before / After`, but step 2 presents the `## Exercise` tier with no substitution instruction — and every day file carries `{{TASK}}` inside its tiers. As written, the learner is shown a literal `{{TASK}}` in the exercise they are asked to complete.
+
+Make substitution global rather than per-step. Add this line immediately under the `## The daily loop — 20 minutes` heading, before step 1:
+
+> Wherever `{{TASK}}` appears in any text you present, substitute the learner's first `## Tasks` entry. Never show the raw token to the learner.
+
+Step 1 may keep its existing clause; the global rule is what guarantees the tiers are covered.
+
+**(b) An absent `PROGRESS.md` must not silently restart the course.** The current text sends every absent-file case straight into the assessment. This plan's Error Handling section requires that a file lost mid-course be reported rather than silently restarted at day 1. An absent file carries no information about which case it is, so the skill must ask. Replace the **Absent** bullet with:
+
+> - **Absent** → the file is missing either because the learner is new or because it was lost mid-course, and an absent file cannot tell you which. Ask. If they are starting fresh, read `assessment.md` and run it; writing `PROGRESS.md` ends the session. If they were mid-course, accept a day number they state and rebuild the file from it, or re-run the assessment if they prefer. Never silently restart at day 1.
+
 - [ ] **Step 2: Write AGENTS.md**
 
 Create `prompting-wizard/AGENTS.md`:
