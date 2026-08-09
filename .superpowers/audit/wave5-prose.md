@@ -283,3 +283,148 @@ anything a later step must act on goes in the plan.
 - The concept-cap table is republished there with day 03 removed and days 03 and 07 restated.
 - Wave 6 touches `SKILL.md`, `README.md` and `assessment.md` only, so it trips no FIX-3.22 day-file
   trigger — but the mandate still binds if it opens one.
+
+---
+---
+
+# Wave 5 — round 2
+
+Four Important items and three Minors from the gate. **Two of the four were arithmetic in my own
+round-1 text, and both understated a risk rather than overstating it.** One shipped-file defect was
+real and would have reached a learner; one plan defect would have landed a wave-6 entry on the wrong
+line.
+
+`python3 tools/validate.py --complete` → `ok`, exit 0. `python3 -m unittest discover -s tools` → 103
+tests, OK. `rubrics.md` untouched this round; no tier body, no anchor, and no `## ` / `### ` heading
+changed — `git diff HEAD -- prompting-wizard/ | grep -E "^[-+]#{1,3} "` returns nothing.
+
+## Important 1 — the wave-6 remap said +3 while every example in it was +4
+
+**Confirmed and corrected.** FIX-5.12(e) replaced one line with a header line plus four sub-items —
+five lines where there was one — so the shift below `SKILL.md:14` is **+4**. Round 1 stated the rule
+as "+3" and then listed five targets that were all computed correctly at +4. A rule that is wrong
+while its worked examples are right is worse than a wrong example: the examples get trusted and the
+rule gets applied to everything else.
+
+Wave 6 cites **eleven** `SKILL.md` locations; round 1 listed five. The full table is now in
+`MASTER-FIX-PLAN.md`, every row re-located **by content in the file**, not computed:
+
+`:13`→`:13`, `:20`→`:24`, `:26`→`:30`, `:28`→`:32`, `:32`→`:36`, `:34`→`:38`, `:40-49`→`:44-53`,
+`:44`→`:48`, `:45`→`:49`, `:47`→`:51`, `:53`→`:57`.
+
+**The concrete hazard, recorded in the plan next to the table.** FIX-6.07 appends to the **fallback**
+bullet, old `:45`, now **`:49`**. Applying +3 gives `:48` — the **dispatch** bullet. The two are one
+line apart, both begin "If", and attaching FIX-6.07's Tier-B relocation note to the Tier-A branch
+would invert what the entry says while looking plausible. The plan now instructs re-location by the
+content column and forbids editing by number.
+
+## Important 2 — `SKILL.md:13` told a false thing to anyone rebuilding past day 14
+
+**Confirmed. This is the one round-1 defect that would have reached a learner.** My D4 clause ended
+"until day 14 rescores all eleven". Day 14 is the *only* day that rescores all eleven at once, so a
+learner rebuilding at day 20 never reaches it. Their self-estimated scores would then persist for the
+rest of the course, drive `SKILL.md:34`'s secondary-constraint selection ("scores 2 or below"), and
+be what day 30's Completion compares the Day 0 baseline against. Roughly half the reachable rebuild
+points — days 15 through 30 — are past day 14, so the clause was false on about half its domain.
+
+Landed as the gate's conditional, verbatim: "…their own estimate until a later day rescores each one
+— and if day 14 is still ahead, it rescores all eleven at once." Correct on both branches, and it
+now points at the mechanism that actually applies after day 14 — each lever's own later day.
+
+## Important 3 — FIX-5.07 left P15 inverted at three further sites
+
+**Confirmed, and the entry's rationale was false of its own named file.** FIX-5.07 says `rubrics.md`
+and `assessment.md` "are the only two places that invert it". `assessment.md` inverted it **twice**,
+eight lines apart, and round 1 fixed one of them. All three now fixed:
+
+- **`assessment.md:77`** — the Day 0 `## Log` line inside the same illustrative `PROGRESS.md` block
+  whose `## Levers` I had already corrected. A tutor copying that template saw both orders in one
+  code fence. This is the worst of the three: it is the block the assessment tells the tutor to
+  "use exactly this structure".
+- **`days/14.md:41`** — the `## Rubric` line, `#pronoun` before `#preposition`, now swapped.
+- **`days/14.md:5`** — **factually wrong, not merely out of order.** The sentence narrates the
+  course chronologically ("you've set an operation, two qualities, a manner, …") and had "a
+  reference, a boundary" — pronoun is day 8 and preposition is day 5, so it told a day-14 learner
+  they had learned the two levers in the wrong order. Now "a boundary, a reference". Word-count
+  neutral: day 14's `## Concept` is **186 before and 186 after**, recounted.
+
+**Departure recorded: I edited a `## Rubric` reference.** Wave 5's standing scope forbids touching
+any `## Rubric` reference; the gate's round-1 message explicitly directs it ("either fix both lines
+… or file them"). Recorded as an authorised departure rather than a silent one. **No slug was added,
+removed, or altered** — two adjacent items in an eleven-item list were transposed, all eleven still
+resolve, and `validate.py --complete` confirms it.
+
+**FIX-3.22 fired on `days/14.md` and was run.** Result: **clean**, recorded in the plan under the
+standing consequence with the other thirteen. `:9`'s "every lever considered, and either set
+deliberately or **left out on purpose**" is the line that legitimises the eight levers the Novice
+tier has the learner leave alone; it is CONFLICT-03 protected and was not touched. Wave 4 round 2's
+close call at `:11` is re-confirmed as naming rather than instructing. `:17` and `:21` are
+third-person direction and not read aloud, which is what keeps `:21`'s "deliberately setting all
+eleven levers" away from a learner whose tier tells them to set three.
+
+## Important 4 — the FIX-3.22 tally undercounted its own class, twice
+
+**Confirmed, both errors, both in the direction that understates risk.**
+
+- "**Seven** confirmed members (06, 07, 16, 17, 20, 27, 28, 30)" — the parenthetical lists **eight**.
+  And day **14** was missing from it: wave 4 round 2 recorded it as a close call in the same register
+  as day 06. Corrected to **nine members: 06, 07, 14, 16, 17, 20, 27, 28, 30.**
+- "**Four** confirmed defects" — written by the wave that had just raised it to **five**. Day 07,
+  which FIX-5.11 found and this wave fixed, was omitted from the count in the same document that
+  records the fix. Corrected to **five: 16, 17, 27, 30 and 07.**
+
+The corrected paragraph now also states the ratio plainly — better than half the members of the class
+have been defective — because that is the number a later wave reads to decide how hard to look.
+
+**A third arithmetic error, self-caught while fixing these.** Round 1's heading said "fourteen files
+opened, fourteen checks run" over a table of **thirteen** rows (01, 02, 03, 04, 05, 06, 07, 10, 16,
+17, 21, 22, 30). With day 14 added in round 2 the count is now genuinely fourteen. The plan says so
+explicitly, so nobody later reads the agreement as evidence the round-1 count was right. **That is
+four wrong counts in one wave's output, against a plan whose recorded failure mode is wrong counts.**
+
+## Minors
+
+**M1 — D9's first reason does not hold; re-recorded on the second.** The gate is right: a seven-word
+form exists ("Failing this test is where this starts." → 198 of 200), so zero headroom was never the
+binding constraint and "no room" was a false finding to leave for a future wave. The decisive reason
+is the second: day 06 scores **five** rubrics, and `:11`'s deletion test — is this lever load-bearing?
+— maps onto no single anchor of `noun`, `verb`, `adjective`, `adverb` or `preposition`. Asserting
+"this is where this starts" would invent a rung mapping, which is wave-2 derivation work requiring a
+written re-derivation, not a wave-5 prose edit. Both the plan entry and the departure below now
+record it that way: **not "no room" — "no anchor to point at".**
+
+**M2 — FIX-5.08's ruling addressed two of three pacing moves.** The entry names session framing,
+ordering, and what the tutor asks for alongside the artifact. Round 1 ruled on the last two and
+dropped the first without saying so. **Session framing is now explicitly declined**, and it is the
+move that most needed the reasoning: framing is the only lever that raises *felt* demand without
+touching a tier, which is precisely the objection — it would tell a learner the stretch is harder
+than the tiers actually ask. That gap between stated and scored demand is what SYS-2 exists to close
+and what FIX-5.09 spent an entire entry disclosing on one day. Installing it on seven consecutive
+days, in the one register no rubric scores and no validator catches, would re-create the defect class
+this plan has spent five waves removing.
+
+**M3 — `SKILL.md:79`'s recoverability claim softened.** FIX-5.12(a) made field 2 determinate on days
+6, 7 and 14 but not *recoverable*: `composition` and `review` name no lever, and days 7 and 14 both
+log `review`, so the log line alone cannot say which levers those days rewrote. No consumer breaks —
+`days/27.md:17` searches the score field. The claim now names its own limit and points the reader at
+the day file.
+
+## Round-2 departures
+
+**D14 — a `## Rubric` reference was edited** (`days/14.md:41`), against wave 5's standing scope, on
+the gate's explicit direction. Transposition only; no slug added, removed or changed; all eleven
+resolve; validator re-run. Recorded because the standing scope is what a later reader will check
+this diff against.
+
+**D15 — `days/14.md:5` was edited, a `## Concept` line on a day no wave-5 entry opened.** Justified
+by the gate's direction and by the sentence being factually wrong rather than merely inconsistent.
+Word-count neutral (186 → 186), and it triggered the FIX-3.22 check, which was run and recorded.
+
+Round-1 departure count was thirteen; **wave 5 closes at fifteen, five substantive** (D2, D4, D6, D9,
+D14).
+
+## What wave 6 inherits — amended
+
+The three plan-side corrections above (the +4 table, the corrected class tally, the FIX-5.08 session-
+framing ruling) are in `MASTER-FIX-PLAN.md`, not here. The one line wave 6 must not skim:
+**FIX-6.07's target is the fallback bullet at `:49`, not the dispatch bullet at `:48`.**

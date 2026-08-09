@@ -3294,7 +3294,12 @@ requires ("any wave opening a day file **for any reason**"). One real finding.**
 ### Wave 5's result, recorded here as this entry requires — fourteen files opened, fourteen checks run, all clean
 
 No new member of the class was found. Days 04 and 05 were opened read-only, to confirm FIX-5.01's
-spent rows; the mandate covers "any reason", so they are checked and recorded like the rest.
+spent rows; the mandate covers "any reason", so they are checked and recorded like the rest. Day 14
+was opened in round 2 by the P15 residue and is checked on the same terms.
+
+*Round 1 wrote "fourteen" over a table of thirteen rows. The row count is now genuinely fourteen —
+day 14 was added, not the count adjusted to fit. Counted: 01, 02, 03, 04, 05, 06, 07, 10, 14, 16, 17,
+21, 22, 30.*
 
 | Day | Opened for | Concept edited? | Verdict |
 |---|---|---|---|
@@ -3306,6 +3311,7 @@ spent rows; the mandate covers "any reason", so they are checked and recorded li
 | 06 | FIX-5.01 + FIX-5.02 | yes (`:11` opener) | clean — `:11` close call re-confirmed, no scoping clause added |
 | 07 | FIX-5.11 | yes (`:7`) | clean after the fix |
 | 10 | FIX-5.10(b) | no | clean — third independent reading of `:9` |
+| 14 | round 2 — the P15 residue at `:5` and `:41` | yes (`:5`, two list items swapped) | clean |
 | 16 | FIX-5.05 (Before / After) | no | clean |
 | 17 | FIX-5.03 (Concept code fence) | fence only, no prose | clean — `:16` / `:18` untouched, so wave 4's re-run trigger not tripped; run anyway |
 | 21 | FIX-5.09 (Exercise preamble) | no | clean |
@@ -3330,10 +3336,15 @@ Per-day evidence, for the days where the verdict rests on something other than a
 - **Day 06 — clean; the `:11` close call is re-confirmed, not closed by an edit.** Wave 4 round 2
   recorded `:11`'s deletion test as an Advanced-rung diagnostic presented as "the test" on a day
   whose Novice tier produces levers that fail it, and ruled it names a property rather than
-  instructing a state. A third reading agrees. **No scoping clause was added** — see the departures
-  list in `wave5-prose.md`: the shortest accurate candidate ("Levers that fail this test are where
-  this starts", nine words) lands day 06 at exactly 200 of 200, and zero headroom was judged a worse
-  trade than a re-confirmed close call on a line no entry requires changing.
+  instructing a state. A third reading agrees. **No scoping clause was added, and the reason is not
+  budget** — round 1 recorded it as budget and was corrected in round 2. A seven-word form fits
+  ("Failing this test is where this starts." → 198 of 200), so headroom was never the binding
+  constraint. The binding reason is the second one: day 06 scores **five** rubrics, and the deletion
+  test at `:11` maps onto no single anchor of any of them — it asks whether a lever is load-bearing,
+  which is not what `noun`, `verb`, `adjective`, `adverb` or `preposition` anchor 3 measures.
+  Asserting "this is where this starts" would be inventing a rung mapping, which is wave-2
+  derivation work under a written re-derivation, not a wave-5 prose edit. A future wave inheriting
+  this should not read "no room"; it should read "no anchor to point at".
 - **Day 10 — clean, no edit, per FIX-5.10(b)'s instruction to re-read rather than assume.** `:9`'s
   "A bare noun next to a bound one is still a gap" is positional: "still" names distance left to
   climb, one bare noun is `determiner` anchor 3, and the sentence does not instruct the learner to
@@ -3341,6 +3352,16 @@ Per-day evidence, for the days where the verdict rests on something other than a
   none, that's the gap" locates a compliant Novice on the ladder rather than condemning them, which
   is CONFLICT-07's ruling. Three readings now agree; the file was not edited and day 10's concept
   stands at **178** of 200, unchanged.
+- **Day 14 — clean, checked in round 2 when the P15 residue opened the file.** `:9`'s "every lever
+  considered, and either set deliberately or **left out on purpose**" is what legitimises the eight
+  levers the Novice tier (`:29`) has the learner leave exactly as they are; it is CONFLICT-03
+  protected and was not touched. `:7`'s "run all eleven over one request" is what `:29` mandates —
+  the tier goes lever by lever through all eleven and rewrites three. Wave 4 round 2's close call at
+  `:11` ("a dimension you thought you'd covered and hadn't", which mildly misdescribes a deliberate
+  omission) is re-confirmed as naming rather than instructing; no edit. `:17` and `:21` are
+  third-person direction and not read aloud, which is what keeps `:21`'s "deliberately setting all
+  eleven levers" away from a Novice learner told to set three. The round-2 edit at `:5` swaps two
+  items in a chronological list and is word-count neutral — 186 before and after.
 - **Day 16 — clean.** `:11` ladders all three rungs one to one ("variety and no edge — a rung of its
   own; a boundary case is the climb from there; the boundary case and the failure case together is
   the top"), FIX-3.08's landed work. `:9`'s superlatives ("the best boundary case is…") rank rather
@@ -3361,11 +3382,23 @@ Per-day evidence, for the days where the verdict rests on something other than a
   names the close variant and then the unfamiliar case as "the climb". Both are wave 3C round 2's
   landed work. The FIX-5.12(b) edit is in `## Completion`, not a concept, self-test or Before/After.
 
-**Standing consequence, unchanged.** The class now has seven confirmed members (06, 07, 16, 17, 20,
-27, 28, 30) and four confirmed defects, all four found by opening a file and reading every concept
-sentence against that day's own tiers. Wave 6 opens `SKILL.md`, `README.md` and `assessment.md` and
-so trips no day-file trigger — but if it opens any day file, for any reason, this check is still
-mandatory and its result still belongs in this plan.
+**Standing consequence, unchanged. The tally, corrected in wave 5 round 2 — it was wrong twice in
+the direction that understates the risk.** The class has **nine** confirmed members — **06, 07, 14,
+16, 17, 20, 27, 28, 30** — and **five** confirmed defects: **16, 17, 27, 30 and 07**. Day 07 is the
+one wave 5 found and fixed and it was missing from the defect count; day 14 was missing from the
+member list, though wave 4 round 2 recorded it as a close call in the same register as day 06 (a
+concept line that misdescribes a state the Novice tier deliberately mandates, naming rather than
+instructing). Round 1 wrote "seven members" over a parenthetical listing eight, and "four defects"
+over a wave that had just raised it to five.
+
+**All five defects were found by opening a file and reading every concept sentence against that
+day's own tiers. None was found by following a list** — including the two that were named by an
+entry and survived it. Better than half the members of this class have been defective, which is the
+number a later wave should size the check against.
+
+Wave 6 opens `SKILL.md`, `README.md` and `assessment.md` and so trips no day-file trigger — but if
+it opens any day file, for any reason, this check is still mandatory and its result still belongs in
+this plan.
 
 ---
 
@@ -4234,9 +4267,17 @@ edit belongs before FIX-5.07's block move.
    by a wave-2 derivation. Day 27 Novice is the clearest case: `failure-diagnosis` anchors 4 and 5
    both require a fix, so any way of making that tier heavier lifts it off anchor 3. Raising demand
    is the only route to raising *absolute* difficulty, and this entry declares it inadmissible.
-2. **(b) — pacing-only change — was considered and rejected on the merits, not skipped.** The two
-   available pacing moves are reordering the stretch and adding tutor-side work alongside the
-   artifact. Reordering breaks a real dependency chain: day 23 (agent and tool prompting) presumes
+2. **(b) — pacing-only change — was considered and rejected on the merits, not skipped.** The entry
+   names **three** moves: session framing, ordering of the stretch, and what the tutor asks for
+   alongside the artifact. Round 1 addressed two and silently dropped the first; all three are
+   ruled here. **Session framing — declined, and it is the one worth explaining.** Framing is the
+   only move that could raise *felt* demand without touching a tier, and that is exactly the
+   objection: it would tell a learner the stretch is harder than the tiers actually ask, which is
+   the gap between stated and scored demand that SYS-2 exists to close and that FIX-5.09 spent a
+   whole entry disclosing on a single day. Framing seven consecutive days that way would install
+   the defect this plan has been removing, and it would do it in the one register — what the tutor
+   says aloud — that no rubric scores and no validator catches. Reordering breaks a real dependency
+   chain: day 23 (agent and tool prompting) presumes
    day 22's standing/per-turn split, day 25 (writing evals) is what day 30's criteria are drawn
    from, day 27 (failure diagnosis) presumes the whole technique vocabulary, and day 28 (prompt
    library) presumes something worth saving. It would also desynchronise every `days/NN.md`
@@ -4485,10 +4526,30 @@ sixteen-day tight list is now seventeen: day 03 leaves it, days 03 and 07 do not
 (191), 04 (190)**. Day 07 has one word of headroom and day 02 has one. Wave 6 touches no day file;
 if that changes, recount rather than trusting this table.
 
-**`SKILL.md` line numbers moved.** FIX-5.12(e) turned `:14` into a four-item sub-list, so everything
-below it shifted by three. Wave 6's entries cite `SKILL.md:13`, `:20`, `:28`, `:44` and `:53`; those
-are now `:13`, `:24`, `:32`, `:48` and `:57`. Re-read before editing — the section headings are
-stable, the numbers are not.
+**`SKILL.md` line numbers moved — the shift is +4, and this table is the whole of it.** FIX-5.12(e)
+turned the one-line `:14` into a header line plus four sub-items — five lines where there was one —
+so **every line below `:14` shifted by four**, not three. Wave 6 cites eleven `SKILL.md` locations.
+All eleven, re-located by content in the file rather than computed:
+
+| Wave-6 citation | Now | Content that identifies it |
+|---|---|---|
+| `:13` | **`:13`** | the **Absent** bullet — above the change, unmoved |
+| `:20` | **`:24`** | `## Every session` step 6, "Append one `## Log` line…" |
+| `:26` | **`:30`** | "Some passages are written to you rather than to the learner…" |
+| `:28` | **`:32`** | daily loop step 1, "**1. Concept — 3 min.**" |
+| `:32` | **`:36`** | daily loop step 3, "**3. Run — 2 min.**" |
+| `:34` | **`:38`** | daily loop step 4, "**4. Critique — 7 min.**" |
+| `:40-49` | **`:44-53`** | the whole `## Clean-context execution` section |
+| `:44` | **`:48`** | the **dispatch** bullet, "If this harness can dispatch an isolated agent…" |
+| `:45` | **`:49`** | the **fallback** bullet, "If it cannot, or if dispatch fails…" |
+| `:47` | **`:51`** | "Never run the learner's prompt in the lesson context." |
+| `:53` | **`:57`** | `## Rules`, "Never improve the learner's prompt before running it." |
+
+**The two adjacent bullets are the trap.** FIX-6.07 appends to the **fallback** bullet — old `:45`,
+now **`:49`**. A +3 shift lands on `:48`, the **dispatch** bullet, which would attach a Tier-B
+relocation note to the Tier-A branch and invert what the entry says. The two bullets are one line
+apart and both begin "If", so **re-locate by the content column above before editing; never by
+number.** The section headings are stable, the numbers are not.
 
 ---
 
