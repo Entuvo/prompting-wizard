@@ -27,8 +27,8 @@ Scores are 1–5. Anchors are given for every point. Score the prompt as written
 | 1 | No verb, or one that names no operation ("help", "look at"). |
 | 2 | A verb is present but names a family of operations, not one ("handle", "deal with"), so the model must guess which. |
 | 3 | An operation is named, but a nearby operation would satisfy the same wording just as well. |
-| 4 | Exactly one operation named, and it matches the operation actually wanted. |
-| 5 | Exactly one operation named, matching what is wanted, in the most precise verb available for it. |
+| 4 | Exactly one operation named, and it is the operation wanted, but expressed with a generic synonym ("check" instead of "audit") where a more specific verb in the same family exists. |
+| 5 | Exactly one operation named, and it is the operation actually wanted. |
 
 **Fastest fix:** name the operation: summarise, rank, critique, refactor, enumerate.
 
@@ -265,7 +265,7 @@ Scores are 1–5. Anchors are given for every point. Score the prompt as written
 | 1 | Durable rules repeated per turn, or turn-specific detail promoted into standing rules. |
 | 2 | Some durable rules are separated out, but turn-specific detail still leaks into them. |
 | 3 | Durable rules and turn request are mostly separated, but one standing rule is restated per turn out of habit. |
-| 4 | Standing behaviour and per-turn request cleanly separated, with only a minor overlap. |
+| 4 | Standing behaviour and per-turn request are separated into two blocks, but one line in the system prompt is turn-specific and could move to the per-turn request without changing behaviour. |
 | 5 | Standing behaviour and per-turn request cleanly separated. |
 
 **Fastest fix:** ask which lines you would want true on every turn — those are the system prompt.
@@ -321,7 +321,7 @@ Scores are 1–5. Anchors are given for every point. Score the prompt as written
 | 1 | Context padded with material the task never uses. |
 | 2 | Some unused material is trimmed, but redundant restatements of the same instruction remain. |
 | 3 | Most padding is removed, but one section is included "just in case" rather than because the task needs it. |
-| 4 | Every included token earns its place, verified for most of the context but not all. |
+| 4 | Every included token earns its place on inspection, but the cuts have not been tested against the output to confirm accuracy held. |
 | 5 | Every included token earns its place; cuts made without losing accuracy. |
 
 **Fastest fix:** delete a third of the context and see whether the output degrades.
@@ -335,7 +335,7 @@ Scores are 1–5. Anchors are given for every point. Score the prompt as written
 | 1 | Failure blamed on the model; prompt unchanged. |
 | 2 | A cause is guessed at, but it isn't named as one of the specific levers or techniques. |
 | 3 | A lever or technique is named as the cause, but the fix doesn't actually target it. |
-| 4 | The failing lever is identified by name and the fix mostly targets it, with some drift. |
+| 4 | The failing lever is identified by name and the fix changes that lever, but it also changes a second lever that was not implicated. |
 | 5 | The failing lever is identified by name and the fix targets it. |
 
 **Fastest fix:** ask which of the 11 levers was underspecified, and fix that one.
