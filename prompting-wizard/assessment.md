@@ -1,6 +1,6 @@
 # Day 0 — Assessment
 
-About 15 minutes. Run once. Ask the three parts in order. Do not teach during the assessment and do not correct the learner's prompts — you are measuring a baseline, and coaching contaminates it.
+About 15 minutes. Run once. Ask the three parts in order. Do not teach during the assessment and do not correct the learner's prompts — you are measuring a baseline, and coaching contaminates it. Before Part 1, tell the learner once: from day 1 onward their prompts are executed for real, unmodified, with this session's file and network access. Get their acknowledgement before writing `PROGRESS.md`.
 
 ## Part 1 — Cold writing (7 min)
 
@@ -10,7 +10,7 @@ Ask for three prompts, one at a time. Give no guidance beyond the brief. Do not 
 2. **Analysis task:** "Write the prompt you would send to get a model to tell you what is wrong with a piece of work you produced."
 3. **Open-ended task:** "Write the prompt you would send to get a model to help you think through a decision you are stuck on."
 
-Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree.
+Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree. Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take the median of the prompts that do give it something. Where that leaves two scores, their median is the midpoint; if it falls between two whole numbers, take the lower, so `## Levers` carries whole numbers throughout. Where none of the three gives it anything, record 3 and note it, and leave that lever out of the mean under "Setting the level": average only the levers the three prompts actually exercised, so the level is not skewed by a property they never touched. An imputed 3 counted in an eleven-lever mean drags it toward 3, and the bands either side of 3 are not symmetric, so counting it can move the learner a whole tier. Day 0 is the one place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
 
 ## Part 2 — Diagnosis (4 min)
 
@@ -49,6 +49,8 @@ Extract 3–5 recurring, concrete tasks. Write them in the learner's words, not 
 | Mean lever score 2.5 to 3.9 | `working` |
 | Mean lever score 4.0 or above | `advanced` |
 
+The mean is taken over the levers the three prompts actually exercised, per Part 1 — not over any lever recorded as an imputed 3.
+
 Then apply one adjustment: if the Part 2 diagnosis count is 8 or more but the mean lever score is below 2.5, set `working` instead. The learner already recognises weak prompting and needs practice, not first principles.
 
 ## Writing PROGRESS.md
@@ -63,7 +65,7 @@ current_day: 1
 
 ## Levers
 noun: 4    verb: 3    adjective: 2    adverb: 3
-pronoun: 2    preposition: 4    conjunction: 3
+preposition: 4    pronoun: 2    conjunction: 3
 determiner: 3    numeral: 5    interjection: 4    particle: 2
 
 ## Tasks
@@ -72,7 +74,7 @@ determiner: 3    numeral: 5    interjection: 4    particle: 2
 - Drafting API docs for external partners
 
 ## Log
-- Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, pronoun 2, preposition 4, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
+- Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, preposition 4, pronoun 2, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
 ```
 
 All 11 lever keys must be present. `current_day` starts at 1. The Day 0 `## Log` line must carry all eleven baseline scores, in the format shown, in addition to the level and diagnosis count — `## Levers` gets overwritten as the course progresses, so this line is the only surviving record of the learner's starting point. Never edit it after it's written. Then tell the learner the assessment is done and the course starts next session.
