@@ -3291,6 +3291,82 @@ requires ("any wave opening a day file **for any reason**"). One real finding.**
   moves — the tier's product has the instruction at the top, so nothing is condemned. Before/After
   models the Advanced state; Novice and Working are foreclosed in their own words.
 
+### Wave 5's result, recorded here as this entry requires — fourteen files opened, fourteen checks run, all clean
+
+No new member of the class was found. Days 04 and 05 were opened read-only, to confirm FIX-5.01's
+spent rows; the mandate covers "any reason", so they are checked and recorded like the rest.
+
+| Day | Opened for | Concept edited? | Verdict |
+|---|---|---|---|
+| 01 | FIX-5.01 opener | yes (`:9`, punctuation) | clean |
+| 02 | FIX-5.01 opener | yes (`:11`, punctuation) | clean |
+| 03 | FIX-5.01 + FIX-5.10(a) | yes (`:11` rewritten) | clean — and `:11` now ladders Novice against Working |
+| 04 | FIX-5.01 status check | no | clean |
+| 05 | FIX-5.01 status check | no | clean |
+| 06 | FIX-5.01 + FIX-5.02 | yes (`:11` opener) | clean — `:11` close call re-confirmed, no scoping clause added |
+| 07 | FIX-5.11 | yes (`:7`) | clean after the fix |
+| 10 | FIX-5.10(b) | no | clean — third independent reading of `:9` |
+| 16 | FIX-5.05 (Before / After) | no | clean |
+| 17 | FIX-5.03 (Concept code fence) | fence only, no prose | clean — `:16` / `:18` untouched, so wave 4's re-run trigger not tripped; run anyway |
+| 21 | FIX-5.09 (Exercise preamble) | no | clean |
+| 22 | FIX-5.05 (confirmed already conforming) | no | clean |
+| 30 | FIX-5.12(b) (`## Completion`) | no | clean |
+
+Per-day evidence, for the days where the verdict rests on something other than an explicit ladder:
+
+- **Day 01 — clean.** `:11`'s "Nouns compound with counts and formats, but those are later levers"
+  legitimises the Novice tier's mandated omission of count and format by name; `:11`'s closing clause
+  names economy as "the top rung adds", FIX-3.01's landed form. `:9`'s test asks whether the learner
+  can name the artifact in a noun phrase — a compliant Novice can, so they pass it.
+- **Day 04 — clean, and FIX-5.01's day-04 row confirmed spent.** `:11` already opens "Here is the
+  test:" and reads "would their outputs be the same length and thoroughness?" — anchor 5's wording,
+  with no "roughly". `:7`'s "without a measure attached, a manner word is a mood" is scoped by `:11`'s
+  three-rung ladder, which gives the Novice state ("measuring the one part where depth matters most
+  and leaving the rest to guess") a rung of its own.
+- **Day 05 — clean, and FIX-5.01's day-05 row confirmed spent.** `:11` already opens "Here is the
+  test:" and carries the way-station clause ("two of three answered is a rung of its own"). `:9`'s
+  "Drop any one and the model fills the gap with its own default" is the same framing `:11` then
+  gives a rung to.
+- **Day 06 — clean; the `:11` close call is re-confirmed, not closed by an edit.** Wave 4 round 2
+  recorded `:11`'s deletion test as an Advanced-rung diagnostic presented as "the test" on a day
+  whose Novice tier produces levers that fail it, and ruled it names a property rather than
+  instructing a state. A third reading agrees. **No scoping clause was added** — see the departures
+  list in `wave5-prose.md`: the shortest accurate candidate ("Levers that fail this test are where
+  this starts", nine words) lands day 06 at exactly 200 of 200, and zero headroom was judged a worse
+  trade than a re-confirmed close call on a line no entry requires changing.
+- **Day 10 — clean, no edit, per FIX-5.10(b)'s instruction to re-read rather than assume.** `:9`'s
+  "A bare noun next to a bound one is still a gap" is positional: "still" names distance left to
+  climb, one bare noun is `determiner` anchor 3, and the sentence does not instruct the learner to
+  close it — the instruction to bind every noun lives in the Working tier. `:11`'s "If a noun has
+  none, that's the gap" locates a compliant Novice on the ladder rather than condemning them, which
+  is CONFLICT-07's ruling. Three readings now agree; the file was not edited and day 10's concept
+  stands at **178** of 200, unchanged.
+- **Day 16 — clean.** `:11` ladders all three rungs one to one ("variety and no edge — a rung of its
+  own; a boundary case is the climb from there; the boundary case and the failure case together is
+  the top"), FIX-3.08's landed work. `:9`'s superlatives ("the best boundary case is…") rank rather
+  than condemn. The FIX-5.05 edit is confined to `## Before / After` and moved no text between
+  sections.
+- **Day 17 — clean.** The FIX-5.03 edit changes two dummy strings inside the `## Concept` code fence.
+  `validate.py`'s `section()` blanks fences, so the concept word count is unaffected — **184 before
+  and after**. `:16` and `:18` are untouched, so wave 4's re-run trigger is not tripped; the check
+  was run anyway and `:16` remains laddered by `:18`'s "fields enumerated, with types and order
+  unstated, is a rung of its own".
+- **Day 22 — clean, no edit.** `:9` states all three rungs in the rubric's own counting ("two or more
+  is where this starts; exactly one is the climb from there; no line on the wrong side is the top"),
+  which is what stops `:7`'s "a turn-specific detail left in the system prompt silently governs
+  requests it was never written for" from condemning the two lines the Novice tier mandates putting
+  there. Its `## Before / After` already uses FIX-5.05's target form and was not touched.
+- **Day 30 — clean.** `:7` scopes the write-down to "the top rung's addition", which is what stops it
+  condemning the Novice tier's "nothing about what broke gets written down at this tier"; `:11`
+  names the close variant and then the unfamiliar case as "the climb". Both are wave 3C round 2's
+  landed work. The FIX-5.12(b) edit is in `## Completion`, not a concept, self-test or Before/After.
+
+**Standing consequence, unchanged.** The class now has seven confirmed members (06, 07, 16, 17, 20,
+27, 28, 30) and four confirmed defects, all four found by opening a file and reading every concept
+sentence against that day's own tiers. Wave 6 opens `SKILL.md`, `README.md` and `assessment.md` and
+so trips no day-file trigger — but if it opens any day file, for any reason, this check is still
+mandatory and its result still belongs in this plan.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -4151,6 +4227,29 @@ amendment and needs a written re-derivation, not a wave-5 edit.
 number. This entry is filed after it for numbering only and, if it results in any edit at all, that
 edit belongs before FIX-5.07's block move.
 
+**CLOSED by wave 5 under (a) — accepted. No edit made.** The three reasons, in the order they bind:
+
+1. **The ladders are correct and the rubrics permit nothing heavier.** Every one of days 22–28 rises
+   3 / 4 / 5 within itself, confirmed by the wave-2 final gate, and each rung is pinned to an anchor
+   by a wave-2 derivation. Day 27 Novice is the clearest case: `failure-diagnosis` anchors 4 and 5
+   both require a fix, so any way of making that tier heavier lifts it off anchor 3. Raising demand
+   is the only route to raising *absolute* difficulty, and this entry declares it inadmissible.
+2. **(b) — pacing-only change — was considered and rejected on the merits, not skipped.** The two
+   available pacing moves are reordering the stretch and adding tutor-side work alongside the
+   artifact. Reordering breaks a real dependency chain: day 23 (agent and tool prompting) presumes
+   day 22's standing/per-turn split, day 25 (writing evals) is what day 30's criteria are drawn
+   from, day 27 (failure diagnosis) presumes the whole technique vocabulary, and day 28 (prompt
+   library) presumes something worth saving. It would also desynchronise every `days/NN.md`
+   reference in this plan, all six audit reports, and `SKILL.md:59`'s day list. Adding tutor-side
+   work alongside the artifact adds unscored demand to seven consecutive days, which is the shape
+   SYS-2 exists to constrain and which FIX-5.09 spent an entry disclosing on a single day.
+3. **A level curve across seven late days is a cost of the design, not a defect in it.** One
+   technique per day, each scored against one rubric, is the course's unit. The stretch is where
+   that unit stops compounding, because days 22–28 teach independent techniques rather than levers
+   that stack. Day 29–30's capstone is where difficulty rises again, and it does.
+
+Filed as accepted rather than deferred: nothing here is left for wave 6.
+
 ### FIX-5.09 — Day 21: say that the three-lever material is not scored — filed by wave 3B, the residue of FIX-2.21(b) — severity: low
 
 `prompting-wizard/days/21.md:31`, the `## Exercise` preamble (**not** a tier body). Current:
@@ -4345,6 +4444,51 @@ re-derivation drops that adjustment by design, as a day-0-only correction. A lea
 and whose levers land below 2.5 at day 14 is moved back to `novice` on day 15 and told their tier
 changed. Specified behaviour, correctly implemented, and nothing prepares the learner for it. One
 sentence in `SKILL.md:20`'s re-derivation clause, or in what the tutor says, is enough.
+
+---
+
+## Wave 5 — result, and what wave 6 inherits
+
+Landed on `feat/prompting-wizard-polish`. `python3 tools/validate.py --complete` → `ok`;
+`python3 -m unittest discover -s tools` → 103 tests, OK. Full report in
+`.superpowers/audit/wave5-prose.md`.
+
+**Every wave-5 entry is closed. Nothing is deferred to wave 6.**
+
+| Entry | Outcome |
+|---|---|
+| FIX-5.01 | executed on the four live rows (days 01, 02, 03, 06). Days 04 and 05 confirmed spent in file and **not** applied |
+| FIX-5.02 | executed — `days/06.md:1` is now `# Day 6 — Composition: the first five together` |
+| FIX-5.03 | executed — `days/17.md:11-12` now read `sample entry one` / `sample entry two` |
+| FIX-5.04 | ruled: recommended no-op taken. FIX-5.05 did not change day 17's surrounding form, so the trigger for spending an edit never fired |
+| FIX-5.05 | executed on `days/16.md` only; days 17, 18 and 22 already agree |
+| FIX-5.06 | executed — `README.md:5` |
+| FIX-5.07 | executed **last**. See the line-number warning below |
+| FIX-5.08 | ruled and closed under (a) — accepted, no edit. Reasoning in the entry |
+| FIX-5.09 | executed, with one wording departure — see `wave5-prose.md` |
+| FIX-5.10 | (a) executed with FIX-5.01's day-03 row in one edit; (b) ruled — re-read, third reading agrees, no edit |
+| FIX-5.11 | executed with candidate C. `days/07.md` 197 → 199 |
+| FIX-5.12 | all six sub-items executed |
+| FIX-5.13 | (a) and (c) executed; (b) ruled acceptable and the difference explained in `SKILL.md:24`, per the entry's own instruction — no state field invented |
+
+**`rubrics.md:NN` line references in this plan and in all seven audit reports are now stale.**
+FIX-5.07 moved the `## Preposition` block above `## Pronoun`. `## Preposition` is now `:65-77` and
+`## Pronoun` is `:79-91`; every heading below `## Adverb` is unmoved in text but not in number. No
+`## ` heading text changed, so every `rubrics.md#slug` reference in every day file still resolves —
+`validate.py --complete` confirms it.
+
+**Concept word counts after wave 5 — only three moved.** Day 03: 163 → **179**. Day 06: 190 → **191**.
+Day 07: 197 → **199**. Every other day is unchanged from the wave-3C census, day 17 included: its
+edit is inside a code fence, which `validate.py`'s `section()` blanks before counting. The
+sixteen-day tight list is now seventeen: day 03 leaves it, days 03 and 07 do not — **07 (199), 02
+(199), 15 (198), 09 / 11 (197), 19 / 21 (196), 05 / 12 / 30 (195), 13 (194), 22 / 26 (192), 06 / 16
+(191), 04 (190)**. Day 07 has one word of headroom and day 02 has one. Wave 6 touches no day file;
+if that changes, recount rather than trusting this table.
+
+**`SKILL.md` line numbers moved.** FIX-5.12(e) turned `:14` into a four-item sub-list, so everything
+below it shifted by three. Wave 6's entries cite `SKILL.md:13`, `:20`, `:28`, `:44` and `:53`; those
+are now `:13`, `:24`, `:32`, `:48` and `:57`. Re-read before editing — the section headings are
+stable, the numbers are not.
 
 ---
 

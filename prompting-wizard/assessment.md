@@ -10,7 +10,7 @@ Ask for three prompts, one at a time. Give no guidance beyond the brief. Do not 
 2. **Analysis task:** "Write the prompt you would send to get a model to tell you what is wrong with a piece of work you produced."
 3. **Open-ended task:** "Write the prompt you would send to get a model to help you think through a decision you are stuck on."
 
-Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree. Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take the median of the prompts that do give it something. Where none of the three gives it anything, record 3 and note it, and leave that lever out of the mean under "Setting the level": average only the levers the three prompts actually exercised, so the level is not skewed by a property they never touched. An imputed 3 counted in an eleven-lever mean drags it toward 3, and the bands either side of 3 are not symmetric, so counting it can move the learner a whole tier. Day 0 is the one place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
+Score all three together against each of the 11 levers, 1–5, using `rubrics.md`. One score per lever, not per prompt. Take the median where the three prompts disagree. Where `rubrics.md`'s not-applicable rule applies — a prompt gives a lever nothing to score — take the median of the prompts that do give it something. Where that leaves two scores, their median is the midpoint; if it falls between two whole numbers, take the lower, so `## Levers` carries whole numbers throughout. Where none of the three gives it anything, record 3 and note it, and leave that lever out of the mean under "Setting the level": average only the levers the three prompts actually exercised, so the level is not skewed by a property they never touched. An imputed 3 counted in an eleven-lever mean drags it toward 3, and the bands either side of 3 are not symmetric, so counting it can move the learner a whole tier. Day 0 is the one place `N/A` is not written: all eleven `## Levers` keys carry a number before the course starts.
 
 ## Part 2 — Diagnosis (4 min)
 
@@ -65,7 +65,7 @@ current_day: 1
 
 ## Levers
 noun: 4    verb: 3    adjective: 2    adverb: 3
-pronoun: 2    preposition: 4    conjunction: 3
+preposition: 4    pronoun: 2    conjunction: 3
 determiner: 3    numeral: 5    interjection: 4    particle: 2
 
 ## Tasks

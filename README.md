@@ -2,7 +2,7 @@
 
 A 30-day course that turns you into a deliberate prompter. Twenty minutes a day. It assesses you first, then teaches using the tasks you actually do.
 
-Each day covers one lever — starting with the parts of speech, because each one controls a different dimension of a prompt — then builds up to structure, systems, and a capstone. You write a prompt, it runs verbatim, you see the output, then you see a stronger version's output beside it.
+Each day covers one lever or one technique — starting with the parts of speech, because each one controls a different dimension of a prompt — then builds up to structure, systems, and a capstone. You write a prompt, it runs verbatim, you see the output, then you see a stronger version's output beside it.
 
 ## Install
 

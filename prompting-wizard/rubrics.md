@@ -62,20 +62,6 @@ If the task has no instance of the property the rubric measures — no branch to
 
 **Fastest fix:** say how thoroughly, and in what manner.
 
-## Pronoun
-
-**Measures:** reference binding.
-
-| Score | Anchor |
-|---|---|
-| 1 | Pronouns with no antecedent ("fix it", "do this"). |
-| 2 | More than one reference is unresolvable, or the prompt's main referent is ambiguous between two candidates. |
-| 3 | Exactly one pronoun still requires the reader to guess; the rest resolve. |
-| 4 | Every reference resolves inside the prompt or to a quoted block, but at least one antecedent sits more than a sentence away from its pronoun. |
-| 5 | Every reference resolves inside the prompt or to a quoted block, and each pronoun's antecedent is the nearest preceding noun phrase. |
-
-**Fastest fix:** replace each it/this/that with the thing it means.
-
 ## Preposition
 
 **Measures:** scope and relation.
@@ -89,6 +75,20 @@ If the task has no instance of the property the rubric measures — no branch to
 | 5 | Boundaries, audience and exclusions all set so each admits exactly one reading — in what, for whom, without what. |
 
 **Fastest fix:** add: in what, for whom, without what.
+
+## Pronoun
+
+**Measures:** reference binding.
+
+| Score | Anchor |
+|---|---|
+| 1 | Pronouns with no antecedent ("fix it", "do this"). |
+| 2 | More than one reference is unresolvable, or the prompt's main referent is ambiguous between two candidates. |
+| 3 | Exactly one pronoun still requires the reader to guess; the rest resolve. |
+| 4 | Every reference resolves inside the prompt or to a quoted block, but at least one antecedent sits more than a sentence away from its pronoun. |
+| 5 | Every reference resolves inside the prompt or to a quoted block, and each pronoun's antecedent is the nearest preceding noun phrase. |
+
+**Fastest fix:** replace each it/this/that with the thing it means.
 
 ## Conjunction
 
