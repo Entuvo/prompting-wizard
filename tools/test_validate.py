@@ -10,9 +10,10 @@ Fixtures are built in a temp directory and `validate.SKILL` is repointed at
 them for the duration of each test, so nothing here reads or mutates the real
 `prompting-wizard/` content.
 
-Tests whose name or docstring says DOCUMENTED GAP pin down behaviour that is
-wrong or surprising but currently shipped. They assert what the code does, not
-what it should do. See .superpowers/audit/validator-tests.md.
+The eight gaps recorded in .superpowers/audit/validator-tests.md have been
+closed (seven fixed, one confirmed intended); the tests that used to pin their
+wrong behaviour now assert the corrected behaviour. See
+.superpowers/audit/wave0-validator-fixes.md.
 """
 import shutil
 import subprocess
@@ -68,6 +69,18 @@ def render_rubrics(slugs=validate.LEVERS + validate.TECHNIQUES):
 
 def words(count, start=0):
     return " ".join(f"w{i}" for i in range(start, start + count))
+
+
+def body_of(text, heading):
+    """`validate.section`, asserted present, so callers get a `str` not `str | None`.
+
+    Membership checks against `None` otherwise fail with a confusing container
+    error, and static type checkers flag every such call site.
+    """
+    body = validate.section(text, heading)
+    if body is None:
+        raise AssertionError(f"fixture has no {heading!r} section")
+    return body
 
 
 def line_number_of(text, needle):
@@ -201,9 +214,19 @@ class SlugifyTests(unittest.TestCase):
     def test_punctuation_only_heading_slugifies_to_empty_string(self):
         self.assertEqual(validate.slugify("!!!"), "")
 
-    def test_non_ascii_letters_are_dropped_rather_than_transliterated(self):
-        """DOCUMENTED GAP: [^a-z0-9] treats accented letters as separators."""
-        self.assertEqual(validate.slugify("café"), "caf")
+    def test_non_ascii_letters_are_kept_not_dropped(self):
+        """`[\\W_]` is Unicode-aware, so an accent is a letter, not a separator."""
+        self.assertEqual(validate.slugify("café"), "café")
+
+    def test_non_ascii_letters_are_kept_mid_heading(self):
+        self.assertEqual(validate.slugify("Café au lait"), "café-au-lait")
+
+    def test_underscore_is_still_a_separator(self):
+        self.assertEqual(validate.slugify("token_economy"), "token-economy")
+
+    def test_em_dash_and_smart_quotes_are_separators(self):
+        self.assertEqual(validate.slugify("Token — “economy”"),
+                         "token-economy")
 
     def test_every_expected_rubric_slug_round_trips_from_a_prose_heading(self):
         for slug in validate.LEVERS + validate.TECHNIQUES:
@@ -261,13 +284,18 @@ class StripFencesTests(unittest.TestCase):
 
         self.assertEqual(stripped, "\n" * 7 + "after\n")
 
-    def test_shorter_closing_fence_also_closes_a_longer_opening_fence(self):
-        """DOCUMENTED GAP: CommonMark requires the closer to be at least as long.
+    def test_shorter_closing_fence_does_not_close_a_longer_opening_fence(self):
+        """CommonMark requires the closer to be at least as long as the opener.
 
-        The opening `{3,} backtracks to three backticks when no equal-length
-        closer exists, so a 5-backtick block is closed by a 3-backtick line.
+        A 5-backtick block is not closed by a 3-backtick line, so the block is
+        unterminated and the text is left alone.
         """
         text = "`````\nA\n```\nafter\n"
+
+        self.assertEqual(validate.strip_fences(text), text)
+
+    def test_equal_length_closing_fence_closes_a_longer_opening_fence(self):
+        text = "`````\nA\n`````\nafter\n"
 
         self.assertEqual(validate.strip_fences(text), "\n\n\nafter\n")
 
@@ -295,20 +323,44 @@ class StripFencesTests(unittest.TestCase):
 
         self.assertEqual(validate.strip_fences(text), text)
 
-    def test_blockquoted_fence_is_not_stripped(self):
-        """DOCUMENTED GAP: FENCE is anchored at column 0.
-
-        A fence inside a blockquote (`> ` then backticks, as in
-        prompting-wizard/days/17.md:30-35) keeps its `> ` prefix, so the
-        block is treated as prose. Consequence pinned in
-        CheckConceptWordCapTests.
-        """
+    def test_blockquoted_fence_is_stripped(self):
+        """A fence inside a blockquote, as in prompting-wizard/days/17.md:30-35."""
         text = "> ```\n> [{\"item\": \"one\"}]\n> ```\n"
+
+        self.assertEqual(validate.strip_fences(text), "\n\n\n")
+
+    def test_nested_blockquoted_fence_is_stripped(self):
+        text = "before\n>> ```\n>> code()\n>> ```\nafter\n"
+
+        self.assertEqual(validate.strip_fences(text), "before\n\n\n\nafter\n")
+
+    def test_blockquoted_fence_is_not_closed_by_an_unquoted_fence(self):
+        """The quote prefix is backreferenced, so quote depth must match."""
+        text = "> ```\n> code()\n```\nafter\n"
 
         self.assertEqual(validate.strip_fences(text), text)
 
-    def test_indented_fence_is_not_stripped(self):
-        """DOCUMENTED GAP: same column-0 anchor; a fence nested in a list item survives."""
+    def test_unquoted_fence_is_not_closed_by_a_blockquoted_fence(self):
+        text = "```\ncode()\n> ```\nafter\n"
+
+        self.assertEqual(validate.strip_fences(text), text)
+
+    def test_indented_fence_is_stripped(self):
+        """Up to three spaces of indentation, e.g. a fence under a list item."""
+        text = "- item\n   ```\n   code()\n   ```\n"
+
+        stripped = validate.strip_fences(text)
+
+        self.assertEqual(stripped, "- item\n\n\n\n")
+        self.assertLineCountPreserved(text, stripped)
+
+    def test_opening_and_closing_fence_indentation_need_not_match(self):
+        text = "  ```\ncode()\n ```\nafter\n"
+
+        self.assertEqual(validate.strip_fences(text), "\n\n\nafter\n")
+
+    def test_fence_indented_four_spaces_is_not_a_fence(self):
+        """Four spaces is an indented code block in CommonMark, not a fence."""
         text = "- item\n    ```\n    code()\n    ```\n"
 
         self.assertEqual(validate.strip_fences(text), text)
@@ -347,20 +399,20 @@ appendix body
 class SectionTests(unittest.TestCase):
 
     def test_h2_section_includes_its_h3_subheadings(self):
-        body = validate.section(DOC, "## Concept")
+        body = body_of(DOC, "## Concept")
 
         self.assertIn("concept body", body)
         self.assertIn("### Aside", body)
         self.assertIn("aside body", body)
 
     def test_h2_section_ends_at_the_next_h2(self):
-        self.assertNotIn("novice body", validate.section(DOC, "## Concept"))
+        self.assertNotIn("novice body", body_of(DOC, "## Concept"))
 
     def test_h2_section_ends_at_a_following_h1(self):
-        self.assertNotIn("appendix body", validate.section(DOC, "## Exercise"))
+        self.assertNotIn("appendix body", body_of(DOC, "## Exercise"))
 
     def test_h3_section_ends_at_the_next_h3(self):
-        body = validate.section(DOC, "### Novice")
+        body = body_of(DOC, "### Novice")
 
         self.assertIn("novice body", body)
         self.assertNotIn("working body", body)
@@ -375,32 +427,70 @@ class SectionTests(unittest.TestCase):
         text = ("## Concept\n\nbefore\n\n```\n# not a heading\n## also not\n```\n"
                 "\nafter\n\n## Exercise\n\nx\n")
 
-        body = validate.section(text, "## Concept")
+        body = body_of(text, "## Concept")
 
         self.assertIn("before", body)
         self.assertIn("after", body)
         self.assertNotIn("x", body)
 
     def test_only_the_first_of_two_identical_headings_is_returned(self):
-        """DOCUMENTED GAP: a duplicated section silently validates on its first copy."""
+        """`section` takes the first copy; `heading_occurrences` exposes the rest.
+
+        `check` turns a count above one into an explicit problem, so the second
+        copy is no longer silently ignored. See
+        CheckDaySectionTests.test_duplicate_day_section_is_reported.
+        """
         text = "## Concept\n\nfirst\n\n## Other\n\nz\n\n## Concept\n\nsecond\n"
 
         self.assertEqual(validate.section(text, "## Concept"), "first\n\n")
+        self.assertEqual(validate.heading_occurrences(text, "## Concept"), 2)
 
     def test_empty_section_returns_empty_string_not_none(self):
         text = "## Concept\n\nx\n\n## Rubric\n"
 
         self.assertEqual(validate.section(text, "## Rubric"), "")
 
-    def test_heading_on_the_final_line_without_a_trailing_newline_returns_none(self):
-        """DOCUMENTED GAP: the pattern requires a newline after the heading line.
-
-        A file whose last line is a heading and which lacks a trailing newline
-        reports that section as missing rather than empty.
-        """
+    def test_heading_on_the_final_line_without_a_trailing_newline_is_found(self):
+        """A heading is present whether or not the editor saved a final newline."""
         text = "## Concept\n\nx\n\n## Rubric"
 
-        self.assertIsNone(validate.section(text, "## Rubric"))
+        self.assertEqual(validate.section(text, "## Rubric"), "")
+
+    def test_final_heading_with_a_body_but_no_trailing_newline_is_found(self):
+        text = "## Concept\n\nx\n\n## Rubric\n\nscore it"
+
+        self.assertEqual(validate.section(text, "## Rubric"), "score it")
+
+
+# --------------------------------------------------------------------------
+# heading_occurrences
+# --------------------------------------------------------------------------
+
+class HeadingOccurrencesTests(unittest.TestCase):
+
+    def test_absent_heading_counts_zero(self):
+        self.assertEqual(validate.heading_occurrences(DOC, "## Rubric"), 0)
+
+    def test_single_heading_counts_one(self):
+        self.assertEqual(validate.heading_occurrences(DOC, "## Concept"), 1)
+
+    def test_repeated_heading_counts_every_copy(self):
+        text = "## A\n\n## A\n\n## A\n"
+
+        self.assertEqual(validate.heading_occurrences(text, "## A"), 3)
+
+    def test_heading_inside_a_fenced_block_is_not_counted(self):
+        text = "## A\n\n```\n## A\n```\n"
+
+        self.assertEqual(validate.heading_occurrences(text, "## A"), 1)
+
+    def test_longer_heading_on_the_same_prefix_is_not_counted(self):
+        text = "## Concept\n\n## Concept notes\n"
+
+        self.assertEqual(validate.heading_occurrences(text, "## Concept"), 1)
+
+    def test_heading_on_the_final_line_without_a_trailing_newline_is_counted(self):
+        self.assertEqual(validate.heading_occurrences("x\n\n## Rubric", "## Rubric"), 1)
 
 
 # --------------------------------------------------------------------------
@@ -558,6 +648,29 @@ class CheckDaySectionTests(SkillFixture):
 
                 self.assertIn(f"days/01.md: missing '{heading}'", validate.check())
 
+    def test_duplicate_day_section_is_reported(self):
+        duplicated = CLEAN_DAY + (("## Concept", "a second copy nobody validates"),)
+        self.write_day(1, duplicated)
+
+        self.assertEqual(validate.check(),
+                         ["days/01.md: duplicate '## Concept' (2 occurrences)"])
+
+    def test_each_required_day_section_is_checked_for_duplication(self):
+        for heading in validate.DAY_SECTIONS:
+            with self.subTest(heading=heading):
+                self.rebuild()
+                body = dict(CLEAN_DAY)[heading]
+                self.write_day(1, CLEAN_DAY + ((heading, body),))
+
+                self.assertIn(f"days/01.md: duplicate '{heading}' (2 occurrences)",
+                              validate.check())
+
+    def test_a_duplicate_heading_inside_a_fenced_block_is_not_counted(self):
+        concept = "Short prose.\n\n```\n## Concept\n```"
+        self.write_day(1, replacing(CLEAN_DAY, "## Concept", concept))
+
+        self.assertEqual(validate.check(), [])
+
     def test_missing_exercise_tier_is_reported(self):
         exercise = "### Novice\n\nn\n\n### Advanced\n\na"
         self.write_day(1, replacing(CLEAN_DAY, "## Exercise", exercise))
@@ -593,12 +706,11 @@ class CheckConceptWordCapTests(SkillFixture):
 
         self.assertEqual(validate.check(), [])
 
-    def test_blockquoted_fence_counts_toward_the_cap_unlike_a_plain_fence(self):
-        """DOCUMENTED GAP: consequence of the column-0 FENCE anchor.
+    def test_blockquoted_fence_is_exempt_from_the_cap_like_a_plain_fence(self):
+        """The same sample must cost the same whether or not it is quoted.
 
-        The identical example counts as prose once it is quoted, so a day file
-        written in the days/17.md style can fail the 200-word cap on sample
-        JSON it should never have been charged for.
+        A day written in the days/17.md house style is no longer charged for
+        sample JSON it never should have been charged for.
         """
         sample = words(400)
         plain = f"Short prose.\n\n```\n{sample}\n```"
@@ -610,8 +722,14 @@ class CheckConceptWordCapTests(SkillFixture):
         quoted_problems = validate.check()
 
         self.assertEqual(plain_problems, [])
-        self.assertEqual(len(quoted_problems), 1)
-        self.assertIn("days/01.md: concept is", quoted_problems[0])
+        self.assertEqual(quoted_problems, [])
+
+    def test_indented_fence_is_exempt_from_the_cap(self):
+        sample = "\n".join(f"   {chunk}" for chunk in (words(200), words(200, 200)))
+        concept = f"Short prose.\n\n- item\n   ```\n{sample}\n   ```"
+        self.write_day(1, replacing(CLEAN_DAY, "## Concept", concept))
+
+        self.assertEqual(validate.check(), [])
 
 
 # --------------------------------------------------------------------------
@@ -666,7 +784,12 @@ class CheckAbsolutePathTests(SkillFixture):
                          ["nested/notes.md:1: absolute path in shipped file"])
 
     def test_absolute_path_inside_a_fenced_block_is_still_reported(self):
-        """The abs-path scan runs on raw text; fences do not exempt a path."""
+        """Intended, not a gap: this is the one check that reads raw text.
+
+        A fenced install snippet is exactly where a machine-specific path hides,
+        so a code block is not an excuse. Every other check strips fences first;
+        see the docstring on validate.check_absolute_paths.
+        """
         text = render_day() + "\n```\n/Users/dana/x\n```\n"
         self.write("days/01.md", text)
 
@@ -700,17 +823,23 @@ class CheckDayCoverageTests(SkillFixture):
 
 class CheckUnreadableFileTests(SkillFixture):
 
-    def test_unreadable_day_file_is_reported_twice(self):
-        """DOCUMENTED GAP: day loop and rglob scan both read the file.
-
-        The same file fails to decode in both passes, so one broken day file
-        inflates the problem count by two identical lines.
-        """
+    def test_unreadable_day_file_is_reported_once(self):
+        """The day loop and the rglob scan share one read per file."""
         (self.skill / "days" / "01.md").write_bytes(b"\xff\xfe not utf-8\n")
 
         problems = validate.check()
 
-        self.assertEqual(problems, ["days/01.md: unreadable (UnicodeDecodeError)"] * 2)
+        self.assertEqual(problems, ["days/01.md: unreadable (UnicodeDecodeError)"])
+
+    def test_unreadable_rubrics_file_is_reported_once(self):
+        (self.skill / "rubrics.md").write_bytes(b"\xff\xfe not utf-8\n")
+
+        problems = validate.check()
+
+        self.assertEqual(
+            [p for p in problems if p.endswith("unreadable (UnicodeDecodeError)")],
+            ["rubrics.md: unreadable (UnicodeDecodeError)"],
+        )
 
     def test_unreadable_rubrics_file_does_not_stop_the_run(self):
         (self.skill / "rubrics.md").write_bytes(b"\xff\xfe not utf-8\n")
