@@ -2022,9 +2022,12 @@ others. Do not reword the gate until this tier text is settled.
 
 ## Wave 3 — concepts and worked examples
 
-**Files touched: 11 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `12`, `15`, `16`, `18`, `19`,
-`21`. (`days/12.md` was added by FIX-3.11, filed during wave 2A; `days/18.md` by FIX-3.12, and
-`days/15.md`/`days/21.md` gained FIX-3.14/FIX-3.13, all filed during wave 2B — see those entries.)
+**Files touched: 16 day files** — `days/01.md`, `04`, `06`, `07`, `08`, `12`, `15`, `16`, `18`, `19`,
+`21`, `22`, `24`, `26`, `27`, `30`. (`days/12.md` was added by FIX-3.11, filed during wave 2A;
+`days/18.md` by FIX-3.12, and `days/15.md`/`days/21.md` gained FIX-3.14/FIX-3.13, all filed during
+wave 2B; `days/22.md`, `24`, `26`, `30` were added by FIX-3.16–FIX-3.19 and `days/27.md` by
+FIX-3.20, all filed during wave 2C — see those entries. `days/17.md` carries FIX-3.15, tracking
+only, and is not counted here.)
 
 Two rules govern this wave. First, `SKILL.md:28` has the tutor read `## Concept` **verbatim** to the
 learner, so a wrong sentence here is taught aloud, thirty times over. Second, `validate.py` enforces
@@ -2503,6 +2506,117 @@ day 17 is touched: `:7`'s "shows what an empty value looks like" is a *descripti
 a tier demand, and `:18`'s self-test ("could you write a script that rejects a malformed output
 without you reading it first") is anchor 5's text, correctly aimed at the top of the ladder.
 
+### FIX-3.16 — Day 22: the concept forbids what the rebuilt Working tier mandates — filed during wave 2C — severity: medium
+
+`prompting-wizard/days/22.md:7` reads "Move a durable rule into the per-turn slot and you retype it
+forever", and `:11`'s self-test is one-directional: "read your **system prompt** line by line and
+ask, would this be false on some future turn? If yes, it belongs in the per-turn ask."
+
+The rebuilt Working tier (`:41`) mandates the anchor-4 state directly — "leave **exactly one** rule
+that would still be true on a future turn sitting in the per-turn ask" — because `system-prompts`
+anchor 5 is the *absence* of error ("no line is on the wrong side — in either direction") and any
+tier that asks for a correct split is asking for 5. The shortfall is a positive state (a line
+present on the wrong side), so rule 2 licenses the mandate; the concept then tells the learner
+aloud, via `SKILL.md:28`, that the thing their tier requires is a mistake.
+
+Two things wave 3 must reconcile, without touching the `## Before / After` at `:15-29` (it is the
+anchor-5 model and the Advanced tier's target):
+
+- `:7` — reframe the downward leak as a **scored way-station** rather than an unqualified error, in
+  the shape FIX-3.11 used for day 12's one-marker absolute.
+- `:11` — the self-test checks one direction only, but every anchor from 3 upward says "in either
+  direction", and the rebuilt Advanced tier (`:45`) now checks both. Add the second direction (a
+  line repeated in every per-turn ask belongs in the system prompt) or say the test is partial.
+
+200-word `## Concept` cap applies: `days/22.md`'s concept is currently well inside it, but both
+edits are additions.
+
+### FIX-3.17 — Day 24: the concept states the anchor-5 action as the only acceptable one — filed during wave 2C — severity: medium
+
+`prompting-wizard/days/24.md:9` reads "The loop isn't finished until it says what to do when the
+check fails. 'If you find one, replace it or flag it as unverified' turns a check into a correction;
+without that line the model finds the problem and reports it anyway, unfixed."
+
+After FIX-1.22, "an action on failure that **names no operation** ('fix it', 'try again')" is
+`self-critique-loops` anchor **4**, not a defect — it is the rung wave 2C's Working tier occupies,
+mandated in the anchor's own examples because the day's After (`:21`, "cut it or mark it
+'unverified'") models the anchor-5 form and a Working learner imitating it would otherwise reach 5,
+collapsing the ladder back to the 3/5/5 T21 reported.
+
+Direction for wave 3: `:9` should distinguish *no* action (anchor 3, the Novice rung) from an
+*unnamed* action (anchor 4, Working) from an action naming the operation on the failing element
+(anchor 5, Advanced), rather than treating everything short of the last as unfinished. The Novice
+tier now also forbids any failure action at all ("the check only, with nothing said about what to do
+if it fails"), which `:9` currently calls an unfinished loop. **Do not touch** the Before / After at
+`:15-23`: it is the anchor-5 model the Advanced tier targets, and `:11`'s self-test ("describe, in
+one sentence, what your output would look like if it failed your check") is a bar on the *check*,
+not on the action, and is correct at every rung.
+
+### FIX-3.18 — Day 26: the concept makes the rerun universal; two of three tiers now forbid it — filed during wave 2C — severity: medium
+
+`prompting-wizard/days/26.md:7` ("Cutting is not the same as guessing. Delete a section, rerun, and
+compare"), `:9` ("The test is the cut, not the eyeballing") and `:11`'s self-test ("cut a third of
+your context, rerun, and compare outputs side by side") all require the rerun.
+
+After FIX-1.24, the rerun **is** `token-economy` anchor 5's evidence ("the cut version was rerun and
+the output held"), and anchor 4 is precisely the untested state. Wave 2C therefore put the cut on
+inspection alone at Novice and Working — "do not run the two versions and compare" — and gave the
+rerun-and-compare to Advanced alone, which is what CONFLICT-10 and FIX-2.24 require. The concept, read
+verbatim, tells two thirds of learners that the exercise they were just given is the mistake the day
+is about.
+
+Direction for wave 3: keep `:7` and `:9` — they are why the rerun is worth a rung — but say that
+cutting by inspection is where the ladder starts and the rerun is what the top of it adds, in the
+shape day 29's `:9` uses to declare its own cap. `:11`'s self-test is the Advanced tier's test and
+should stay pointed there. **Do not touch** the Before / After at `:15-23`: `:23` ("cutting it
+changed nothing when tested … Keeping it wasn't a guess; it was confirmed") is the anchor-5 model.
+
+### FIX-3.19 — Day 30: the concept quotes anchor text FIX-1.27 replaced — filed during wave 2C — severity: high
+
+`prompting-wizard/days/30.md:9` quotes the capstone rubric verbatim: *"anchor 4, 'evaluated against
+written criteria, with failure modes noted **but not systematically**.' Document what the unseen case
+breaks, systematically: anchor 5, the same evaluation with failure modes '**documented**' rather than
+just noted."*
+
+FIX-1.27 deleted "not systematically" — it was R39's finding that nothing defined it — and replaced
+the 4/5 split with stranger-recognisability: anchor 4 "failure modes noted but **not specifically
+enough for someone else to recognise them**", anchor 5 "documented **specifically enough that someone
+else could recognise each one**". It also carried the robustness axis into both rows ("holds on
+varied cases" at 4, "holds on a case it was not designed for" at 5), which `:9` does not mention at
+all. The concept is read aloud verbatim (`SKILL.md:28`) on the last day of the course, quoting two
+anchors that no longer exist and omitting the axis that now separates them.
+
+Second collision, smaller: `:7` says "when that case breaks something, the failure mode gets written
+down", while the rebuilt Novice tier (`:29`) forecloses anchor 4 by instructing "Record the scores
+only; nothing about what broke gets written down at this tier."
+
+Direction: requote `:9` against the settled anchors and add the robustness clause; reframe `:7` so
+the writing-down is what the ladder climbs to rather than what every tier does. **Do not touch** the
+Before / After at `:15-21` — it models the Advanced tier exactly. 200-word cap applies; `:9` is the
+longest paragraph in the file, so requoting should replace text rather than add to it.
+
+**Also unblocks FIX-4.07.** Day 30's tier text is now settled, so `## Completion`'s "When the revised
+prompt passes both" (`:45`) can be reworded. Note for wave 4: under the rebuilt Novice tier there is
+no revised prompt and no second case that the prompt is fixed against, so a tier-independent trigger
+is required, exactly as FIX-4.07 argues.
+
+### FIX-3.20 — Day 27: the concept and After teach the anchor-5 discipline to every tier — filed during wave 2C — severity: low, tracking only
+
+`prompting-wizard/days/27.md:9` reads "The fix has to target **only** what you named", and the After
+(`:21`) has the learner name "what they'd change" before anything is run. After FIX-1.25, targeting
+the named lever **and nothing else** is `failure-diagnosis` anchor **5**, and collateral change to a
+second, unimplicated lever is anchor 4 — the rung FIX-2.25 gives the Working tier by dropping "only"
+from it. Wave 2C left that shortfall **silent** rather than mandating it (mandating collateral damage
+would teach the opposite of the day), so the tier is honest; but the concept, read aloud before the
+tier, pushes every learner toward the Advanced rung.
+
+**Nothing is broken and no edit is required.** Working permits anchor 4 and does not forbid 5, which
+is the standard 4-or-5-by-learner shape wave 2 accepts on days 14, 16, 17, 19, 20 and 28. Filed for
+two reasons. First, day 27 is on no wave-3 list, and an editor tightening `:9` into a tier-level
+demand would close anchor 4 again. Second, the rebuilt Novice tier (`:29`) ends "no fix today", which
+the After's "what they'd change" contradicts for a learner who takes the After as the instruction; if
+wave 3 touches day 27 at all, that is the sentence to scope to the upper tiers.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -2533,6 +2647,20 @@ without you reading it first") is anchor 5's text, correctly aimed at the top of
     FIX-1.17 it is the scored 4→5 discriminator and day 19's Advanced tier demands it.
 12. FIX-3.15 (day 17) is tracking-only: if wave 3 touches `days/17.md` at all, confirm the concept's
     `"note": ""` example and the Working tier have not been coupled.
+13. FIX-3.16 (day 22) has landed: the concept no longer calls the Working tier's mandated
+    per-turn-ask rule an unqualified mistake, and `:11`'s self-test either checks both directions or
+    says it is partial. Its Before / After at `:15-29` is **unchanged**.
+14. FIX-3.17 (day 24) has landed: `:9` distinguishes no action / unnamed action / named operation
+    across anchors 3, 4 and 5 instead of treating anything short of anchor 5 as unfinished. Its
+    Before / After at `:15-23` is **unchanged**.
+15. FIX-3.18 (day 26) has landed: the concept says the rerun is what the top rung adds, not what
+    every tier does. Its Before / After at `:15-23` is **unchanged**.
+16. FIX-3.19 (day 30) has landed: `days/30.md:9` quotes the **settled** capstone anchors — no "not
+    systematically", and the robustness clause present — and is still inside the 200-word cap. Its
+    Before / After at `:15-21` is **unchanged**. FIX-4.07 is unblocked.
+17. FIX-3.20 (day 27) is tracking-only: if wave 3 touches `days/27.md`, confirm `:9`'s "only what you
+    named" has not been turned into a tier-level demand, which would reclose `failure-diagnosis`
+    anchor 4.
 
 ---
 
