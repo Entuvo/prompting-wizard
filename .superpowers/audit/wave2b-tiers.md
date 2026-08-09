@@ -53,12 +53,13 @@ artifact `SKILL.md:32` runs and `SKILL.md:34` scores.
 anchor 4 to a *disjunctive, at-least-one, text-based* bar and anchor 5 to *role text says how*;
 neither wave-1 nor wave-2 planning re-derived day 15 against that. Novice's closing clause was
 anchor 4's positive content verbatim, and Advanced's "be ready to name both" was a rule-7 rider that
-anchor 5 no longer credits. Two edits restore 3 / 4 / 5. Working is untouched.
+anchor 5 no longer credits. Two edits restore 3 / 4 / 5. **Round 2 revised the Working tier as well —
+see the round-2 section below; the table row here is the round-1 state.**
 
 | Tier | Anchor | Anchor text | Why it lands there |
 |---|---|---|---|
 | Novice | **3** | "The role implies a standard or a body of knowledge, but the prompt doesn't say which parts to draw on." | A role "with a concrete stake — something it's responsible for, something that happens if it's wrong", sent "**without saying anywhere in it what the output should include, exclude, or assume differently**." The stake implies the standard; the added clause forecloses anchor 4 in anchor 4's own words. **Reaches 1–2** if the learner writes "you are a world-class expert" — rule-3 room to fail preserved. |
-| Working (unchanged) | **4** | "The role text names **at least one** thing the output includes, excludes **or** assumes because of the role, but not how the role produces it." | "Whose role changes what's included, excluded, or assumed. A reader should be able to name at least two things the output does because of the role." Two things on any of the three dimensions clears anchor 4's at-least-one bar. **Not 5**: the tier asks *what*, never *how*. |
+| Working (round-1 state — **superseded in round 2**) | **3-or-4** | "The role text names **at least one** thing the output includes, excludes **or** assumes because of the role, but not how the role produces it." | Round 1 left this tier at "A reader should be able to name at least two things the output does because of the role" — an inference test against a text anchor, so a bare stance with a naming-free role text sat at **3**. Round 2 re-aimed it at the text. |
 | Advanced | **5** | "The role text names what the output includes, excludes **and** assumes because of the role, **and says how the role produces each**." | "Whose role text names one thing the output includes, one it excludes, and one it assumes because of the role — and **says, in the prompt itself, how the role produces each of the three**." All three dimensions plus the mechanism, in the text, where `rubrics.md:5` can see it. |
 
 **Working leaves open:** *"but not how the role produces it."* The tier never asks for the mechanism.
@@ -95,7 +96,7 @@ neither requires nor forbids showing an empty value, so a thorough learner may r
 
 | Tier | Anchor | Anchor text | Why it lands there |
 |---|---|---|---|
-| Novice | **3** | "Tasks are split into steps, but one step's output isn't a clean input to the next." | "Each one's input is the previous prompt's output — **summarised in your own words or pasted, whichever is easier**." A summarised hand-off is precisely an unclean input. **Reaches 1–2** if the learner never really splits the three asks. |
+| Novice (round-1 state — **superseded in round 2**) | **3 on one branch, 5 on the other** | "Tasks are split into steps, but one step's output isn't a clean input to the next." | Round 1 read "summarised in your own words **or pasted, whichever is easier**". The summarised branch is anchor 3; the pasted branch is anchor 5, and it was the easier one. Round 2 removed the branch — see the round-2 section. |
 | Working | **4** | "Work split so each step has one output, and the next step's input is the previous step's output **plus exactly one added instruction or re-explanation**." | "Each step's input is the previous step's output **plus exactly one line of added instruction. Nothing from the original task may be re-explained.**" Anchor 4's state, mandated exactly — see below. |
 | Advanced (unchanged) | **5** | "…each step's input is **verbatim** the previous step's output — nothing added, nothing re-explained." | The only tier now demanding the verbatim seam, and its adversarial constraint (the last step must cite a detail that only survives an unparaphrased hand-off) becomes the *test* of that seam rather than an extra. |
 
@@ -240,6 +241,22 @@ Added after OPEN-3.01, with the wave-3 file list and the wave-3 checkpoint updat
   no rung, `:21`'s After is now load-bearing for FIX-3.07, and wave 3's checkpoint item 6 must not
   move the Working tier to three properties.
 
+## Departures from literal plan text, non-substantive
+
+Listed separately from the six above because none of them changes an anchor, but the rule is to
+record every deviation from the plan's quoted replacement text, not only the consequential ones.
+All three are rule 4 ("every tier produces a written prompt") applied to a plan text that omitted the
+send step — the same change batch A made to FIX-2.03's day-04 Novice.
+
+- **`days/14.md:29`** — FIX-2.13's replacement ends "…leaving the other eight as they are." Added
+  "**and send that version**", and changed "as they are" to "exactly as they are" so the eight
+  untouched levers are unambiguously untouched rather than merely unmentioned.
+- **`days/18.md:41`** — FIX-2.17's replacement ends "…summarised or pasted, whichever is easier."
+  Added "**and send the three prompts**" (and, in round 2 below, replaced the branch itself).
+- **`days/19.md:31`** — FIX-2.18's replacement ends "…in place of 'step by step'." Added "**and send
+  the rewritten version**", which also disambiguates which of the two prompts the learner wrote is
+  the scored artifact.
+
 ## Nothing was stopped on
 
 Day 15 was the one candidate for a stop-and-report. The brief's condition is that a plan entry must
@@ -247,3 +264,125 @@ not *move* day 15's ladder; FIX-2.14 would not have moved it (Working stays at 4
 edits actually made restore the ladder to the 3 / 4 / 5 the census recorded rather than re-pitching
 it. The finding that made them necessary is a wave-1 consequence, not a wave-2 judgement call, and it
 is filed as FIX-3.14 with the full before-state so it can be reviewed independently.
+
+---
+
+# Round 2 — the day 18 branch leak and the day 15 Working inference test
+
+Two tier-body edits, both in scope. Days 14, 16, 17, 19, 20 and 21 were **not** touched this round
+(round-2 `git diff --stat`: `days/15.md` 1 line, `days/18.md` 1 line, `MASTER-FIX-PLAN.md`).
+
+## Critical — `days/18.md:41` offered anchor 5 by name
+
+Round 1's Novice read "…the previous prompt's output — summarised in your own words **or pasted,
+whichever is easier**". The justification I wrote covered the summarised branch and was silent on the
+other, which is the leak: pasting is the easier branch *and* the shape the learner has just been
+shown, because `SKILL.md:28` presents `## Before / After` before the exercise and day 18's After at
+`:25-31` writes every seam as `[Prompt 1's output, unedited]`. A learner taking that branch hands in
+three prompts each carrying the previous output verbatim — `task-decomposition` anchor 5 — from the
+bottom rung, while Working is mandated down to 4. Least-effort compliant path: **5 / 4 / 5**. Same
+inversion class as day 12's own-line leak in batch A, and precisely what FIX-2.17 exists to remove.
+
+**Fixed at `days/18.md:41`:**
+
+> Write a single chained prompt for {{TASK}} with three asks in it, then split it into three prompts where each one's input is the previous prompt's output summarised in your own words rather than pasted — a paraphrase at every seam, not the actual text — and send the three prompts.
+
+Two independent closures, deliberately belt-and-braces, and both borrowed from the higher anchor's own
+wording so there is no gap between what is forbidden and what is scored. "Summarised in your own words
+**rather than pasted**" removes the branch; "**a paraphrase at every seam, not the actual text**"
+negates anchor 5's discriminator (`rubrics.md:215`, "each step's input is **verbatim** the previous
+step's output") in the same language day 18's own self-test uses (`:11`, "**verbatim** … not a
+paraphrase, the actual text"). "At every seam" closes the partial reading — one pasted seam among
+three is still a pasted seam.
+
+## Important — `days/15.md:35` tested inference, not text
+
+FIX-1.13 made the rubric a text property twice over: the Measures line is "whether **the prompt says**
+what the role changes" (`rubrics.md:167`) and anchor 4 opens "**The role text names** at least one
+thing…" (`:172`). Round 1 carried that correction to Novice and Advanced and diagnosed the cause in
+FIX-3.14, but left Working reading "A reader should be able to **name at least two things the output
+does** because of the role" — an inference test. A prompt whose role text is only "Answer as a
+reviewer who will be paged if it breaks" satisfies it: a reader infers two output effects while the
+role text names none, which is anchor 3 ("the role implies a standard … but the prompt doesn't say
+which parts to draw on"). So Working was 3-or-4 by learner, and for the inferring learner the day was
+flat at 3 across its bottom two rungs.
+
+**Fixed at `days/15.md:35`:**
+
+> Write a prompt for {{TASK}} whose role text names at least one thing the output includes, excludes, or assumes because of the role — named in the prompt, not left for a reader to infer from the role.
+
+FIX-2.14 remains rejected — its premise is still false against the file. The disjunction is kept
+("includes, excludes, **or** assumes", "at least one") and the mechanism is left unasked, so Advanced
+retains the whole 4→5 gap.
+
+**One deliberate deviation from the suggested wording.** The suggestion ended "— without saying how
+the role produces it." I left the mechanism *silent* rather than *forbidden*, per rule 2's preference,
+because the mandate buys nothing here: anchor 5 requires all three dimensions ("includes, excludes
+**and** assumes"), so a Working learner scoped to "at least one" cannot reach 5 by volunteering a
+mechanism. Adding a prohibition would have capped the tier for no scoring gain and put a fourth
+concept-versus-tier collision into wave 3. The clause that *is* load-bearing — "named in the prompt,
+not left for a reader to infer" — is the one that closes the reported defect, and it is in.
+
+## Days 15 and 18 re-derived against the settled anchors
+
+`rubrics.md` `## Role framing`:
+
+| Tier | Anchor | Anchor text (verbatim from the file) | Why it lands there, and not a rung higher or lower |
+|---|---|---|---|
+| Novice | **3** | "The role implies a standard or a body of knowledge, but the prompt doesn't say which parts to draw on." | A role with a concrete stake implies the standard; the tier then forecloses the rung above in anchor 4's own vocabulary — "without saying anywhere in it what the output should include, exclude, or assume differently". **Not 4**: anchor 4 needs the role text to name at least one such thing, which the tier forbids. **Reaches 1–2** on "you are a world-class expert" — room to fail preserved. |
+| Working | **4** | "The role text names at least one thing the output includes, excludes or assumes because of the role, but not how the role produces it." | Anchor 4's positive content, in the anchor's own words, with the inference escape shut. **Not 3**: the naming is required to be in the prompt. **Not 5**: see shortfall below. |
+| Advanced | **5** | "The role text names what the output includes, excludes and assumes because of the role, and says how the role produces each." | One included, one excluded, one assumed — all three dimensions — "and says, **in the prompt itself**, how the role produces each of the three". Every clause of anchor 5, nothing added. |
+
+**Working leaves open:** *"but not how the role produces it."* **Left silent**, and the silence is
+safe: "at least one" scopes the tier to a single dimension, and anchor 5 needs all three, so no
+compliant Working prompt reaches 5 whether or not the learner volunteers a mechanism.
+
+`rubrics.md` `## Task decomposition`:
+
+| Tier | Anchor | Anchor text (verbatim from the file) | Why it lands there, and not a rung higher or lower |
+|---|---|---|---|
+| Novice | **3** | "Tasks are split into steps, but one step's output isn't a clean input to the next." | A paraphrase at every seam is the definition of an unclean input. **Not 4**: anchor 4 requires the input to *be* the previous output plus one addition; a paraphrase is not the previous output. **Not 5**: anchor 5's "verbatim … the actual text" is negated word for word. **Reaches 1–2** if the learner never really splits the three asks — room to fail. |
+| Working | **4** | "Work split so each step has one output, and the next step's input is the previous step's output plus exactly one added instruction or re-explanation." | "The previous step's output plus **exactly one line of added instruction**. Nothing from the original task may be re-explained." Anchor 4's state, mandated — "at most one" would admit zero and therefore anchor 5. |
+| Advanced (unchanged) | **5** | "…each step's input is **verbatim** the previous step's output — nothing added, nothing re-explained." | The only tier demanding the verbatim seam; its adversarial constraint (the last step must cite a detail that survives only an unparaphrased hand-off) is now the *test* of that seam. |
+
+**Working leaves open:** *"plus exactly one added instruction or re-explanation."* **Mandated** —
+anchor 4's shortfall here is a positive state, not an omission. Wave-3 entry **FIX-3.12** was filed
+in round 1 for the resulting concept collision and still stands.
+
+**Day 18 Novice admits no anchor-5 reading under either branch, because there is no longer a second
+branch.** The tier states the required form positively ("summarised in your own words"), rules out
+the alternative explicitly ("rather than pasted"), and then negates anchor 5's discriminator in the
+rubric's own words ("a paraphrase at every seam, not the actual text"). The only way to reach anchor 5
+from this tier is to disobey it.
+
+## Round-2 minors folded in
+
+- **Wave-3 checkpoint renumbered.** It read 1,2,3,4,5,6,9,10,7,8 after round 1's insertions; it now
+  runs 1–12 in sequence, with the two new items appended as 11 and 12.
+- **Three unreported departures added** to the report's departures list, under a new heading
+  "Departures from literal plan text, non-substantive" — the "send" clauses added to `days/14.md:29`,
+  `18.md:41` and `19.md:31`, none of which appears in the plan's replacement text.
+- **FIX-3.09 amended.** `days/19.md:9` calls gating "useful, but **secondary** to getting the list
+  right". That was true against the pre-wave-1 anchors; after FIX-1.17 ordering-and-gating *is* the
+  scored 4→5 discriminator and wave 2B's Advanced tier demands exactly it, so the concept now tells
+  the learner aloud (`SKILL.md:28`) that the property separating their tier from full marks is
+  secondary. The entry's old "confirmed already fixed, do not re-touch" note on `:9` is replaced with
+  the required direction and the 200-word cap warning. New checkpoint item 11.
+- **FIX-3.15 filed** — day 17, low, tracking only. The concept's schema example at `:11` contains
+  `"note": ""` and `:16` glosses it, which is the anchor-4→5 property wave 2B assigned to Advanced.
+  Nothing is broken: neither Novice nor Working *requires* it, so no tier is lifted. Filed because
+  day 17 was on no wave-3 list and a wave-3 editor could couple the concept and the Working tier
+  without noticing. New checkpoint item 12.
+
+## Round 2 verification
+
+| Check | Result |
+|---|---|
+| `python3 tools/validate.py --complete` | `ok`, exit 0 |
+| `python3 -m unittest discover -s tools` | 103 tests, OK |
+| Round-2 diff scope | `days/15.md` (1 line), `days/18.md` (1 line), `MASTER-FIX-PLAN.md` — days 14, 16, 17, 19, 20, 21 untouched |
+| `## ` / `### ` headings | none touched |
+| Day 15 ladder | 3 / 4 / 5, and Working now fails on the text, not on a reader's inference |
+| Day 18 ladder | 3 / 4 / 5, with no branch in Novice that reaches anchor 5 |
+| Riders in 14–21 | still none |
+| Advanced word/item budgets in 14–21 | still day 14 only |

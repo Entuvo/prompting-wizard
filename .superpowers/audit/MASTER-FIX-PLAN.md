@@ -2262,8 +2262,20 @@ for verification-shaped tasks and a 3 for anything whose answer depends on somet
 concept is correct (`:11` tells the learner to derive the list from the task); the model answer is
 the part that cannot generalise, so the gloss must say so.
 
-Confirmed already fixed and not to be re-touched: the gating defect at `:9` ("Naming steps can also
-gate the answer on them — useful, but secondary to getting the list right").
+**Amended during wave 2B — a second edit is now required at `:9`.** The line reads "Naming steps can
+also gate the answer on them — useful, but **secondary to getting the list right**." That ranking was
+correct against the pre-wave-1 anchors, where 4 and 5 differed only by "minor slack in ordering" and
+the set-match carried the whole ladder. After FIX-1.17, anchor 4 is "…match the ones the task
+requires, **but the prompt does not fix the order they are produced in**" and anchor 5 is "…**in the
+order the task requires them produced**" — so ordering-and-gating *is* the scored 4→5 discriminator,
+and wave 2B's Advanced tier demands exactly it ("states in the prompt the order they must be produced
+in — which comes first, and which cannot start until an earlier one is done"). A learner is now told
+aloud, via `SKILL.md:28`, that the one property separating their tier from full marks is secondary.
+
+Required direction: keep the set-match as the *first* thing to get right — anchors 3→4 still turn on
+it — but stop calling gating secondary. Something of the shape "getting the list right comes first;
+fixing the order they are produced in is what separates a complete scaffold from a correct one."
+Watch the 200-word `## Concept` cap; `:9` is the longest paragraph in the day.
 
 ### FIX-3.10 — Day 21: replace the self-test with a placement check — closes: A11 — severity: medium
 
@@ -2458,7 +2470,38 @@ rejected** — see the wave-2B report's departures. Consequences for wave 3:
   FIX-3.07 already owns this; it is now load-bearing rather than cosmetic.
 - Wave 3's checkpoint item 6 ("Day 15's self-test, Working tier and After now all name three
   properties") must be re-derived: the **Working tier legitimately names one**, not three, because
-  anchor 4 is disjunctive. Only the self-test and the After move.
+  anchor 4 is disjunctive. Only the self-test and the After move in wave 3.
+
+**Round-2 amendment (wave 2B fix round 1).** The same output-vs-text drift was still live in the
+Working tier and is now closed there too. It read "A reader should be able to **name at least two
+things the output does** because of the role" — an *inference* test, which a bare stance ("Answer as
+a reviewer who will be paged if it breaks") satisfies while the role text names nothing, i.e. anchor
+3. Working now reads "whose **role text names** at least one thing the output includes, excludes, or
+assumes because of the role — **named in the prompt, not left for a reader to infer from the role**",
+which is anchor 4's positive content in the anchor's own words. FIX-2.14 remains rejected; the
+disjunction is kept and the mechanism is left unasked, so Advanced keeps the whole 4→5 gap. Note the
+"at least one" scoping already forecloses anchor 5 on its own — anchor 5 needs all three dimensions —
+so no mandate against stating the mechanism was needed, and none was added.
+
+Consequence for the checkpoint: item 6 is about `:11` and `:21` **only**. All three tiers are settled
+and none of them should move in wave 3.
+
+### FIX-3.15 — Day 17: the concept's schema example already shows an empty value — filed during wave 2B — severity: low, tracking only
+
+`prompting-wizard/days/17.md:11` — the worked schema in the `## Concept` contains `"note": ""`, and
+`:16` glosses it ("an item with nothing to flag gets an empty string, not a missing key"). Showing
+the empty value is precisely the property that separates `output-schemas` anchor 4 from anchor 5, and
+wave 2B made it the thing the **Advanced** tier adds, with Working stopping at a dummy-value block
+that leaves the edge unaddressed.
+
+**Nothing is broken and no edit is proposed.** Neither Novice nor Working *requires* the anchor-5
+property, so no tier is lifted off its rung; the concept legitimately teaches the finished form while
+the ladder climbs to it, exactly as day 1's concept states the economy clause its Advanced tier
+enforces. This is filed because day 17 appears on no wave-3 list, and a wave-3 editor tightening
+either the concept or the Working tier could couple them without noticing. Two things to preserve if
+day 17 is touched: `:7`'s "shows what an empty value looks like" is a *description of the goal*, not
+a tier demand, and `:18`'s self-test ("could you write a script that rejects a malformed output
+without you reading it first") is anchor 5's text, correctly aimed at the top of the ladder.
 
 ---
 
@@ -2472,20 +2515,24 @@ rejected** — see the wave-2B report's departures. Consequences for wave 3:
    before-state failures are day 4 (3), day 6 (adverb 2, preposition 3); both must now be 5.
 4. Grep `days/` for "exhaustively" and confirm every surviving instance carries a measure.
 5. Confirm `days/14.md:9` and `days/28.md:11` were **not** edited (CONFLICT-03, CONFLICT-07).
-6. Day 15's self-test and After now match the settled anchors. **Amended by FIX-3.14:** the Working
-   tier is *not* moved to three properties — anchor 4 is disjunctive and at-least-one, so Working is
-   correct naming one. Only `:11` and `:21` change.
+6. Day 15's self-test and After now match the settled anchors. **Amended by FIX-3.14:** the tiers are
+   settled and none of the three moves — anchor 4 is disjunctive and at-least-one, so the Working
+   tier is correct naming one. Only `:11` and `:21` change.
+7. Day 12's concept no longer contradicts its own tiers (FIX-3.11): no "one marker" absolute where
+   the Working tier mandates two, no "move it" where the Novice tier says "not moved", and no
+   positional claim that FIX-1.10 removed from anchor 4. Its Before / After and gloss at
+   `days/12.md:17,21,23` are **unchanged**.
+8. OPEN-3.01 has been ruled on, or explicitly deferred to a named wave, before wave 3 closes.
 9. FIX-3.12 (day 18) and FIX-3.13 (day 21) have landed: neither concept still states as an absolute
    the thing its own Working tier is instructed to violate, and day 21's prediction test is either
    in the concept with a day-23-style "not a scored one" disclaimer or explicitly dropped.
 10. Wave 2's checkpoint item 6 has been closed one way or the other: `days/21.md:47` either names
     four rubrics (FIX-2.21(b) applied, lever work restored to Advanced) or the review-day gap is
     recorded as accepted. See FIX-3.13.
-7. Day 12's concept no longer contradicts its own tiers (FIX-3.11): no "one marker" absolute where
-   the Working tier mandates two, no "move it" where the Novice tier says "not moved", and no
-   positional claim that FIX-1.10 removed from anchor 4. Its Before / After and gloss at
-   `days/12.md:17,21,23` are **unchanged**.
-8. OPEN-3.01 has been ruled on, or explicitly deferred to a named wave, before wave 3 closes.
+11. `days/19.md:9` no longer calls gating "secondary" (FIX-3.09's round-2 amendment) — after
+    FIX-1.17 it is the scored 4→5 discriminator and day 19's Advanced tier demands it.
+12. FIX-3.15 (day 17) is tracking-only: if wave 3 touches `days/17.md` at all, confirm the concept's
+    `"note": ""` example and the Working tier have not been coupled.
 
 ---
 
