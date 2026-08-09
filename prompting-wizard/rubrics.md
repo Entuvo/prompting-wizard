@@ -57,7 +57,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 1 | Manner unspecified; depth left to chance. |
 | 2 | A manner word is used ("briefly", "carefully") but without a measure, so two readers would produce different depths. |
 | 3 | Depth or manner is set for part of the task, but another part is left to guess. |
-| 4 | Depth and manner set with a measure attached, but only to part of the task, or attached as a stated tolerance rather than a fixed figure, so two competent readers would land inside that tolerance rather than on the same length. |
+| 4 | Depth and manner set with a measure attached across the whole task, but attached as a stated tolerance rather than a fixed figure, so two competent readers would land inside that tolerance rather than on the same length. |
 | 5 | Depth and manner set with a measure attached to every part, so two competent readers would produce the same length and thoroughness. |
 
 **Fastest fix:** say how thoroughly, and in what manner.
@@ -140,7 +140,7 @@ If the task has no instance of the property the rubric measures — no branch to
 |---|---|
 | 1 | All instructions carry equal weight; the critical one is buried mid-paragraph. |
 | 2 | A priority word is used ("important:") but attached to something other than the instruction the writer names as the one they would be angriest to see ignored. |
-| 3 | The critical instruction is marked, but its position in the prompt still lets it get skimmed past. |
+| 3 | The critical instruction is marked, but the marker sits inline in a paragraph with other instructions rather than on a line of its own. |
 | 4 | The must-not-fail instruction is marked and stands alone rather than sitting mid-paragraph, but competes with one other marked item. |
 | 5 | Exactly one marker in the prompt, on the instruction the writer names as highest-stakes, standing alone as its own line. |
 
@@ -155,7 +155,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 1 | Phrasal verbs used loosely, so the operation is ambiguous (look up / look over / look into). |
 | 2 | A phrasal verb is used, and swapping its particle would plausibly change the intended task without the writer noticing. |
 | 3 | The phrasal verb is close to right, but a stricter synonym would remove a small remaining ambiguity. |
-| 4 | Each phrasal verb present is load-bearing, but at least one plain verb would have served as well. |
+| 4 | Each phrasal verb present was chosen deliberately, but at least one could be swapped for a plain verb without changing the task. |
 | 5 | Each phrasal verb present is load-bearing and no plain verb would have served — swapping any particle changes the task. |
 
 **Fastest fix:** swap the particle and check whether the task changed. If it did, you needed the precise one.
@@ -211,7 +211,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 1 | One prompt carries several tasks that interfere. |
 | 2 | The tasks are listed, but their inputs and outputs aren't separated, so they still interfere. |
 | 3 | Tasks are split into steps, but one step's output isn't a clean input to the next. |
-| 4 | Work split so each step has one output, and the next step's input is the previous step's output plus at most one added instruction or re-explanation. |
+| 4 | Work split so each step has one output, and the next step's input is the previous step's output plus exactly one added instruction or re-explanation. |
 | 5 | Work split so each step has one output, and each step's input is verbatim the previous step's output — nothing added, nothing re-explained. |
 
 **Fastest fix:** find the "and then" in your prompt and cut there.
@@ -242,7 +242,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 4 | Exclusions are specific and each names the failure it prevents, but at least one is speculative rather than observed, or names its failure without citing the incident in the prompt. |
 | 5 | Exclusions are specific, and each cites in the prompt the incident it prevents. |
 
-**Fastest fix:** write down what it did wrong last time, and forbid exactly that.
+**Fastest fix:** write down what it did wrong last time, put that incident in the prompt, and forbid exactly that.
 
 ## Context ordering
 
@@ -253,7 +253,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 1 | Instruction buried after a wall of context. |
 | 2 | Instruction and context are both present but interleaved in a way that obscures which material serves which step. |
 | 3 | Instruction is findable, but constraints are scattered rather than grouped at the end. |
-| 4 | Instruction and context are ordered sensibly, with constraints grouped except for one placed early. |
+| 4 | Task first, material second, with constraints grouped last except for one placed early. |
 | 5 | Task first, material second, constraints grouped last. |
 
 **Fastest fix:** task first, material second, constraints last.
@@ -268,7 +268,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 2 | Some durable rules are separated out, but turn-specific detail still leaks into them. |
 | 3 | Standing behaviour and per-turn request are separated into two blocks, but two or more lines are on the wrong side — in either direction. |
 | 4 | Standing behaviour and per-turn request are separated into two blocks, and exactly one line is on the wrong side — in either direction. |
-| 5 | Standing behaviour and per-turn request cleanly separated. |
+| 5 | Standing behaviour and per-turn request are separated into two blocks, and no line is on the wrong side — in either direction. |
 
 **Fastest fix:** ask which lines you would want true on every turn — those are the system prompt.
 

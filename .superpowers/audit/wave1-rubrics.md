@@ -536,3 +536,120 @@ requires them. Day 29's self-cap at `:9` stays true.
 4. **Re-derivations the plan already flags**, all now unblocked: FIX-2.02 (day 3), 2.07 (day 8),
    2.09 (day 10), 2.11 (day 12), 2.17 (day 18), 2.18 (day 19), 2.19 (day 20), 2.21 (day 21),
    2.22 (day 22), 2.23 (day 24), 2.24 (day 26), 2.25 (day 27), 2.26 (day 28), 2.27 (day 30).
+
+---
+
+# Round 2 — review fixes
+
+Two Important defects and five Minors, all inherited from the plan's drafted text, plus nine
+corrections to `MASTER-FIX-PLAN.md` so wave 2's implementer does not re-introduce them.
+
+## I-1 — `task-decomposition` anchor 4 admitted the anchor-5 case
+
+Before: `…the previous step's output plus **at most one** added instruction or re-explanation.`
+After: `…the previous step's output plus **exactly one** added instruction or re-explanation.`
+
+"At most one" includes zero, and zero additions *is* the verbatim seam — so every anchor-5 prompt
+also satisfied anchor 4's literal text. This was the last row in the file where the shortfall was
+merely *permitted* rather than *asserted present*; every other repaired anchor 4 asserts it.
+
+**Discriminating prompt.** A three-step chain where step 2's input is step 1's output pasted
+unchanged, nothing added, nothing re-explained:
+
+- *Before:* anchor 4 ✔ (zero additions satisfies "at most one") **and** anchor 5 ✔ — two tutors
+  quoting anchors per `SKILL.md:34` could award 4 and 5 for the same prompt.
+- *After:* anchor 4 ✘ (zero ≠ exactly one), anchor 5 ✔ — **exactly one row.**
+
+The complementary case is also clean: a chain carrying the previous output plus one added line of
+instruction now matches anchor 4 ✔ and anchor 5 ✘. Two or more additions fall to anchor 3, "one
+step's output isn't a clean input to the next". Gains quality-bar **2**.
+
+## I-2 — `adverb` anchors 3 and 4 both owned the partial-measure case
+
+Before: `| 4 | Depth and manner set with a measure attached, **but only to part of the task, or** attached as a stated tolerance rather than a fixed figure, so two competent readers would land inside that tolerance rather than on the same length. |`
+After: `| 4 | Depth and manner set with a measure attached **across the whole task**, but attached as a stated tolerance rather than a fixed figure, so two competent readers would land inside that tolerance rather than on the same length. |`
+
+My round-1 rewrite introduced this: the old anchor 4 covered the whole task, so anchors 3 and 4 were
+separated by coverage, and adding the partial-coverage disjunct collapsed that separation. Anchor 3
+already reads "Depth or manner is set for part of the task, but another part is left to guess."
+
+**Discriminating prompt.** *"Review X exhaustively — check every function against its callers — then
+summarise."* Manner plus a measure on the review half; the summarise half has no depth measure.
+
+- *Before:* anchor 3 ✔ (one part left to guess) **and** anchor 4 ✔ (its first disjunct, "only to
+  part of the task") — both rows, verbatim.
+- *After:* anchor 3 ✔, anchor 4 ✘ ("across the whole task" fails) — **exactly one row.**
+
+Complement: *"Review X and summarise, roughly 200–300 words each"* → anchor 3 ✘ (nothing left to
+guess), anchor 4 ✔ (a stated tolerance, not a fixed figure). The axis is now clean —
+**partial coverage at 3, a whole-task tolerance at 4, a fixed figure at 5** — and day 4 gets a real
+3/4/5 instead of the 4/4/5 the plan resigned itself to. Gains quality-bar **5**.
+
+## The five Minors
+
+| Row | Before | After |
+|---|---|---|
+| `interjection` 3 | "…but its position in the prompt still lets it get skimmed past." | "…but the marker sits inline in a paragraph with other instructions rather than on a line of its own." |
+| `context-ordering` 4 | "Instruction and context are **ordered sensibly**, with constraints grouped except for one placed early." | "**Task first, material second**, with constraints grouped last except for one placed early." |
+| `system-prompts` 5 | "Standing behaviour and per-turn request **cleanly separated**." | "…separated into two blocks, and **no line is on the wrong side** — in either direction." |
+| `particle` 4 | "Each phrasal verb present **is load-bearing**, but at least one plain verb would have served as well." | "Each phrasal verb present **was chosen deliberately**, but at least one could be swapped for a plain verb without changing the task." |
+| `negative-constraints` fastest fix | "write down what it did wrong last time, and forbid exactly that." | "write down what it did wrong last time, **put that incident in the prompt**, and forbid exactly that." |
+
+Each gains quality-bar **3** (a checkable referent replaces an unquantified judgement). Two notes.
+`interjection` 3 now feeds anchor 4's "stands alone rather than sitting mid-paragraph" on the same
+axis — marker placement — so 3→4→5 escalates inline / standalone-but-competing / standalone-and-sole.
+`particle` 4 was self-tensioned: "load-bearing" and "a plain verb would have served as well" are
+contradictory, since a replaceable particle is by definition not load-bearing. "Chosen deliberately"
+names the same state — the learner picked the phrasal verb on purpose — without the contradiction,
+and leaves "load-bearing" to anchor 5 where it is true.
+
+## Nine corrections to `MASTER-FIX-PLAN.md`
+
+1. **plan:808** — `task-decomposition` anchor-4 draft: `at most one` → `exactly one`.
+2. **plan:572** — `adverb` anchor-4 draft: partial-coverage disjunct removed, matching I-2.
+3. **FIX-2.17** (day 18) — Working demanded "at most one line of added instruction", which admits
+   zero and lands at anchor 5; changed to **exactly one**, with a note that day 18 would otherwise
+   read 4/5/5 rather than 3/4/5.
+4. **FIX-2.03** (day 4) — re-derived. The replacement text was already right; the *reasoning* was
+   wrong, because it targeted anchor 3 while the round-1 anchor 4 also claimed partial coverage.
+   The "ladder is 4/4/5 rather than 3/4/5" resignation is deleted — under the round-2 anchors day 4
+   is a clean 3/4/5.
+5. **FIX-2.19** (day 20) — added the review's diagnosis: `days/20.md:39` Advanced lands at **4**, not
+   5, for two independent reasons — the incident is never required to appear in the prompt (round-2
+   anchor 4's second disjunct), and "be ready to say when and how each one happened" is a SYS-2 rider
+   that `SKILL.md:32-34` scores nothing for. Wave 2 must not soften "inside the prompt itself"; that
+   phrase is the 4→5 discriminator.
+6. **FIX-2.11** (day 12) — **escalated**. FIX-1.11's anchor 5 is `days/12.md:31`'s *Novice* tier read
+   back almost word for word ("one instruction you'd be angriest to see ignored… mark it IMPORTANT:
+   and move it to stand alone at the end"), so day 12 is **5/5/5**, not the 3/5/5 T10 recorded. The
+   entry now states that Novice must be pushed down to 2–3 and that this is a high-severity rewrite.
+7. **FIX-4.20** — scope extended from two edits to **three**. `SKILL.md:34` ("1–5, quoting the
+   rubric's anchor for each score you give") is a third site where N/A has no legal value and no
+   anchor to quote. Patching only `SKILL.md:20` and `assessment.md:13` fixes where the score is
+   *recorded* while leaving the instruction that *produces* it contradictory — the contradiction
+   would have survived the fix meant to close it. Added edit (c) with replacement text.
+8. **plan:165** — CONFLICT-03 cited FIX-4.21 where it means FIX-4.20; corrected in both places.
+9. **Wave-2 preamble** — added: re-derive every `rubrics.md:N` from the file, the shift is **+2**,
+   not the +1 checkpoint 6 predicts, and quote anchors by text rather than by line.
+
+## Round-2 verification
+
+| Check | Result |
+|---|---|
+| `python3 -m unittest discover -s tools` | 103 tests, OK |
+| `python3 tools/validate.py --complete` | `ok`, exit 0 |
+| 26 `## ` headings vs pre-wave copy | byte-identical |
+| Slugs / citations | 26 headings, 30 day files, 26 cited, 0 unresolved, 0 uncited |
+| SYS-1 grep on anchor-4 rows (now also banning `at most`) | clean |
+| I-1 / I-2 discriminating prompts | each now satisfies exactly one row (above) |
+
+**Model ladders re-checked.** Days 23, 25 and 29 cite `agent-and-tool-prompting`, `writing-evals`
+and `capstone` respectively — **none of the seven rubrics touched in round 2**, so all three are
+provably unmoved at **3/4/5, 3/4/5 and 1 / 2–3 / 3**.
+
+Day 7 is the one model ladder exposed to a round-2 edit: it cites `adverb` among its five rubrics.
+Re-checked and unmoved at **1–3 / 4 / 5**. Novice rewrites a single lever (1–3). Working, "all five
+levers are set", reads as full coverage, so on the corrected `adverb` it still lands at 4 — the
+tightening only moves a learner who sets depth for *part* of the task, and that learner now drops to
+3, which is the correct score and was previously mis-awarded 4. Advanced's load-bearing test still
+reaches 5. Days 1 and 15 cite `noun` and `role-framing`, untouched in round 2.
