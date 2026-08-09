@@ -2047,9 +2047,17 @@ FIX-3.21, filed during wave 2D, which also adds a second, independent edit to `d
 `days/19.md` — see that entry.)
 
 **Counting convention for this list:** a day is listed when some entry mandates an edit to it.
-Entries that are tracking-only mandate nothing and their days are **not** listed — currently
-`days/17.md` (FIX-3.15) alone. Day 27 is listed because FIX-3.20's round-2 re-grade makes its `:21`
-edit mandated; its `:9` half remains tracking-only, which does not change the count.
+Entries that are tracking-only mandate nothing and their days are **not** listed. Day 27 is listed
+because FIX-3.20's round-2 re-grade makes its `:21` edit mandated; its `:9` half remains
+tracking-only, which does not change the count.
+
+**Amended by wave 3C round 2 — the count is 22 day files, and `days/17.md` is one of them.** Day 17
+was the sole entry on the tracking-only exclusion above. FIX-3.15 has since been amended: its `:18`
+defect is real, it is a **fourth** member of FIX-3.22's coverage hole, and the line was edited. No
+tracking-only entry now remains, so the exclusion clause has no members. **This is the second time the
+"tracking-only" label hid a live defect** — the first was FIX-3.20, re-graded during wave 2C round 2
+for the same reason. Treat "tracking only" as "not yet read against the tiers", never as "checked and
+clean".
 
 Two rules govern this wave. First, `SKILL.md:28` has the tutor read `## Concept` **verbatim** to the
 learner, so a wrong sentence here is taught aloud, thirty times over. Second, `validate.py` enforces
@@ -2690,6 +2698,37 @@ day 17 is touched: `:7`'s "shows what an empty value looks like" is a *descripti
 a tier demand, and `:18`'s self-test ("could you write a script that rejects a malformed output
 without you reading it first") is anchor 5's text, correctly aimed at the top of the ladder.
 
+**Amended by wave 3C round 2 — this entry's scope was the reason day 17's real defect was never
+found, and `:18` has now been edited. No longer tracking-only.** The two preservation conditions
+above are correct and both still hold, but between them they cover `:7` and the *question* half of
+`:18`, and wave 3B verified exactly those two and stopped. The half neither condition covers is
+`:18`'s **second sentence**, which was: "If not, the schema is still **a description, not a
+contract** — **fill it with dummy values until it is**." The Novice tier (`:47`) mandates "every field
+the output must contain, **as a plain list of field names with no types and no example values**" —
+`output-schemas` anchor 3, "Fields are enumerated, but types, order, or optionality are left
+unstated." A compliant Novice's schema *is* a description, and `SKILL.md:28` read them an instruction
+to do the one thing `:47` forbids, immediately before presenting `:47`. Day 17's foreclosure clause
+arrived in **wave 2B** (`git log`: `b78e545`), which is precisely the provenance FIX-3.22 identifies —
+day 17 is a **fourth** member of that coverage hole.
+
+**Landed by wave 3C round 2, 178 → 184 words. `:7`, the `"note": ""` example, all three tiers, the
+`## Before / After` and the `## Rubric` are untouched — checkpoint item 12's two conditions were
+re-verified in the file after the edit and both hold; the concept and the Working tier are not
+coupled.** `:18` is now a three-rung ladder quoting all three anchors:
+
+> Here is the test: **fields enumerated, with types and order unstated, is a rung of its own**; **an
+> exact structure with empty values unaddressed is the climb from there**; **a structure output can be
+> checked against mechanically**, without you reading it first, **is the top**.
+
+Anchor 3 in its own words, anchor 4's "An exact structure is given, with one edge (e.g. empty values)
+unaddressed", anchor 5's "which output can be checked against mechanically". The script question is
+kept as the top rung's content rather than as a universal gate — the preservation condition above
+called it "anchor 5's text, correctly aimed at the top of the ladder", and it now says so. **Do not
+restore "the schema is still a description, not a contract — fill it with dummy values until it
+is."** No deletion was needed: day 17 had 22 words of headroom and the ladder cost 6, because
+absorbing the script question into the top rung removed the duplication between `:18`'s two
+sentences.
+
 ### FIX-3.16 — Day 22: the concept forbids what the rebuilt Working tier mandates — filed during wave 2C — severity: medium
 
 `prompting-wizard/days/22.md:7` reads "Move a durable rule into the per-turn slot and you retype it
@@ -2888,6 +2927,23 @@ not restore the universal form.**
 **Unfiled cut that paid for the additions:** `:5` lost "— not until tested against a case you didn't
 design for." (11 words), restated by `:7`'s "an unfamiliar case tests whether the prompt generalises"
 and by `:11` in full.
+
+**Round 2 — `:11` scoped, 191 → 195 words.** The final wave-3 gate found the collision round 1 did not
+run on this line: `:11` read "run your day-29 prompt on **a case you didn't build it for**", and the
+Novice tier (`:29`) mandates "a close variant, **not a case it was never built for**". `SKILL.md:28`
+read the instruction aloud and `SKILL.md:30` then presented the tier negating it in the tier's own
+words, on the final day of the course. Now:
+
+> Here is the test: run your day-29 prompt on **a close variant, then on a case you didn't build it
+> for. The second is the climb** — what breaks there?
+
+Anchor 2's "a couple of close variants" and anchor 5's "a case it was not designed for" are now two
+rungs of one test rather than a single universal instruction, matching `:9` one paragraph up.
+**Deletions that paid for it, inside the 9 words of headroom round 1 left:** `:9`'s opening claim
+"**The rubric's rungs are exact.**" (5 words), which the three verbatim anchor quotes that follow
+demonstrate without it; and "asks that **its failure modes** be" → "asks that **they** be" (2 words),
+where "they" binds to the failure modes named in anchor 4's quote in the previous sentence. Net +4.
+Day 30 now has **5** words of headroom.
 
 ### FIX-3.20 — Day 27: the After instructs the learner to do what the Novice tier forbids — filed during wave 2C, re-graded in round 2 — severity: medium
 
@@ -3161,6 +3217,39 @@ today". Day 27 carries a wave-2C foreclosure, appears on no FIX-3.21 sub-item, a
 only its `:21` and its "only what you named" clause. Fixed under FIX-3.20; recorded here because it
 is the second confirmed instance found by looking rather than by list.
 
+### Amended a second time by wave 3C round 2 — the inventory was short by at least three, and the standing consequence is now mandatory
+
+**This entry's day list (16, 20, 28) is not an inventory. It has now proved incomplete twice, and
+five days are confirmed members of the class rather than three.**
+
+| Day | Foreclosure from | On FIX-3.21's list? | Named by any entry? | Verdict |
+|---|---|---|---|---|
+| 16 | wave 2B | no | no | **was defective** — fixed by wave 3B under FIX-3.08 |
+| 20 | wave 2B | no | no | clean — evidence above |
+| 28 | wave 2C | no | no | clean — evidence above |
+| **27** | wave 2C | no | `:21` and `:9`'s "only" clause only | **was defective** at `:9`'s fix-prediction clause — fixed by wave 3C under FIX-3.20 |
+| **17** | wave 2B (`b78e545`) | no | FIX-3.15, **tracking-only and scoped to `:7` and the `"note": ""` example** | **was defective** at `:18` — fixed by wave 3C round 2 under FIX-3.15 |
+| **30** | wave 2C | no | FIX-3.19, scoped to `:9` and `:7` | **was defective** at `:11` — fixed by wave 3C round 2 under FIX-3.19 |
+
+**Three of the six were defective, and every one of the three was found by opening the file and
+checking each concept sentence against the day's own Novice tier — none by following a list.** Days
+17 and 30 are the sharpest cases: both *were* named by a wave-3 entry, and both survived anyway,
+because the entry named some of the day's sentences and the implementer checked those. **A day
+appearing in an entry is not evidence its other concept sentences were read.**
+
+**Standing consequence — now mandatory, not advice, and no longer scoped to any range.** Any wave
+opening a day file for any reason must, before it closes that file, read **every sentence** of that
+day's `## Concept` against that day's **own Novice and Working tier text**, and record the result —
+clean or fixed — in this plan. Not the sentences the entry names: all of them. Absence from
+FIX-3.21's list, absence from this entry's list, and presence in an entry that names other lines are
+all equally worthless as evidence.
+
+**Wave 4 opens `days/17.md` and `days/30.md`** (FIX-4.04 is day 28; FIX-4.05, FIX-4.07 and FIX-4.13
+touch `days/27.md` and `days/30.md`). Both files' concepts are now clean as of wave 3C round 2 and
+the check does not need repeating for the sentences recorded above — but wave 4 must not *re-open* a
+collision, and any wave-4 or wave-5 edit to a `## Concept`, a self-test line or a `## Before / After`
+on those days must re-run this check against the tier text before landing.
+
 ---
 
 ## Wave 3 — checkpoint before wave 4
@@ -3235,8 +3324,11 @@ it. **Sixteen of thirty now have ten words or less of headroom:**
 | Headroom | Days |
 |---|---|
 | 1–3 | 02 (199), 15 (198), 07 / 09 / 11 (197) |
-| 4–6 | 19 / 21 (196), 05 / 12 (195), 13 (194) |
-| 8–10 | 22 / 26 (192), 16 / 30 (191), 04 / 06 (190) |
+| 4–6 | 19 / 21 (196), 05 / 12 / **30** (195), 13 (194) |
+| 8–10 | 22 / 26 (192), 16 (191), 04 / 06 (190) |
+
+*Day 30 was 191 after wave 3C round 1 and is 195 after round 2; day 17 moved 178 → 184 and stays out
+of this table at 16 words of headroom. Both figures recounted after the round-2 edits, not adjusted.*
 
 The other fourteen have 11 or more; the roomiest are 01 (147), 03 (163), 23 (172) and 27 (174). **Any
 wave-4 or wave-5 entry that adds a clause to one of the sixteen must name the deletion that pays for
@@ -3825,7 +3917,7 @@ outright and reduced two more to punctuation.** Status is per row:
 |---|---|---|---|
 | `days/01.md:9` | **live, punctuation only** | "Here is the test. Read your prompt and ask what physical thing lands when it finishes." | "Here is the test: read your prompt and ask what physical thing lands when it finishes." Sentence body unchanged by wave 3A; the full-stop-to-colon swap is P01's half and still applies. |
 | `days/02.md:11` | **live, punctuation only** | "Here is the test. Cover everything in your prompt except the verb." | "Here is the test: cover everything in your prompt except the verb." Opener only — the rest of `:11` was rewritten by wave 3A and must not be restored from this table. |
-| `days/03.md:11` | **live** | "Test it this way: for each adjective in your prompt, ask what output it would make you reject." | "Here is the test: for each adjective in your prompt, ask what output it would make you reject." |
+| `days/03.md:11` | **live — but land it with FIX-5.10(a), not alone** | "Test it this way: for each adjective in your prompt, ask what output it would make you reject." | "Here is the test: for each adjective in your prompt, ask what output it would make you reject." **Wave 3C round 2 filed FIX-5.10(a) against this same line** — the sentence body is rubric-correct but unscoped against `days/03.md:31`'s "two qualities you want". Applying this row alone is safe and reverts nothing, but it re-writes the line, so apply both in one edit or FIX-5.10(a) will look like a fresh defect afterwards. Both fit: day 03 is at 163 words. |
 | `days/04.md:11` | **spent — DO NOT APPLY** | — | Wave 3A rewrote this line in full. The replacement text this table used to carry says "would their outputs be **roughly** the same length and thoroughness?"; "roughly" is `adverb` anchor **4**'s tolerance language, and wave 3A deliberately moved the line to anchor 5's ("would their outputs be the same length and thoroughness?"). Applying the old row verbatim would silently revert a wave-3 alignment fix. The line already opens "Here is the test:". |
 | `days/05.md:11` | **spent — DO NOT APPLY** | — | Wave 3A rewrote this line in full under FIX-3.21(b) and it already opens "Here is the test:". The old replacement text would overwrite the way-station clause that stops the concept condemning the state `days/05.md:31` mandates. |
 | `days/06.md:11` | **live** | "Test it by removing each lever in turn." | "Here is the test: remove each lever in turn." |
@@ -4036,6 +4128,68 @@ its own day-23-form disclaimer, for the prediction test, at `:11`.
 3 / 4 / 5 with imitator 3, derived in `wave2d-sweep.md`. Do not add a rubric to `:47`; see FIX-3.13's
 ruling for why scoring the three levers would grade a defect the exercise plants and forbids fixing.
 Do not touch the `## Concept`.
+
+### FIX-5.10 — Days 3 and 10: two concept-vs-tier drifts that are real but mandate nothing — filed by wave 3C round 2, deliberately not taken in file — severity: low (both sub-items)
+
+Both surfaced at the final wave-3 gate as Minors with the implementer's discretion on where to land
+them. Both were filed rather than edited, for reasons specific to each; **the reasons are the point of
+this entry and a wave-5 implementer should not treat either as a free prose fix.**
+
+**(a) `days/03.md:9` and `:11` — rejection framing versus a Novice tier that asks for wants.** `:11`
+reads "for each adjective in your prompt, ask what output it would make you reject. **If you can't
+answer, cut the word.**" and `:9` reads "the one you'd complain about first if it were missing".
+Wave 2A's Novice tier (`:31`) is "Fill the blanks with **two qualities you want** in the output". A
+compliant Novice following `:11` literally would cut the words their own template requires them to
+supply, and empty both blanks.
+
+**Why this is not the FIX-3.22 class, and why no in-file edit was made.** The tier is **silent**, not
+mandating: it never instructs the learner to name a quality they would *not* reject for, so nothing
+mandated is condemned, and `adjective`'s anchors are rejection-trigger-based at every rung from 3 up
+("Of the qualities the writer names as **rejection-triggers**…"). `:11` is the rubric-aligned half and
+`:31` is the loose half — the inverse of every collision wave 3 fixed. **The decisive reason it was
+not taken in file: `days/03.md:11` is FIX-5.01's one remaining fully-live row**, whose replacement
+text is "Here is the test: for each adjective in your prompt, ask what output it would make you
+reject." Editing `:11` in wave 3 would have spent that row exactly as wave 3A spent the day-04 and
+day-05 rows, and a wave-5 implementer applying FIX-5.01 verbatim afterwards would have silently
+reverted the fix.
+
+**Land both edits together.** Apply FIX-5.01's day-03 row and this sub-item in one edit. Suggested
+`:11` (opener normalised **and** scoped, one net word over the FIX-5.01 row):
+
+> Here is the test: for each adjective in your prompt, ask what output it would make you reject. A
+> quality you want but would not reject for is where this starts; one you would reject for is the
+> climb from there.
+
+Cost check, recounted: `days/03.md`'s `## Concept` is at **163** of 200 — 37 words of headroom, the
+second roomiest in the course — so this fits with room to spare and FIX-5.01's day-03 row remains
+cost-neutral. Do not touch `days/03.md:31` or any tier body; the ladder is settled.
+
+**(b) `days/10.md:7` — the worked example binds both nouns; the Novice template leaves the second
+bare.** `:7` reads "**Fix every correctness issue** in {{TASK}}. **Leave each style issue alone**",
+while wave 2A's Novice template (`:33`) is "Fix ________ correctness issue in {{TASK}}. **Leave style
+issues alone.**" — one blank, second noun deliberately bare, which is `determiner` anchor 3 ("Most
+nouns are bound, but one noun is left bare where swapping 'the' for 'any' would change what gets
+done").
+
+**Why no in-file edit was made, and this is the weaker of the two.** The example **models a rung above
+the tier without condemning the tier**, which is the ordinary shape days 23 and 25 were explicitly
+cleared on. Imitation is structurally impossible here: the Novice template is fixed text with exactly
+one blank, so a learner copying `:7` cannot bind the second noun without rewriting a line the tier
+gives them. Nothing is broken.
+
+**One line a wave-5 reader should look at rather than assume, and it is why this is filed at all:**
+`:9`'s "**A bare noun next to a bound one is still a gap**" is the closest thing on the day to a
+verdict on the state `:33` mandates. Wave 3C read it as rung language — "*still* a gap" names distance
+left to climb, and one bare noun is anchor 3, a scored rung, not anchor 1 — and the final wave-3 gate
+independently judged `:9` and `:11` clean. Two readings agreeing is the reason no edit was made; it is
+**not** a reason to skip re-reading it if wave 5 opens the file. Day 10's `## Concept` is at **178** of
+200 (22 words of headroom) if a scoping clause is ever wanted.
+
+**Constraints for both sub-items.** Do not touch `days/03.md:31`, `days/10.md:33`, or any other tier
+body — days 3 and 10 both sit at 3 / 4 / 5 with imitator 3, derived in `wave2d-sweep.md` and
+re-verified by wave 3A. Do not touch either `## Before / After`. Per FIX-3.22's mandatory check, read
+every sentence of the day's `## Concept` against its own Novice and Working tiers before closing
+either file, and record the result here.
 
 ---
 
