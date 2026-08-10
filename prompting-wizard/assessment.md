@@ -62,6 +62,8 @@ Write `PROGRESS.md` in the learner's working directory — not inside the skill 
 
 level: working
 current_day: 1
+course_version: 1.0.0
+last_update_check: 2026-08-10
 
 ## Levers
 noun: 4    verb: 3    adjective: 2    adverb: 3
@@ -77,4 +79,4 @@ determiner: 3    numeral: 5    interjection: 4    particle: 2
 - Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, pronoun 2, preposition 4, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
 ```
 
-All 11 lever keys must be present. `current_day` starts at 1. The Day 0 `## Log` line must carry all eleven baseline scores, in the format shown, in addition to the level and diagnosis count — `## Levers` gets overwritten as the course progresses, so this line is the only surviving record of the learner's starting point. Never edit it after it's written. Then tell the learner the assessment is done and the course starts next session.
+All 11 lever keys must be present. `current_day` starts at 1. Read the installed `version` from `VERSION.md` into `course_version`, and write today's local date as `last_update_check` in `YYYY-MM-DD` form; the literal values above are illustrative. These two update fields are optional when reading an older or rebuilt progress file, so their absence never invalidates learner state. The Day 0 `## Log` line must carry all eleven baseline scores, in the format shown, in addition to the level and diagnosis count — `## Levers` gets overwritten as the course progresses, so this line is the only surviving record of the learner's starting point. Never edit it after it's written. Then tell the learner the assessment is done and the course starts next session.

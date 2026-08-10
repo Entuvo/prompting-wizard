@@ -14,7 +14,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SKILL = ROOT / "prompting-wizard"
 
-TOP_FILES = ("SKILL.md", "AGENTS.md", "assessment.md", "rubrics.md")
+TOP_FILES = ("SKILL.md", "AGENTS.md", "assessment.md", "rubrics.md",
+             "VERSION.md", "CHANGELOG.md")
 
 LEVERS = ("noun", "verb", "adjective", "adverb", "pronoun", "preposition",
           "conjunction", "determiner", "numeral", "interjection", "particle")
@@ -33,6 +34,14 @@ ABS_PATH_ALLOWED = ("~/.codex/config.toml",)
 SLOT_TOKEN = re.compile(r"\{\{[^{}\n]+\}\}")
 TASK_SLOT_OPTIONAL_DAYS = (14, 27, 29, 30)
 EXTRA_SLOT_DAYS = {28: {"{{DOC}}"}}
+SEMANTIC_VERSION = re.compile(
+    r"^version: (?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$",
+    re.M,
+)
+RELEASE_NOTES_LINE = (
+    "release-notes: https://github.com/Entuvo/prompting-wizard/"
+    "blob/main/prompting-wizard/CHANGELOG.md"
+)
 
 
 def slugify(heading):
@@ -147,6 +156,37 @@ def check_assessment_lever_order(text, errors):
         errors.append("assessment.md: no Day 0 baseline example found")
 
 
+def check_version_manifest(text, changelog_text, errors):
+    """Keep update comparisons machine-readable and release notes reachable."""
+    machine_text = strip_fences(text)
+    version_lines = SEMANTIC_VERSION.findall(machine_text)
+    if not version_lines:
+        errors.append("VERSION.md: version must be semantic MAJOR.MINOR.PATCH")
+    elif len(version_lines) != 1:
+        errors.append("VERSION.md: expected exactly one semantic version line")
+
+    release_notes_lines = re.findall(
+        rf"^{re.escape(RELEASE_NOTES_LINE)}$", machine_text, re.M
+    )
+    if not release_notes_lines:
+        errors.append("VERSION.md: missing canonical release-notes URL")
+    elif len(release_notes_lines) != 1:
+        errors.append(
+            "VERSION.md: expected exactly one canonical release-notes URL"
+        )
+
+    if len(version_lines) == 1 and changelog_text is not None:
+        version = version_lines[0].removeprefix("version: ")
+        if not re.search(
+            rf"^## {re.escape(version)}(?:\s|$)",
+            strip_fences(changelog_text),
+            re.M,
+        ):
+            errors.append(
+                f"CHANGELOG.md: no release heading for version {version}"
+            )
+
+
 def check_day(text, label, day_number, rubric_slugs, referenced_slugs, errors):
     """Record every structural problem in one day file."""
     stripped = strip_fences(text)
@@ -245,6 +285,17 @@ def check(require_all_days=False):
     text = load(assessment_path, "assessment.md") if assessment_path.is_file() else None
     if text is not None:
         check_assessment_lever_order(text, errors)
+
+    version_path = SKILL / "VERSION.md"
+    text = load(version_path, "VERSION.md") if version_path.is_file() else None
+    if text is not None:
+        changelog_path = SKILL / "CHANGELOG.md"
+        changelog_text = (
+            load(changelog_path, "CHANGELOG.md")
+            if changelog_path.is_file()
+            else None
+        )
+        check_version_manifest(text, changelog_text, errors)
 
     rubrics_path = SKILL / "rubrics.md"
     text = load(rubrics_path, "rubrics.md") if rubrics_path.is_file() else None

@@ -84,6 +84,22 @@ def render_assessment(levers=validate.LEVERS, baseline_levers=None):
     )
 
 
+def render_version(version="1.0.0", include_release_notes=True):
+    """Minimal machine-readable update manifest shipped with the skill."""
+    lines = ["# Prompting Wizard version", "", f"version: {version}"]
+    if include_release_notes:
+        lines.append(
+            "release-notes: https://github.com/Entuvo/prompting-wizard/"
+            "blob/main/prompting-wizard/CHANGELOG.md"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def render_changelog(version="1.0.0"):
+    """Minimal release notes for the version declared by the manifest."""
+    return f"# Prompting Wizard release notes\n\n## {version} — 2026-08-10\n"
+
+
 def words(count, start=0):
     return " ".join(f"w{i}" for i in range(start, start + count))
 
@@ -113,6 +129,8 @@ def build_clean_skill(root, days=(1,)):
     (root / "days").mkdir(parents=True, exist_ok=True)
     for name in validate.TOP_FILES:
         (root / name).write_text(f"# {name}\n\nplaceholder\n", encoding="utf-8")
+    (root / "VERSION.md").write_text(render_version(), encoding="utf-8")
+    (root / "CHANGELOG.md").write_text(render_changelog(), encoding="utf-8")
     (root / "assessment.md").write_text(render_assessment(), encoding="utf-8")
     (root / "rubrics.md").write_text(render_rubrics(), encoding="utf-8")
     for number in days:
@@ -163,7 +181,19 @@ class ContractTests(unittest.TestCase):
 
     def test_required_top_level_files(self):
         self.assertEqual(validate.TOP_FILES,
-                         ("SKILL.md", "AGENTS.md", "assessment.md", "rubrics.md"))
+                         ("SKILL.md", "AGENTS.md", "assessment.md", "rubrics.md",
+                          "VERSION.md", "CHANGELOG.md"))
+
+    def test_update_manifest_contract(self):
+        self.assertEqual(
+            validate.SEMANTIC_VERSION.pattern,
+            r"^version: (?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$",
+        )
+        self.assertEqual(
+            validate.RELEASE_NOTES_LINE,
+            "release-notes: https://github.com/Entuvo/prompting-wizard/"
+            "blob/main/prompting-wizard/CHANGELOG.md",
+        )
 
     def test_eleven_levers_are_required(self):
         self.assertEqual(
@@ -622,6 +652,101 @@ class CheckTopLevelFileTests(SkillFixture):
                 (self.skill / name).unlink()
 
                 self.assertIn(f"{name}: missing", validate.check())
+
+
+class CheckVersionManifestTests(SkillFixture):
+
+    def test_missing_version_manifest_is_reported(self):
+        (self.skill / "VERSION.md").unlink()
+
+        self.assertIn("VERSION.md: missing", validate.check())
+
+    def test_non_semantic_version_is_reported(self):
+        self.write("VERSION.md", render_version("next"))
+
+        self.assertIn(
+            "VERSION.md: version must be semantic MAJOR.MINOR.PATCH",
+            validate.check(),
+        )
+
+    def test_leading_zero_version_is_reported(self):
+        self.write("VERSION.md", render_version("01.0.0"))
+
+        self.assertIn(
+            "VERSION.md: version must be semantic MAJOR.MINOR.PATCH",
+            validate.check(),
+        )
+
+    def test_fenced_version_is_not_machine_readable(self):
+        self.write(
+            "VERSION.md",
+            "# Prompting Wizard version\n\n```text\nversion: 1.0.0\n```\n"
+            + validate.RELEASE_NOTES_LINE
+            + "\n",
+        )
+
+        self.assertIn(
+            "VERSION.md: version must be semantic MAJOR.MINOR.PATCH",
+            validate.check(),
+        )
+
+    def test_missing_release_notes_url_is_reported(self):
+        self.write("VERSION.md", render_version(include_release_notes=False))
+
+        self.assertIn(
+            "VERSION.md: missing canonical release-notes URL",
+            validate.check(),
+        )
+
+    def test_near_miss_release_notes_url_is_reported(self):
+        self.write(
+            "VERSION.md",
+            render_version().replace("https://", "http://"),
+        )
+
+        self.assertIn(
+            "VERSION.md: missing canonical release-notes URL",
+            validate.check(),
+        )
+
+    def test_duplicate_version_lines_are_reported(self):
+        self.write("VERSION.md", render_version() + "version: 1.1.0\n")
+
+        self.assertIn(
+            "VERSION.md: expected exactly one semantic version line",
+            validate.check(),
+        )
+
+    def test_duplicate_release_notes_lines_are_reported(self):
+        self.write(
+            "VERSION.md",
+            render_version() + validate.RELEASE_NOTES_LINE + "\n",
+        )
+
+        self.assertIn(
+            "VERSION.md: expected exactly one canonical release-notes URL",
+            validate.check(),
+        )
+
+    def test_changelog_must_include_manifest_version(self):
+        self.write("VERSION.md", render_version("1.1.0"))
+
+        self.assertIn(
+            "CHANGELOG.md: no release heading for version 1.1.0",
+            validate.check(),
+        )
+
+    def test_fenced_changelog_heading_is_not_a_release_heading(self):
+        self.write(
+            "CHANGELOG.md",
+            "# Prompting Wizard release notes\n\n"
+            "```text\n## 1.0.0 — example only\n```\n",
+        )
+
+        self.assertIn(
+            "CHANGELOG.md: no release heading for version 1.0.0",
+            validate.check(),
+        )
 
 
 class CheckAssessmentLeverOrderTests(SkillFixture):

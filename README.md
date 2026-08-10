@@ -106,57 +106,27 @@ You bring the professional judgment. Prompting Wizard teaches you how to communi
 
 ## Start the course
 
-### Let your AI tool install it
-
-If your AI assistant can run terminal commands and read local files, copy and paste this entire instruction into it:
+Open **Codex** or **Claude Code**, start a new chat, and paste the instruction below. You do not need to open a terminal or install anything yourself—the agent does that work and may ask you to approve it.
 
 ```text
-Install Prompting Wizard from https://github.com/Entuvo/prompting-wizard.git and then start the course.
+Install Prompting Wizard from https://github.com/Entuvo/prompting-wizard and start the course.
 
-Before changing anything, inspect the repository README and prompting-wizard/AGENTS.md. Clone the repository into an appropriate user-owned location. If this tool supports local or personal skills, install the inner prompting-wizard directory using this tool's supported skill-discovery convention. If it does not support installed skills, keep the checkout and run the course from the inner prompting-wizard directory by reading AGENTS.md and SKILL.md.
+If you are Codex, use $skill-installer to install the skill from the repository's prompting-wizard directory. If you are Claude Code, install that same inner prompting-wizard directory as a personal skill using Claude Code's supported personal-skills location. You may run the required file and terminal operations yourself; do not ask me to type shell commands.
 
-Do not overwrite or merge with an existing Prompting Wizard installation without asking me first. Do not modify unrelated files. When installation is complete, tell me the exact installation or checkout path, explain which method you used, and start the prompting course. If you cannot run commands or access files, do not pretend the installation succeeded; tell me what capability is missing and give me the shortest manual alternative.
+Before installing, check whether Prompting Wizard is already installed. Do not overwrite or merge an existing installation without asking me. Do not modify unrelated files. When installation is complete, tell me where you installed it and immediately start the day-0 assessment. If a restart is required before the new skill can load, tell me plainly instead of claiming the course has started.
 ```
 
-The assistant should tell you where it installed the course and then begin. This method works with file-aware, terminal-enabled AI tools. A chat-only website cannot install local files by itself.
+Codex uses its built-in skill installer to fetch skills from repositories. Claude Code installs personal skills on the local machine. In both cases, the agent performs the installation; your part is pasting the instruction and approving the action if asked.
 
-### Install manually for Claude Code
+### Using regular Claude chat or Cowork?
 
-```bash
-git clone https://github.com/Entuvo/prompting-wizard.git
-cp -r prompting-wizard/prompting-wizard ~/.claude/skills/
-```
+Claude's chat and Cowork surfaces use account-level skills rather than Claude Code's local personal skills. Anthropic currently installs custom account skills by uploading a packaged ZIP through **Customize → Skills**. Pasting a GitHub link into an ordinary Claude chat does not persistently install it, and regular chat does not provide the persistent local working directory that `PROGRESS.md` needs across lessons. For the one-paste course with progress continuity, open Claude Code in the Claude desktop app rather than a regular chat.
 
-Then tell Claude Code:
+### Updates
 
-```text
-Start the prompting course.
-```
+Prompting Wizard checks for a newer version at most once every seven days. When one is available, it shows the version and release-notes link, then asks before changing anything. Updates never replace `PROGRESS.md`, so your current day, scores, tasks, and lesson history stay intact.
 
-If `~/.claude/skills/prompting-wizard` already exists, move or remove the old copy only after deciding whether you need anything from it.
-
-### Run manually with Codex
-
-```bash
-git clone https://github.com/Entuvo/prompting-wizard.git
-cd prompting-wizard/prompting-wizard
-```
-
-Then tell Codex:
-
-```text
-Read AGENTS.md and start the prompting course.
-```
-
-Codex discovers `AGENTS.md` from the directory where it starts, which is why this method opens the inner `prompting-wizard` directory.
-
-### Use another AI tool
-
-If your tool supports local skills, custom instructions, or reusable agent packages, give it the copy-and-paste installer above. The part that must be installed is the inner `prompting-wizard` directory containing `SKILL.md`, `assessment.md`, `rubrics.md`, and `days/`.
-
-If the tool can read local files but has no skill system, open that inner directory as its workspace and ask it to read `AGENTS.md` and start the course.
-
-If the tool is chat-only, it cannot self-install this repository. Use a file-aware assistant, or download the repository and provide the course files through whatever upload or project feature the product supports.
+To check immediately, tell the tutor: `Check Prompting Wizard for updates.`
 
 ## Before your first lesson
 
@@ -192,7 +162,7 @@ python3 tools/validate.py --complete
 python3 tools/test_validate.py
 ```
 
-The validator checks required section and tier order, duplicate sections, duplicate and non-empty tiers, the 200-word concept cap, rubric references in both directions, supported domain slots, canonical lever order in `assessment.md`, and shipped absolute paths. Changes to `prompting-wizard/days/`, `prompting-wizard/SKILL.md`, or `prompting-wizard/assessment.md` also require human review of their teaching intent.
+The validator checks required section and tier order, duplicate sections, duplicate and non-empty tiers, the 200-word concept cap, rubric references in both directions, supported domain slots, canonical lever order in `assessment.md`, shipped absolute paths, and the shipped `VERSION.md` semantic version, release-notes URL, and matching `CHANGELOG.md` heading. Changes to `prompting-wizard/days/`, `prompting-wizard/SKILL.md`, or `prompting-wizard/assessment.md` also require human review of their teaching intent.
 
 ## License
 
