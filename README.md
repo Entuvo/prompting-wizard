@@ -177,6 +177,10 @@ Prompting Wizard keeps your state in a plain Markdown file named `PROGRESS.md` i
 
 You can read or edit the file whenever you want. You can redo a day, change your tasks, take a break, and return without a penalty.
 
+## Open issues
+
+See the [open issues](https://github.com/Entuvo/prompting-wizard/issues) for known bugs and planned improvements. If you find a problem or have an idea, [open a new issue](https://github.com/Entuvo/prompting-wizard/issues/new).
+
 ## Contributing
 
 Lesson content lives in `prompting-wizard/days/`, and scoring criteria live in `prompting-wizard/rubrics.md`.
@@ -189,3 +193,7 @@ python3 tools/test_validate.py
 ```
 
 The validator checks required section and tier order, duplicate sections, duplicate and non-empty tiers, the 200-word concept cap, rubric references in both directions, supported domain slots, canonical lever order in `assessment.md`, and shipped absolute paths. Changes to `prompting-wizard/days/`, `prompting-wizard/SKILL.md`, or `prompting-wizard/assessment.md` also require human review of their teaching intent.
+
+## License
+
+Prompting Wizard is available under the [MIT License](LICENSE).
