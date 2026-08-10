@@ -30,6 +30,9 @@ TIERS = ("### Novice", "### Working", "### Advanced")
 CONCEPT_MAX_WORDS = 200
 ABS_PATH = re.compile(r"(?:/Users/|/home/|~/)")
 ABS_PATH_ALLOWED = ("~/.codex/config.toml",)
+SLOT_TOKEN = re.compile(r"\{\{[^{}\n]+\}\}")
+TASK_SLOT_OPTIONAL_DAYS = (14, 27, 29, 30)
+EXTRA_SLOT_DAYS = {28: {"{{DOC}}"}}
 
 
 def slugify(heading):
@@ -81,6 +84,27 @@ def section(text, heading):
     return match.group(1) if match else None
 
 
+def raw_section(text, heading):
+    """Body of a section with fenced content intact and fenced headings ignored."""
+    level = len(heading) - len(heading.lstrip("#"))
+    raw_lines = text.split("\n")
+    stripped_lines = strip_fences(text).split("\n")
+    start = next(
+        (index for index, line in enumerate(stripped_lines)
+         if line.rstrip(" \t") == heading),
+        None,
+    )
+    if start is None:
+        return None
+    boundary = re.compile(rf"^#{{1,{level}}} ")
+    end = next(
+        (index for index in range(start + 1, len(stripped_lines))
+         if boundary.match(stripped_lines[index])),
+        len(stripped_lines),
+    )
+    return "\n".join(raw_lines[start + 1:end])
+
+
 def heading_occurrences(text, heading):
     """How many times `heading` appears on a line of its own, outside fences."""
     return len(re.findall(rf"^{re.escape(heading)}\s*$", strip_fences(text), re.M))
@@ -95,14 +119,51 @@ def read_text(path, errors, label):
         return None
 
 
-def check_day(text, label, rubric_slugs, errors):
+def check_assessment_lever_order(text, errors):
+    """Keep both assessment examples in the order used for state tie-breaking."""
+    names = "|".join(map(re.escape, LEVERS))
+    block = re.search(
+        r"^## Levers\s*$\n(.*?)(?=^## Tasks\s*$)",
+        text,
+        re.M | re.S,
+    )
+    if block:
+        order = tuple(re.findall(rf"\b({names}):\s*[1-5]\b", block.group(1)))
+        if order != LEVERS:
+            errors.append(
+                "assessment.md: ## Levers example is not in canonical lever order"
+            )
+    else:
+        errors.append("assessment.md: no ## Levers example found")
+
+    baseline = re.search(r"^- Day 0 .*? — baseline (.+)$", text, re.M)
+    if baseline:
+        order = tuple(re.findall(rf"\b({names})\s+[1-5]\b", baseline.group(1)))
+        if order != LEVERS:
+            errors.append(
+                "assessment.md: Day 0 baseline is not in canonical lever order"
+            )
+    else:
+        errors.append("assessment.md: no Day 0 baseline example found")
+
+
+def check_day(text, label, day_number, rubric_slugs, referenced_slugs, errors):
     """Record every structural problem in one day file."""
+    stripped = strip_fences(text)
+    section_positions = []
     for heading in DAY_SECTIONS:
         count = heading_occurrences(text, heading)
         if count == 0:
             errors.append(f"{label}: missing '{heading}'")
         elif count > 1:
             errors.append(f"{label}: duplicate '{heading}' ({count} occurrences)")
+        else:
+            match = re.search(rf"^{re.escape(heading)}\s*$", stripped, re.M)
+            section_positions.append(match.start())
+
+    if len(section_positions) == len(DAY_SECTIONS):
+        if section_positions != sorted(section_positions):
+            errors.append(f"{label}: day sections are out of order")
 
     concept = section(text, "## Concept")
     if concept is not None:
@@ -110,10 +171,23 @@ def check_day(text, label, rubric_slugs, errors):
         if words > CONCEPT_MAX_WORDS:
             errors.append(f"{label}: concept is {words} words (max {CONCEPT_MAX_WORDS})")
 
-    exercise = section(text, "## Exercise") or ""
+    exercise = raw_section(text, "## Exercise") or ""
+    tier_positions = []
     for tier in TIERS:
-        if tier not in exercise:
+        count = heading_occurrences(exercise, tier)
+        if count == 0:
             errors.append(f"{label}: exercise missing '{tier}'")
+        elif count > 1:
+            errors.append(f"{label}: duplicate exercise tier '{tier}' ({count} occurrences)")
+        else:
+            match = re.search(rf"^{re.escape(tier)}\s*$", exercise, re.M)
+            tier_positions.append(match.start())
+            if not (raw_section(exercise, tier) or "").strip():
+                errors.append(f"{label}: exercise tier '{tier}' is empty")
+
+    if len(tier_positions) == len(TIERS):
+        if tier_positions != sorted(tier_positions):
+            errors.append(f"{label}: exercise tiers are out of order")
 
     rubric = section(text, "## Rubric") or ""
     refs = re.findall(r"rubrics\.md#([a-z0-9-]+)", rubric)
@@ -122,6 +196,15 @@ def check_day(text, label, rubric_slugs, errors):
     for ref in refs:
         if ref not in rubric_slugs:
             errors.append(f"{label}: rubric '{ref}' not in rubrics.md")
+        else:
+            referenced_slugs.add(ref)
+
+    if day_number not in TASK_SLOT_OPTIONAL_DAYS and "{{TASK}}" not in text:
+        errors.append(f"{label}: missing '{{{{TASK}}}}' domain slot")
+
+    allowed_slots = {"{{TASK}}"} | EXTRA_SLOT_DAYS.get(day_number, set())
+    for token in sorted(set(SLOT_TOKEN.findall(text)) - allowed_slots):
+        errors.append(f"{label}: unsupported slot token '{token}'")
 
 
 def check_absolute_paths(text, label, errors):
@@ -145,6 +228,8 @@ def check(require_all_days=False):
 
     errors = []
     cache = {}
+    referenced_slugs = set()
+    all_days_loaded = True
 
     def load(path, label):
         """Read each file at most once a run, so one bad file is one problem."""
@@ -155,6 +240,11 @@ def check(require_all_days=False):
     for name in TOP_FILES:
         if not (SKILL / name).is_file():
             errors.append(f"{name}: missing")
+
+    assessment_path = SKILL / "assessment.md"
+    text = load(assessment_path, "assessment.md") if assessment_path.is_file() else None
+    if text is not None:
+        check_assessment_lever_order(text, errors)
 
     rubrics_path = SKILL / "rubrics.md"
     text = load(rubrics_path, "rubrics.md") if rubrics_path.is_file() else None
@@ -167,13 +257,23 @@ def check(require_all_days=False):
         day = SKILL / "days" / f"{n:02d}.md"
         label = f"days/{n:02d}.md"
         if not day.is_file():
+            all_days_loaded = False
             if require_all_days:
                 errors.append(f"{label}: missing")
             continue
 
         text = load(day, label)
         if text is not None:
-            check_day(text, label, rubric_slugs, errors)
+            check_day(text, label, n, rubric_slugs, referenced_slugs, errors)
+        else:
+            all_days_loaded = False
+
+    if require_all_days and all_days_loaded:
+        for slug in LEVERS + TECHNIQUES:
+            if slug not in referenced_slugs:
+                errors.append(
+                    f"rubrics.md: rubric '{slug}' is not referenced by any day"
+                )
 
     for path in sorted(SKILL.rglob("*.md")):
         label = str(path.relative_to(SKILL))

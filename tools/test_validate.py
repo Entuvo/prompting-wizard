@@ -35,7 +35,7 @@ import validate  # noqa: E402
 
 CLEAN_DAY = (
     ("## Concept", "A short concept, well under the word cap."),
-    ("## Before / After", "**Before**\n\nvague ask\n\n**After**\n\nprecise ask"),
+    ("## Before / After", "**Before**\n\nvague {{TASK}} ask\n\n**After**\n\nprecise ask"),
     ("## Exercise", "### Novice\n\nn\n\n### Working\n\nw\n\n### Advanced\n\na"),
     ("## Rubric", "Score with rubrics.md#noun."),
 )
@@ -67,6 +67,23 @@ def render_rubrics(slugs=validate.LEVERS + validate.TECHNIQUES):
     return f"# Rubrics\n\n{entries}"
 
 
+def render_assessment(levers=validate.LEVERS, baseline_levers=None):
+    """Minimal assessment carrying both canonical lever-order contracts."""
+    baseline_levers = baseline_levers or levers
+    lever_block = "    ".join(f"{slug}: 3" for slug in levers)
+    baseline = ", ".join(f"{slug} 3" for slug in baseline_levers)
+    return (
+        "# Day 0 — Assessment\n\n"
+        "```markdown\n"
+        "## Levers\n"
+        f"{lever_block}\n\n"
+        "## Tasks\n- A task\n\n"
+        "## Log\n"
+        f"- Day 0 — assessment — level working, diagnosis 5/10 — baseline {baseline}\n"
+        "```\n"
+    )
+
+
 def words(count, start=0):
     return " ".join(f"w{i}" for i in range(start, start + count))
 
@@ -96,6 +113,7 @@ def build_clean_skill(root, days=(1,)):
     (root / "days").mkdir(parents=True, exist_ok=True)
     for name in validate.TOP_FILES:
         (root / name).write_text(f"# {name}\n\nplaceholder\n", encoding="utf-8")
+    (root / "assessment.md").write_text(render_assessment(), encoding="utf-8")
     (root / "rubrics.md").write_text(render_rubrics(), encoding="utf-8")
     for number in days:
         (root / "days" / f"{number:02d}.md").write_text(
@@ -181,6 +199,12 @@ class ContractTests(unittest.TestCase):
 
     def test_codex_config_is_the_only_allowed_absolute_path(self):
         self.assertEqual(validate.ABS_PATH_ALLOWED, ("~/.codex/config.toml",))
+
+    def test_task_slot_optional_days_are_pinned(self):
+        self.assertEqual(validate.TASK_SLOT_OPTIONAL_DAYS, (14, 27, 29, 30))
+
+    def test_day_28_doc_slot_exception_is_pinned(self):
+        self.assertEqual(validate.EXTRA_SLOT_DAYS, {28: {"{{DOC}}"}})
 
 
 # --------------------------------------------------------------------------
@@ -600,6 +624,50 @@ class CheckTopLevelFileTests(SkillFixture):
                 self.assertIn(f"{name}: missing", validate.check())
 
 
+class CheckAssessmentLeverOrderTests(SkillFixture):
+
+    def test_missing_levers_example_is_reported(self):
+        assessment = render_assessment().replace("## Levers", "## Scores", 1)
+        self.write("assessment.md", assessment)
+
+        self.assertIn(
+            "assessment.md: no ## Levers example found",
+            validate.check(),
+        )
+
+    def test_missing_day_zero_baseline_is_reported(self):
+        assessment = render_assessment().replace(" — baseline ", " — starting scores ")
+        self.write("assessment.md", assessment)
+
+        self.assertIn(
+            "assessment.md: no Day 0 baseline example found",
+            validate.check(),
+        )
+
+    def test_levers_example_out_of_canonical_order_is_reported(self):
+        reordered = list(validate.LEVERS)
+        reordered[4], reordered[5] = reordered[5], reordered[4]
+        self.write("assessment.md", render_assessment(tuple(reordered)))
+
+        self.assertIn(
+            "assessment.md: ## Levers example is not in canonical lever order",
+            validate.check(),
+        )
+
+    def test_day_zero_baseline_out_of_canonical_order_is_reported(self):
+        reordered = list(validate.LEVERS)
+        reordered[4], reordered[5] = reordered[5], reordered[4]
+        self.write(
+            "assessment.md",
+            render_assessment(validate.LEVERS, tuple(reordered)),
+        )
+
+        self.assertIn(
+            "assessment.md: Day 0 baseline is not in canonical lever order",
+            validate.check(),
+        )
+
+
 class CheckRubricTests(SkillFixture):
 
     def test_rubric_slug_absent_from_rubrics_is_reported(self):
@@ -632,13 +700,38 @@ class CheckRubricTests(SkillFixture):
             ["days/01.md: rubric section has no 'rubrics.md#slug' reference"],
         )
 
+    def test_complete_skill_reports_a_registry_rubric_no_day_references(self):
+        slugs = validate.LEVERS + validate.TECHNIQUES
+        for number in range(1, 31):
+            slug = slugs[number - 1] if number <= len(slugs) else "capstone"
+            sections = replacing(
+                CLEAN_DAY,
+                "## Rubric",
+                f"Score with rubrics.md#{slug}.",
+            )
+            self.write_day(number, sections)
+
+        orphan = "prompt-library"
+        self.write_day(
+            slugs.index(orphan) + 1,
+            replacing(CLEAN_DAY, "## Rubric", "Score with rubrics.md#noun."),
+        )
+
+        self.assertIn(
+            f"rubrics.md: rubric '{orphan}' is not referenced by any day",
+            validate.check(require_all_days=True),
+        )
+
 
 class CheckDaySectionTests(SkillFixture):
 
     def test_missing_day_section_is_reported_by_heading(self):
         self.write_day(1, without(CLEAN_DAY, "## Before / After"))
 
-        self.assertEqual(validate.check(), ["days/01.md: missing '## Before / After'"])
+        self.assertIn(
+            "days/01.md: missing '## Before / After'",
+            validate.check(),
+        )
 
     def test_each_required_day_section_is_checked(self):
         for heading in validate.DAY_SECTIONS:
@@ -665,6 +758,24 @@ class CheckDaySectionTests(SkillFixture):
                 self.assertIn(f"days/01.md: duplicate '{heading}' (2 occurrences)",
                               validate.check())
 
+    def test_required_day_sections_must_be_in_contract_order(self):
+        reordered = (CLEAN_DAY[1], CLEAN_DAY[0], CLEAN_DAY[2], CLEAN_DAY[3])
+        self.write_day(1, reordered)
+
+        self.assertIn(
+            "days/01.md: day sections are out of order",
+            validate.check(),
+        )
+
+    def test_section_heading_mentioned_in_prose_does_not_affect_order(self):
+        concept = "A short concept that refers ahead to ## Exercise in prose."
+        self.write_day(1, replacing(CLEAN_DAY, "## Concept", concept))
+
+        self.assertNotIn(
+            "days/01.md: day sections are out of order",
+            validate.check(),
+        )
+
     def test_a_duplicate_heading_inside_a_fenced_block_is_not_counted(self):
         concept = "Short prose.\n\n```\n## Concept\n```"
         self.write_day(1, replacing(CLEAN_DAY, "## Concept", concept))
@@ -685,6 +796,139 @@ class CheckDaySectionTests(SkillFixture):
                 self.write_day(1, replacing(CLEAN_DAY, "## Exercise", tiers))
 
                 self.assertIn(f"days/01.md: exercise missing '{tier}'", validate.check())
+
+    def test_exercise_tiers_must_be_in_contract_order(self):
+        exercise = "### Working\n\nw\n\n### Novice\n\nn\n\n### Advanced\n\na"
+        self.write_day(1, replacing(CLEAN_DAY, "## Exercise", exercise))
+
+        self.assertIn(
+            "days/01.md: exercise tiers are out of order",
+            validate.check(),
+        )
+
+    def test_tier_heading_mentioned_in_prose_does_not_affect_order(self):
+        exercise = (
+            "The ### Advanced tier comes later.\n\n"
+            "### Novice\n\nn\n\n### Working\n\nw\n\n### Advanced\n\na"
+        )
+        self.write_day(1, replacing(CLEAN_DAY, "## Exercise", exercise))
+
+        self.assertNotIn(
+            "days/01.md: exercise tiers are out of order",
+            validate.check(),
+        )
+
+    def test_empty_exercise_tier_is_reported(self):
+        exercise = "### Novice\n\n### Working\n\nw\n\n### Advanced\n\na"
+        self.write_day(1, replacing(CLEAN_DAY, "## Exercise", exercise))
+
+        self.assertIn(
+            "days/01.md: exercise tier '### Novice' is empty",
+            validate.check(),
+        )
+
+    def test_each_duplicate_exercise_tier_is_reported(self):
+        for tier in validate.TIERS:
+            with self.subTest(tier=tier):
+                self.rebuild()
+                exercise = (
+                    "### Novice\n\nn\n\n### Working\n\nw\n\n"
+                    f"### Advanced\n\na\n\n{tier}\n\nsecond"
+                )
+                self.write_day(1, replacing(CLEAN_DAY, "## Exercise", exercise))
+
+                self.assertIn(
+                    f"days/01.md: duplicate exercise tier '{tier}' (2 occurrences)",
+                    validate.check(),
+                )
+
+    def test_fenced_prompt_is_nonempty_exercise_tier(self):
+        exercise = (
+            "### Novice\n\n```text\nPrompt only.\n```\n\n"
+            "### Working\n\nw\n\n### Advanced\n\na"
+        )
+        self.write_day(1, replacing(CLEAN_DAY, "## Exercise", exercise))
+
+        self.assertNotIn(
+            "days/01.md: exercise tier '### Novice' is empty",
+            validate.check(),
+        )
+
+
+class CheckDomainSlotTests(SkillFixture):
+
+    def test_domain_lesson_without_task_slot_is_reported(self):
+        sections = replacing(
+            CLEAN_DAY,
+            "## Before / After",
+            "**Before**\n\nvague ask\n\n**After**\n\nprecise ask",
+        )
+        self.write_day(1, sections)
+
+        self.assertIn(
+            "days/01.md: missing '{{TASK}}' domain slot",
+            validate.check(),
+        )
+
+    def test_each_non_domain_day_may_omit_task_slot(self):
+        sections = replacing(
+            CLEAN_DAY,
+            "## Before / After",
+            "**Before**\n\nvague ask\n\n**After**\n\nprecise ask",
+        )
+        for day in validate.TASK_SLOT_OPTIONAL_DAYS:
+            with self.subTest(day=day):
+                self.rebuild()
+                self.write_day(day, sections)
+
+                self.assertNotIn(
+                    f"days/{day:02d}.md: missing '{{{{TASK}}}}' domain slot",
+                    validate.check(),
+                )
+
+    def test_unknown_slot_token_is_reported(self):
+        self.write_day(
+            1,
+            replacing(CLEAN_DAY, "## Concept", "Use {{UNKNOWN}} here."),
+        )
+
+        self.assertIn(
+            "days/01.md: unsupported slot token '{{UNKNOWN}}'",
+            validate.check(),
+        )
+
+    def test_mixed_case_slot_typo_is_reported(self):
+        self.write_day(
+            1,
+            replacing(CLEAN_DAY, "## Concept", "Use {{Task}} here."),
+        )
+
+        self.assertIn(
+            "days/01.md: unsupported slot token '{{Task}}'",
+            validate.check(),
+        )
+
+    def test_doc_slot_is_allowed_as_literal_lesson_content_on_day_28(self):
+        self.write_day(
+            28,
+            replacing(CLEAN_DAY, "## Concept", "Save {{DOC}} as a named slot."),
+        )
+
+        self.assertNotIn(
+            "days/28.md: unsupported slot token '{{DOC}}'",
+            validate.check(),
+        )
+
+    def test_doc_slot_is_not_allowed_on_other_days(self):
+        self.write_day(
+            1,
+            replacing(CLEAN_DAY, "## Concept", "Save {{DOC}} as a named slot."),
+        )
+
+        self.assertIn(
+            "days/01.md: unsupported slot token '{{DOC}}'",
+            validate.check(),
+        )
 
 
 class CheckConceptWordCapTests(SkillFixture):
@@ -815,8 +1059,13 @@ class CheckDayCoverageTests(SkillFixture):
         self.assertEqual(problems, [f"days/{n:02d}.md: missing" for n in range(2, 31)])
 
     def test_require_all_days_is_satisfied_when_every_day_exists(self):
+        slugs = validate.LEVERS + validate.TECHNIQUES
         for n in range(2, 31):
-            self.write_day(n)
+            slug = slugs[n - 1] if n <= len(slugs) else "capstone"
+            self.write_day(
+                n,
+                replacing(CLEAN_DAY, "## Rubric", f"Score with rubrics.md#{slug}."),
+            )
 
         self.assertEqual(validate.check(require_all_days=True), [])
 

@@ -1,10 +1,12 @@
 # Prompting Wizard Implementation Plan
 
+> **Status:** Implemented. The task-by-task code blocks below are a historical build record, not the current runtime contract. The shipped files and approved design, including later amendments recorded here, are authoritative where wording differs.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build a shippable 30-day prompting course as a portable markdown skill that assesses the learner, teaches one prompting lever per day using their own real tasks, and runs their prompts in a clean context so they see the difference rather than being told about it.
 
-**Architecture:** The skill is markdown only. `SKILL.md` is the entire tutor loop; `days/01.md`–`days/30.md` and `rubrics.md` are content it loads; `PROGRESS.md` in the learner's directory is the only state. A dev-time Python validator, kept outside the shipped directory, enforces structural consistency across the 35 content files.
+**Architecture:** The skill is markdown only. `SKILL.md` is the entire tutor loop; `days/01.md`–`days/30.md` and `rubrics.md` are content it loads; `PROGRESS.md` in the learner's directory is the only state. A dev-time Python validator, kept outside the shipped directory, enforces structural consistency across the 34 content files.
 
 **Tech Stack:** Markdown. Python 3 stdlib for the dev-time validator. No runtime dependencies, no build step.
 
@@ -12,12 +14,12 @@
 
 - **Shipped skill is markdown only.** No scripts, manifests, or plugin-marketplace assumptions inside `prompting-wizard/`.
 - **Relative paths only** in every shipped file. The single documented exception is `~/.codex/config.toml`, referenced in `SKILL.md`.
-- **No harness-specific tool names** in shipped instructions. Capabilities are stated as requirements ("run in a context with no lesson history"), never as tool calls.
+- **No harness-specific tool dependency** in shipped instructions. Capabilities are stated as requirements; concrete tool names may appear only as detection examples and never as prerequisites.
 - **Both harnesses read the same `SKILL.md` body.** `AGENTS.md` is a pointer only and contains no lesson logic.
 - **Lever vocabulary is fixed** at exactly these 11 slugs, used identically in `rubrics.md`, `PROGRESS.md`, and every day file: `noun`, `verb`, `adjective`, `adverb`, `pronoun`, `preposition`, `conjunction`, `determiner`, `numeral`, `interjection`, `particle`.
 - **Concept sections are ≤200 words.**
 - **Every day file** has exactly these four H2 sections in this order: `## Concept`, `## Before / After`, `## Exercise`, `## Rubric`. `## Exercise` contains exactly `### Novice`, `### Working`, `### Advanced`.
-- **Domain slot token is `{{TASK}}`** everywhere. The skill substitutes the learner's first `## Tasks` entry.
+- **Domain substitution token is `{{TASK}}`.** The skill substitutes the selected `## Tasks` entry everywhere that token appears. Other named slots may remain literal only when the lesson is explicitly teaching slots; day 28's `{{DOC}}` is the current exception.
 - **Commit after every task.** Conventional commit prefixes: `feat`, `docs`, `chore`, `test`.
 
 ---
@@ -39,7 +41,7 @@ docs/superpowers/
 README.md                  # install and run instructions
 ```
 
-Responsibilities: `SKILL.md` owns control flow and nothing else. `rubrics.md` owns all scoring criteria, so critique language stays identical across 30 days. Each `days/NN.md` owns one lesson's content and references a rubric by slug rather than restating criteria. `tools/validate.py` owns the invariants that hold the 35 files together.
+Responsibilities: `SKILL.md` owns control flow and nothing else. `rubrics.md` owns all scoring criteria, so critique language stays identical across 30 days. Each `days/NN.md` owns one lesson's content and references a rubric by slug rather than restating criteria. `tools/validate.py` owns the invariants that hold the 34 files together.
 
 ---
 
@@ -487,11 +489,11 @@ A 30-day course. One 20-minute lesson per session. All state lives in `PROGRESS.
 
 **1. Concept — 3 min.** Present the day's `## Concept` verbatim. Then present `## Before / After`, substituting the learner's first `## Tasks` entry wherever `{{TASK}}` appears.
 
-**2. Write — 5 min.** Present the `## Exercise` tier matching `level`: `### Novice`, `### Working`, or `### Advanced`. If any lever in `## Levers` scores 2 or below, add exactly one of them as a named secondary constraint — for example, "and bind every reference; you scored low on pronoun". One only. Ask for the learner's prompt, then wait.
+**2. Write — 5 min.** Present the `## Exercise` tier matching `level`: `### Novice`, `### Working`, or `### Advanced`. If any lever in `## Levers` scores 2 or below, add exactly one of them as a named secondary constraint — for example, "and bind every reference; you scored low on pronoun". One only. Do not add one when the tier permits only reordering existing words. Ask for the learner's prompt, then wait.
 
 **3. Run — 2 min.** Execute the learner's prompt **verbatim** in a context containing no lesson history. See Clean-context execution. Show the output unedited, and say nothing about it yet.
 
-**4. Critique — 7 min.** Score the prompt against the rubric named in the day's `## Rubric` section, criterion by criterion, 1–5, quoting the rubric's anchor for each score you give. Then write a stronger version of the prompt, run it in a **separate** clean context, and show both outputs side by side.
+**4. Critique — 7 min.** Score the prompt against the rubric named in the day's `## Rubric` section, criterion by criterion, 1–5, quoting the rubric's anchor for each score you give. Then make one edit operation that changes one rubric named by the day and no other lever or technique, run it in a **separate** clean context, and show both outputs side by side.
 
 **5. Name it — 3 min.** Ask the learner which single change moved the output, and for a 1–5 self-rating. Log both.
 
@@ -499,7 +501,7 @@ A 30-day course. One 20-minute lesson per session. All state lives in `PROGRESS.
 
 The learner's prompt must run with no lesson history in context. Lesson context contaminates the output and destroys the comparison the exercise depends on.
 
-- If this harness can dispatch an isolated agent, dispatch the prompt there and capture the output verbatim. In Codex this requires `multi_agent = true` under `[features]` in `~/.codex/config.toml`.
+- If this harness can dispatch an isolated agent, dispatch the prompt there and capture the output verbatim. Detect the capability from the tools actually exposed to the session, not from a configuration entry.
 - If it cannot, or if dispatch fails, print the prompt in a fenced block and ask the learner to run it in a fresh chat and paste the output back.
 
 Never run the learner's prompt in the lesson context. A contaminated run is worse than no run.
@@ -532,7 +534,7 @@ Append one line per completed day:
 
 Make substitution global rather than per-step. Add this line immediately under the `## The daily loop — 20 minutes` heading, before step 1:
 
-> Wherever `{{TASK}}` appears in any text you present, substitute the learner's first `## Tasks` entry. Never show the raw token to the learner.
+> Wherever `{{TASK}}` appears in any text you present, substitute the learner's selected `## Tasks` entry. Never show the raw `{{TASK}}` token to the learner. Other named slots used as lesson content remain literal.
 
 Step 1 may keep its existing clause; the global rule is what guarantees the tiers are covered.
 
@@ -890,7 +892,7 @@ Three checks, each in a fresh session:
 
 - [ ] **Step 6: Verify Codex parity**
 
-In Codex, from the skill directory, confirm `AGENTS.md` leads to `SKILL.md` and that day 1 runs identically to Claude Code. Confirm the Tier A path works with `multi_agent = true` set, and that unsetting it falls through to Tier B rather than erroring.
+In Codex, from the skill directory, confirm `AGENTS.md` leads to `SKILL.md` and that day 1 runs identically to Claude Code. Confirm Tier A whenever an isolated-agent dispatch tool is actually exposed, including when no matching config entry exists; confirm Tier B only when no such tool is available or dispatch fails.
 
 - [ ] **Step 7: Write the README**
 
@@ -922,14 +924,7 @@ git clone https://github.com/Entuvo/prompting-wizard.git
 
 Then, from the inner `prompting-wizard` directory, ask: "read AGENTS.md and start the prompting course".
 
-For the run step to happen automatically, enable multi-agent support in `~/.codex/config.toml`:
-
-```toml
-[features]
-multi_agent = true
-```
-
-Without it the course still works — it asks you to run each prompt in a fresh chat and paste the output back.
+For the run step to happen automatically, Codex must expose an isolated-agent dispatch tool. The course detects the tool itself rather than assuming a configuration entry. Without one, the course asks you to run each prompt in a fresh chat and paste the output back.
 
 ## How it works
 
@@ -939,7 +934,7 @@ Skipping days costs nothing. There is no backlog.
 
 ## Contributing
 
-Lesson content lives in `prompting-wizard/days/`, scoring criteria in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete` before opening a PR. It checks that every day has the required sections, that every rubric reference resolves, and that no shipped file contains an absolute path.
+Lesson content lives in `prompting-wizard/days/`, scoring criteria in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete` before opening a PR. It checks section and tier structure, rubric references in both directions, supported slots, and shipped absolute paths.
 ````
 
 - [ ] **Step 8: Run the validator one final time**
@@ -963,4 +958,4 @@ git push origin main
 
 **Spec refinement made here.** The spec said `rubrics.md` holds one rubric per lever, which left days 15–30 with nothing to score against. This plan extends it to 26 rubrics — 11 levers plus 15 techniques — in the same format and the same file.
 
-**Naming consistency.** The 11 lever slugs and 15 technique slugs are declared once in the slug registry and used identically in `tools/validate.py` (`LEVERS`, `TECHNIQUES`), in `rubrics.md` headings, in every day file's `## Rubric` reference, and in `PROGRESS.md`'s `## Levers` block. `{{TASK}}` is the sole domain slot token. `check(require_all_days=False)` is the only validator entry point; `--complete` is used in Tasks 9 and 10 only. The `.gitkeep` created in Task 1 is deleted in Task 9.
+**Naming consistency.** The 11 lever slugs and 15 technique slugs are declared once in the slug registry and used identically in `tools/validate.py` (`LEVERS`, `TECHNIQUES`), in `rubrics.md` headings, in every day file's `## Rubric` reference, and in `PROGRESS.md`'s `## Levers` block. `{{TASK}}` is the domain substitution token; day 28's literal `{{DOC}}` is lesson content. `check(require_all_days=False)` is the only validator entry point; `--complete` is used in Tasks 9 and 10 only. The `.gitkeep` created in Task 1 is deleted in Task 9.

@@ -46,7 +46,7 @@ Extract 3–5 recurring, concrete tasks. Write them in the learner's words, not 
 | Condition | Level |
 |---|---|
 | Mean lever score below 2.5 | `novice` |
-| Mean lever score 2.5 to 3.9 | `working` |
+| Mean lever score 2.5 or above but below 4.0 | `working` |
 | Mean lever score 4.0 or above | `advanced` |
 
 The mean is taken over the levers the three prompts actually exercised, per Part 1 — not over any lever recorded as an imputed 3.
@@ -65,7 +65,7 @@ current_day: 1
 
 ## Levers
 noun: 4    verb: 3    adjective: 2    adverb: 3
-preposition: 4    pronoun: 2    conjunction: 3
+pronoun: 2    preposition: 4    conjunction: 3
 determiner: 3    numeral: 5    interjection: 4    particle: 2
 
 ## Tasks
@@ -74,7 +74,7 @@ determiner: 3    numeral: 5    interjection: 4    particle: 2
 - Drafting API docs for external partners
 
 ## Log
-- Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, preposition 4, pronoun 2, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
+- Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, pronoun 2, preposition 4, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
 ```
 
 All 11 lever keys must be present. `current_day` starts at 1. The Day 0 `## Log` line must carry all eleven baseline scores, in the format shown, in addition to the level and diagnosis count — `## Levers` gets overwritten as the course progresses, so this line is the only surviving record of the learner's starting point. Never edit it after it's written. Then tell the learner the assessment is done and the course starts next session.
