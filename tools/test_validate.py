@@ -130,6 +130,7 @@ def build_clean_skill(root, days=(1,)):
     (root / "days").mkdir(parents=True, exist_ok=True)
     (root / ".claude-plugin").mkdir(parents=True, exist_ok=True)
     (root.parent / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+    (root.parent / "packaging").mkdir(parents=True, exist_ok=True)
     for name in validate.TOP_FILES:
         (root / name).write_text(f"# {name}\n\nplaceholder\n", encoding="utf-8")
     (root / "VERSION.md").write_text(render_version(), encoding="utf-8")
@@ -153,6 +154,10 @@ def build_clean_skill(root, days=(1,)):
                 ]
             }
         ),
+        encoding="utf-8",
+    )
+    (root.parent / "packaging" / "openai-plugin.json").write_text(
+        json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
         encoding="utf-8",
     )
     for number in days:
@@ -294,6 +299,7 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         root = Path(tmp.name)
         skill = root / "prompting-wizard"
         (root / ".claude-plugin").mkdir()
+        (root / "packaging").mkdir()
         (skill / ".claude-plugin").mkdir(parents=True)
 
         self.addCleanup(setattr, validate, "ROOT", validate.ROOT)
@@ -303,6 +309,7 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
 
         self.plugin_path = skill / ".claude-plugin" / "plugin.json"
         self.marketplace_path = root / ".claude-plugin" / "marketplace.json"
+        self.openai_plugin_path = root / "packaging" / "openai-plugin.json"
         self.plugin_path.write_text(
             json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
             encoding="utf-8",
@@ -320,6 +327,10 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
                     ]
                 }
             ),
+            encoding="utf-8",
+        )
+        self.openai_plugin_path.write_text(
+            json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
             encoding="utf-8",
         )
 
@@ -380,6 +391,22 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.assertIn(
             "Claude marketplace metadata: version does not match VERSION.md",
             errors,
+        )
+
+    def test_openai_plugin_version_must_match_course_version(self):
+        manifest = json.loads(
+            self.openai_plugin_path.read_text(encoding="utf-8")
+        )
+        manifest["version"] = "9.9.9"
+        self.openai_plugin_path.write_text(
+            json.dumps(manifest), encoding="utf-8"
+        )
+        errors = []
+
+        validate.check_distribution_metadata("1.0.0", errors)
+
+        self.assertIn(
+            "OpenAI plugin: version does not match VERSION.md", errors
         )
 
     def test_empty_plugin_manifest_reports_missing_name_and_version(self):
@@ -821,6 +848,24 @@ class CheckTopLevelFileTests(SkillFixture):
                 (self.skill / name).unlink()
 
                 self.assertIn(f"{name}: missing", validate.check())
+
+
+class CheckSkillMetadataTests(SkillFixture):
+
+    def test_description_over_claude_ai_limit_is_rejected(self):
+        self.write(
+            "SKILL.md",
+            "---\n"
+            "name: prompting-wizard\n"
+            f"description: {'x' * 201}\n"
+            "---\n\n"
+            "# Prompting Wizard\n",
+        )
+
+        self.assertIn(
+            "SKILL.md: description exceeds Claude.ai 200-character maximum",
+            validate.check(),
+        )
 
 
 class CheckVersionManifestTests(SkillFixture):

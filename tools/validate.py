@@ -32,6 +32,7 @@ TECHNIQUES = ("role-framing", "few-shot-examples", "output-schemas",
 DAY_SECTIONS = ("## Concept", "## Before / After", "## Exercise", "## Rubric")
 TIERS = ("### Novice", "### Working", "### Advanced")
 CONCEPT_MAX_WORDS = 200
+SKILL_DESCRIPTION_MAX = 200
 ABS_PATH = re.compile(r"(?:/Users/|/home/|~/)")
 ABS_PATH_ALLOWED = ("~/.codex/config.toml",)
 SLOT_TOKEN = re.compile(r"\{\{[^{}\n]+\}\}")
@@ -150,8 +151,25 @@ def read_manifest(path: Path, label: str, errors: list[str]) -> dict | None:
     return manifest
 
 
+def check_skill_metadata(text: str, errors: list[str]) -> None:
+    """Enforce metadata limits for the regular Claude.ai upload artifact."""
+    frontmatter = re.match(r"\A---[ \t]*\n(.*?)^---[ \t]*$", text, re.M | re.S)
+    if not frontmatter:
+        return
+    description = re.search(
+        r"^description:[ \t]*(.*)$", frontmatter.group(1), re.M
+    )
+    if (
+        description
+        and len(description.group(1).strip()) > SKILL_DESCRIPTION_MAX
+    ):
+        errors.append(
+            "SKILL.md: description exceeds Claude.ai 200-character maximum"
+        )
+
+
 def check_distribution_metadata(version: str, errors: list[str]) -> None:
-    """Keep Claude plugin and marketplace metadata aligned with the course."""
+    """Keep shipped plugin and marketplace metadata aligned with the course."""
     plugin = read_manifest(
         SKILL / ".claude-plugin" / "plugin.json",
         "prompting-wizard/.claude-plugin/plugin.json",
@@ -162,11 +180,18 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
         ".claude-plugin/marketplace.json",
         errors,
     )
+    openai_plugin = read_manifest(
+        ROOT / "packaging" / "openai-plugin.json",
+        "packaging/openai-plugin.json",
+        errors,
+    )
 
     if plugin is not None and plugin.get("name") != "prompting-wizard":
         errors.append("Claude plugin: name must be prompting-wizard")
     if plugin is not None and plugin.get("version") != version:
         errors.append("Claude plugin: version does not match VERSION.md")
+    if openai_plugin is not None and openai_plugin.get("version") != version:
+        errors.append("OpenAI plugin: version does not match VERSION.md")
 
     if marketplace is not None:
         metadata = marketplace.get("metadata")
@@ -346,6 +371,11 @@ def check(require_all_days=False):
     for name in TOP_FILES:
         if not (SKILL / name).is_file():
             errors.append(f"{name}: missing")
+
+    skill_path = SKILL / "SKILL.md"
+    text = load(skill_path, "SKILL.md") if skill_path.is_file() else None
+    if text is not None:
+        check_skill_metadata(text, errors)
 
     assessment_path = SKILL / "assessment.md"
     text = load(assessment_path, "assessment.md") if assessment_path.is_file() else None

@@ -106,6 +106,7 @@ class InstallerTests(unittest.TestCase):
         repo = self.sandbox / "broken-repo"
         shutil.copytree(ROOT / "prompting-wizard", repo / "prompting-wizard")
         shutil.copytree(ROOT / ".claude-plugin", repo / ".claude-plugin")
+        shutil.copytree(ROOT / "packaging", repo / "packaging")
         (repo / "tools").mkdir()
         shutil.copy2(ROOT / "tools/validate.py", repo / "tools/validate.py")
         path = repo / relative
@@ -119,6 +120,7 @@ class InstallerTests(unittest.TestCase):
         repo = self.sandbox / "artifact-repo"
         shutil.copytree(ROOT / "prompting-wizard", repo / "prompting-wizard")
         shutil.copytree(ROOT / ".claude-plugin", repo / ".claude-plugin")
+        shutil.copytree(ROOT / "packaging", repo / "packaging")
         (repo / "tools").mkdir()
         shutil.copy2(ROOT / "tools/validate.py", repo / "tools/validate.py")
         skill = repo / "prompting-wizard"

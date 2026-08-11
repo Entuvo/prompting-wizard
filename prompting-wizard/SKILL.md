@@ -1,6 +1,6 @@
 ---
 name: prompting-wizard
-description: Use when the user wants to learn, practise, or get better at prompting - runs a 30-day, 20-minute-a-day course that assesses the learner once and then teaches one prompting lever per day using the learner's own real tasks.
+description: Use when the user wants to learn, practise, or improve prompting through a 30-day course that assesses them once and teaches one prompting lever per day using their real tasks.
 ---
 
 # Prompting Wizard
