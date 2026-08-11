@@ -19,6 +19,7 @@ SYSTEM_PATH = os.pathsep.join(
     dict.fromkeys((str(Path(sys.executable).parent), "/usr/bin", "/bin"))
 )
 REAL_RM = shutil.which("rm", path=SYSTEM_PATH)
+REAL_MV = shutil.which("mv", path=SYSTEM_PATH)
 
 
 class InstallerTests(unittest.TestCase):
@@ -425,6 +426,86 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((target / "old").exists())
         self.assertIn("Warning: could not completely remove backup", result.stderr)
         self.assert_clean_siblings(target.parent)
+
+    def test_rollback_quarantines_before_identity_check_and_never_deletes_live_target(
+        self,
+    ):
+        if REAL_RM is None or REAL_MV is None:
+            self.skipTest("rm or mv is unavailable")
+        skills_root = self.home / ".agents/skills"
+        target = skills_root / "prompting-wizard"
+        target.mkdir(parents=True)
+        (target / "old").write_text("prior\n", encoding="utf-8")
+        rename_count = self.sandbox / "quarantine-rename-count"
+        actor_marker = self.sandbox / "actor-ran"
+        actor_saved = self.sandbox / "displaced-installer-target"
+        remove_log = self.sandbox / "remove-arguments"
+        self.stub(
+            "python3",
+            f'run_actor() {{\n'
+            f'  "{REAL_MV}" "$PW_RACE_TARGET" "$PW_ACTOR_SAVED"\n'
+            f'  mkdir "$PW_RACE_TARGET"\n'
+            f'  printf "concurrent\\n" > "$PW_RACE_TARGET/sentinel"\n'
+            f'  : > "$PW_ACTOR_MARKER"\n'
+            f'}}\n'
+            f'if [ "$1" = - ] && [ "$2" = rename ]; then\n'
+            f'  count=0\n'
+            f'  [ ! -f "$PW_RENAME_COUNT_FILE" ] || '
+            f'count=$(sed -n "1p" "$PW_RENAME_COUNT_FILE")\n'
+            f'  count=$((count + 1))\n'
+            f'  echo "$count" > "$PW_RENAME_COUNT_FILE"\n'
+            f'  if [ "$count" -eq 3 ] && [ ! -f "$PW_ACTOR_MARKER" ]; then\n'
+            f'    case "$3" in */prompting-wizard) run_actor ;; esac\n'
+            f'  fi\n'
+            f'  "{sys.executable}" "$@"\n'
+            f'  status=$?\n'
+            f'  if [ "$count" -eq 2 ] && [ "$status" -eq 0 ]; then\n'
+            f'    "{REAL_RM}" -f "$4/SKILL.md"\n'
+            f'  fi\n'
+            f'  exit "$status"\n'
+            f'fi\n'
+            f'if [ "$1" = - ] && [ "$2" = same-identity ]; then\n'
+            f'  "{sys.executable}" "$@"\n'
+            f'  status=$?\n'
+            f'  if [ "$status" -eq 0 ] && [ ! -f "$PW_ACTOR_MARKER" ]; then\n'
+            f'    run_actor\n'
+            f'  fi\n'
+            f'  exit "$status"\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
+        )
+        self.stub(
+            "rm",
+            f'printf "%s\\n" "$@" >> "$PW_REMOVE_LOG"\n'
+            f'exec "{REAL_RM}" "$@"',
+        )
+
+        result = self.run_install(
+            "--codex",
+            "--force",
+            env_extra={
+                "PW_ACTOR_MARKER": str(actor_marker),
+                "PW_ACTOR_SAVED": str(actor_saved),
+                "PW_RACE_TARGET": str(target),
+                "PW_REMOVE_LOG": str(remove_log),
+                "PW_RENAME_COUNT_FILE": str(rename_count),
+            },
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((target / "sentinel").read_text(), "concurrent\n")
+        self.assertTrue(actor_saved.is_dir())
+        target_real = str(target.resolve())
+        removed_paths = (
+            remove_log.read_text().splitlines() if remove_log.exists() else []
+        )
+        self.assertNotIn(target_real, removed_paths)
+        backups = list(skills_root.glob(".prompting-wizard.backup.*"))
+        self.assertEqual(len(backups), 1)
+        prior_safe = backups[0] / "original"
+        self.assertEqual((prior_safe / "old").read_text(), "prior\n")
+        self.assertIn(str(target.resolve()), result.stderr)
+        self.assertIn(str(prior_safe), result.stderr)
 
 
 if __name__ == "__main__":

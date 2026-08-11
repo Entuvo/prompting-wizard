@@ -166,7 +166,6 @@ safe_remove() {
     fi
 
     case "$remove_kind:$remove_base" in
-        target:prompting-wizard) ;;
         stage:.prompting-wizard.stage.?*) ;;
         backup:.prompting-wizard.backup.?*) ;;
         *) return 1 ;;
@@ -332,22 +331,73 @@ install_one() (
     installed_moved=no
     transaction_state=active
     stage_identity=
+    quarantine_path=
 
     rollback_install() {
         rollback_ok=yes
-        if [ "$installed_moved" = yes ] && path_exists "$install_target"; then
-            if same_directory_identity "$install_target" "$stage_identity"; then
-                safe_remove "$install_target" "$install_root" target || rollback_ok=no
-            fi
-        fi
-        if [ "$prior_moved" = yes ] && path_exists "$backup_path/original"; then
-            if ! path_exists "$install_target"; then
-                rename_exact "$backup_path/original" "$install_target" || rollback_ok=no
+        concurrent_safe=
+        live_safe=
+        prior_safe=
+
+        # Never recursively delete the live target. First move it atomically
+        # into our vacant, unique stage pathname; only that quarantined object
+        # may be identity-checked and removed.
+        if [ "$installed_moved" = yes ] && [ -n "$quarantine_path" ] && \
+                ! path_exists "$quarantine_path" && path_exists "$install_target"; then
+            if rename_exact "$install_target" "$quarantine_path"; then
+                if same_directory_identity "$quarantine_path" "$stage_identity"; then
+                    safe_remove "$quarantine_path" "$install_root" stage || rollback_ok=no
+                else
+                    if ! path_exists "$install_target" && \
+                            rename_exact "$quarantine_path" "$install_target"; then
+                        concurrent_safe=$install_target
+                    else
+                        concurrent_safe=$quarantine_path
+                        if path_exists "$install_target"; then
+                            live_safe=$install_target
+                        fi
+                        rollback_ok=no
+                    fi
+                fi
             else
+                if path_exists "$install_target"; then
+                    live_safe=$install_target
+                fi
+                if path_exists "$quarantine_path"; then
+                    concurrent_safe=$quarantine_path
+                fi
                 rollback_ok=no
             fi
         fi
-        if [ -n "$stage_path" ] && path_exists "$stage_path"; then
+
+        # If the staged rename itself failed, the unique stage path still
+        # contains our original staged inode. Clean only that matching inode.
+        if [ "$installed_moved" = yes ] && [ -n "$quarantine_path" ] && \
+                path_exists "$quarantine_path"; then
+            if same_directory_identity "$quarantine_path" "$stage_identity"; then
+                safe_remove "$quarantine_path" "$install_root" stage || rollback_ok=no
+            else
+                concurrent_safe=$quarantine_path
+                rollback_ok=no
+            fi
+        fi
+
+        if [ "$prior_moved" = yes ] && path_exists "$backup_path/original"; then
+            if ! path_exists "$install_target"; then
+                if ! rename_exact "$backup_path/original" "$install_target"; then
+                    prior_safe=$backup_path/original
+                    if path_exists "$install_target"; then
+                        live_safe=$install_target
+                    fi
+                    rollback_ok=no
+                fi
+            else
+                prior_safe=$backup_path/original
+                rollback_ok=no
+            fi
+        fi
+        if [ "$installed_moved" = no ] && [ -n "$stage_path" ] && \
+                path_exists "$stage_path"; then
             safe_remove "$stage_path" "$install_root" stage || rollback_ok=no
         fi
         if [ -n "$backup_path" ] && path_exists "$backup_path"; then
@@ -356,6 +406,15 @@ install_one() (
             else
                 rollback_ok=no
             fi
+        fi
+        if [ -n "$concurrent_safe" ]; then
+            echo "Error: concurrent object preserved at $concurrent_safe" >&2
+        fi
+        if [ -n "$live_safe" ]; then
+            echo "Error: live target preserved at $live_safe" >&2
+        fi
+        if [ -n "$prior_safe" ]; then
+            echo "Error: prior installation preserved at $prior_safe" >&2
         fi
         [ "$rollback_ok" = yes ]
     }
@@ -411,6 +470,7 @@ install_one() (
         rename_exact "$install_target" "$backup_path/original"
     fi
 
+    quarantine_path=$stage_path
     installed_moved=yes
     rename_exact "$stage_path" "$install_target"
     stage_path=
