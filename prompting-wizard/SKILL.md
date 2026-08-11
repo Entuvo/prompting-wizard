@@ -22,6 +22,7 @@ First determine the host's state mode. A durable host can read and write the lea
      - `## Levers`, `## Tasks`, `level`, or `## Log` missing or unparseable → offer to re-run the assessment instead; a day number cannot repair those.
      - `## Tasks` present but carrying fewer than three entries → a failed field; offer to re-run Part 3 of the assessment rather than the whole thing.
      - `## Log` present but empty → not a failed field. The section must be present and its lines parseable, but a file rebuilt from a stated day number legitimately carries no Day 0 baseline line and no per-day lines, and day 30 says so when it reaches the baseline comparison.
+   Any recovery, rebuild, or repair that changes `PROGRESS.md` is a state change: before continuing, apply step 6's durable write or stateless artifact-or-complete-fenced-file delivery rule.
    - **Present and valid** → continue.
 2. Read `level`, `current_day`, `## Levers`, `## Tasks`, and `## Log`. Also read `course_version` and `last_update_check` when present; they are optional update metadata, so a missing or malformed value never invalidates the learner's course state. Run the update check below before continuing when `current_day` is 30 or below, or whenever the learner explicitly asks to check or update.
 3. If `current_day` is above 30, tell the learner the course is complete and stop.
