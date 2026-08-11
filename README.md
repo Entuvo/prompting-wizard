@@ -106,52 +106,25 @@ You bring the professional judgment. Prompting Wizard teaches you how to communi
 
 ## Start the course
 
-### Claude.ai and Claude Desktop
-
-The normal installation path is **Customize → Skills** or **Customize → Plugins**. Search for **Prompting Wizard**, install it, then start a new chat and say `Start Prompting Wizard.`
-
-**Public directory listing: pending vendor review.** When [`prompting-wizard-claude-skill.zip`](https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-claude-skill.zip) is available from the latest GitHub release, download it and upload it through **Customize → Skills → Create skill → Upload**. If the link returns 404, the release asset is not published yet; use the paste-and-run fallback below. This is the normal custom-skill path for regular Claude chat; Claude Code is not required.
-
-Claude chat may not provide a durable working directory. Attach your latest `PROGRESS.md` when returning; Prompting Wizard returns the updated file after the lesson.
-
-### ChatGPT, Codex app, and Codex CLI
-
-The target normal path is the shared OpenAI plugin directory: install **Prompting Wizard**, then say `Start Prompting Wizard.`
-
-**Public directory listing: pending vendor review.** Until it is published, ask Codex to install the repository skill:
+Copy the prompt below and paste it into Claude Desktop, Codex, or another AI assistant. The AI will inspect its own capabilities, choose the installation or loading method it actually supports, and start the course.
 
 ```text
-Use $skill-installer to install Prompting Wizard from https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard, then start Prompting Wizard in this chat. Do not overwrite an existing installation without asking me.
+Install or load Prompting Wizard from:
+
+https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard
+
+First determine which AI environment you are running in and which capabilities it actually provides. Use its native skill, plugin, marketplace, repository, or filesystem installation method when available.
+
+If persistent installation is unavailable but you can read GitHub, load Prompting Wizard for this chat by reading AGENTS.md and then SKILL.md from that repository path. Follow those instructions directly.
+
+Do not overwrite an existing installation without asking me. Never claim the skill is installed unless the host confirms it. Do not stop after explaining installation or creating a package. Once Prompting Wizard is available, start the Day 0 assessment.
+
+If this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
+
+If you can neither install the skill nor read its files from GitHub, state exactly which capability is missing. Do not fabricate a successful installation.
 ```
 
-### Claude Code
-
-Add the repository marketplace, install the plugin, and start it:
-
-```text
-/plugin marketplace add Entuvo/prompting-wizard
-/plugin install prompting-wizard@entuvo-prompting
-```
-
-If plugin discovery requires a reload, Claude Code will say so. Otherwise say `Start Prompting Wizard.` immediately.
-
-### Plain terminal
-
-Paste this one command. It uses a temporary clone, validates all 30 lessons, detects Codex and Claude Code, and asks before replacing an existing installation:
-
-```sh
-pw_install_tmp="$(mktemp -d)" && git clone --depth 1 https://github.com/Entuvo/prompting-wizard "$pw_install_tmp/repo" && sh "$pw_install_tmp/repo/install.sh"
-```
-
-### Paste and run without installing
-
-Use this only when the host can fetch GitHub files but cannot install a skill. It loads the course for the current chat; it does not install it persistently.
-
-```text
-Load Prompting Wizard for this chat from https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard.
-
-Read AGENTS.md, then read SKILL.md and follow it directly. Do not stop after packaging or explaining installation. Start the day-0 assessment now. If this chat has no durable working directory, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change. Never claim this direct load is a persistent installation.
-```
+Some AI hosts can install Prompting Wizard persistently. Others can load it only for the current chat. The prompt requires the AI to tell you which outcome actually occurred.
 
 ### Updates
 
