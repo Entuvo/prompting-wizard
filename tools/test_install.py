@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Filesystem-level tests for the local Prompting Wizard installer."""
 
+import errno
 import os
+import pty
+import select
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -14,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SYSTEM_PATH = os.pathsep.join(
     dict.fromkeys((str(Path(sys.executable).parent), "/usr/bin", "/bin"))
 )
-REAL_MV = shutil.which("mv", path=SYSTEM_PATH)
+REAL_RM = shutil.which("rm", path=SYSTEM_PATH)
 
 
 class InstallerTests(unittest.TestCase):
@@ -34,6 +38,16 @@ class InstallerTests(unittest.TestCase):
         return path
 
     def run_install(self, *args, input_text=None, env_extra=None):
+        env = self.install_env(env_extra)
+        return subprocess.run(
+            ["sh", str(ROOT / "install.sh"), *args],
+            input=input_text,
+            text=True,
+            capture_output=True,
+            env=env,
+        )
+
+    def install_env(self, env_extra=None):
         env = os.environ.copy()
         env.update(
             {
@@ -44,12 +58,47 @@ class InstallerTests(unittest.TestCase):
         )
         if env_extra:
             env.update(env_extra)
-        return subprocess.run(
+        return env
+
+    def run_install_pty(self, *args, env_extra=None, response=b"y\n"):
+        env = self.install_env(env_extra)
+        pid, master = pty.fork()
+        if pid == 0:
+            os.execve("/bin/sh", ["sh", str(ROOT / "install.sh"), *args], env)
+
+        output = bytearray()
+        sent_response = False
+        deadline = time.monotonic() + 10
+        try:
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    os.kill(pid, 9)
+                    raise AssertionError("installer PTY timed out")
+                readable, _, _ = select.select([master], [], [], remaining)
+                if not readable:
+                    os.kill(pid, 9)
+                    raise AssertionError("installer PTY timed out")
+                try:
+                    chunk = os.read(master, 4096)
+                except OSError as exc:
+                    if exc.errno == errno.EIO:
+                        break
+                    raise
+                if not chunk:
+                    break
+                output.extend(chunk)
+                if not sent_response and b"Replace it?" in output:
+                    os.write(master, response)
+                    sent_response = True
+        finally:
+            os.close(master)
+        _, status = os.waitpid(pid, 0)
+        return subprocess.CompletedProcess(
             ["sh", str(ROOT / "install.sh"), *args],
-            input=input_text,
-            text=True,
-            capture_output=True,
-            env=env,
+            os.waitstatus_to_exitcode(status),
+            stdout=output.decode("utf-8", errors="replace"),
+            stderr="",
         )
 
     def copy_repo_without(self, relative):
@@ -190,6 +239,96 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("--force", result.stderr)
         self.assert_clean_siblings(target.parent)
 
+    def test_tty_confirmation_preserves_later_failure_diagnostics(self):
+        target = self.home / ".agents/skills/prompting-wizard"
+        target.mkdir(parents=True)
+        (target / "sentinel").write_text("keep\n", encoding="utf-8")
+        counter = self.sandbox / "pty-rename-count"
+        self.stub(
+            "python3",
+            f'if [ "$1" = - ] && [ "$2" = rename ]; then\n'
+            f'  count=0\n'
+            f'  [ ! -f "$PW_RENAME_COUNT_FILE" ] || '
+            f'count=$(sed -n "1p" "$PW_RENAME_COUNT_FILE")\n'
+            f'  count=$((count + 1))\n'
+            f'  echo "$count" > "$PW_RENAME_COUNT_FILE"\n'
+            f'  [ "$count" -ne 2 ] || exit 72\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
+        )
+
+        result = self.run_install_pty(
+            "--codex",
+            env_extra={"PW_RENAME_COUNT_FILE": str(counter)},
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Replace it?", result.stdout)
+        self.assertIn("prior installation restored", result.stdout)
+        self.assertEqual((target / "sentinel").read_text(), "keep\n")
+        self.assert_clean_siblings(target.parent)
+
+    def test_target_appearing_during_staging_survives_without_authorization(self):
+        target = self.home / ".agents/skills/prompting-wizard"
+        race_marker = self.sandbox / "race-created"
+        self.stub(
+            "python3",
+            f'if [ "$1" = - ] && '
+            f'[ "$2" = "$PW_REPO_ROOT/prompting-wizard" ] && '
+            f'[ ! -f "$PW_RACE_MARKER" ]; then\n'
+            f'  mkdir -p "$PW_RACE_TARGET"\n'
+            f'  printf "concurrent\\n" > "$PW_RACE_TARGET/sentinel"\n'
+            f'  : > "$PW_RACE_MARKER"\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
+        )
+
+        result = self.run_install(
+            "--codex",
+            env_extra={
+                "PW_RACE_MARKER": str(race_marker),
+                "PW_RACE_TARGET": str(target),
+            },
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((target / "sentinel").read_text(), "concurrent\n")
+        self.assertEqual(sorted(p.name for p in target.iterdir()), ["sentinel"])
+        self.assert_clean_siblings(target.parent)
+
+    def test_empty_target_appearing_at_rename_boundary_is_not_replaced(self):
+        target = self.home / ".agents/skills/prompting-wizard"
+        inode_record = self.sandbox / "concurrent-inode"
+        self.stub(
+            "python3",
+            f'if [ "$1" = - ] && [ "$2" = rename ] && '
+            f'[ ! -f "$PW_RACE_INODE" ]; then\n'
+            f'  case "$4" in\n'
+            f'    */prompting-wizard)\n'
+            f'      mkdir "$PW_RACE_TARGET"\n'
+            f'      "{sys.executable}" -c '
+            f'"import os,sys; print(os.stat(sys.argv[1]).st_ino)" '
+            f'"$PW_RACE_TARGET" > "$PW_RACE_INODE"\n'
+            f'      ;;\n'
+            f'  esac\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
+        )
+
+        result = self.run_install(
+            "--codex",
+            env_extra={
+                "PW_RACE_INODE": str(inode_record),
+                "PW_RACE_TARGET": str(target),
+            },
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(target.is_dir())
+        self.assertEqual(target.stat().st_ino, int(inode_record.read_text()))
+        self.assertEqual(list(target.iterdir()), [])
+        self.assert_clean_siblings(target.parent)
+
     def test_force_replaces_only_the_named_skill(self):
         skills_root = self.home / ".agents/skills"
         target = skills_root / "prompting-wizard"
@@ -239,29 +378,29 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((claude / ".claude-plugin/plugin.json").is_file())
 
     def test_failed_replacement_restores_exact_prior_install(self):
-        if REAL_MV is None:
-            self.skipTest("mv is unavailable")
         skills_root = self.home / ".agents/skills"
         target = skills_root / "prompting-wizard"
         (target / "nested").mkdir(parents=True)
         (target / "sentinel").write_bytes(b"keep\x00exact")
         (target / "nested/data").write_text("prior\n", encoding="utf-8")
-        counter = self.sandbox / "mv-count"
+        counter = self.sandbox / "rename-count"
         self.stub(
-            "mv",
-            f'count=0\n'
-            f'[ ! -f "$PW_MV_COUNT_FILE" ] || count=$(sed -n "1p" '
-            f'"$PW_MV_COUNT_FILE")\n'
-            f'count=$((count + 1))\n'
-            f'echo "$count" > "$PW_MV_COUNT_FILE"\n'
-            f'[ "$count" -ne 2 ] || exit 73\n'
-            f'exec "{REAL_MV}" "$@"',
+            "python3",
+            f'if [ "$1" = - ] && [ "$2" = rename ]; then\n'
+            f'  count=0\n'
+            f'  [ ! -f "$PW_RENAME_COUNT_FILE" ] || '
+            f'count=$(sed -n "1p" "$PW_RENAME_COUNT_FILE")\n'
+            f'  count=$((count + 1))\n'
+            f'  echo "$count" > "$PW_RENAME_COUNT_FILE"\n'
+            f'  [ "$count" -ne 2 ] || exit 73\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
         )
 
         result = self.run_install(
             "--codex",
             "--force",
-            env_extra={"PW_MV_COUNT_FILE": str(counter)},
+            env_extra={"PW_RENAME_COUNT_FILE": str(counter)},
         )
 
         self.assertNotEqual(result.returncode, 0)
@@ -270,6 +409,22 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((target / "nested/data").read_text(), "prior\n")
         self.assertEqual(sorted(p.name for p in target.iterdir()), ["nested", "sentinel"])
         self.assert_clean_siblings(skills_root)
+
+    def test_backup_cleanup_failure_cannot_remove_the_committed_install(self):
+        if REAL_RM is None:
+            self.skipTest("rm is unavailable")
+        target = self.home / ".agents/skills/prompting-wizard"
+        target.mkdir(parents=True)
+        (target / "old").write_text("old\n", encoding="utf-8")
+        self.stub("rm", f'"{REAL_RM}" "$@"\nexit 74')
+
+        result = self.run_install("--codex", "--force")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((target / "SKILL.md").is_file())
+        self.assertFalse((target / "old").exists())
+        self.assertIn("Warning: could not completely remove backup", result.stderr)
+        self.assert_clean_siblings(target.parent)
 
 
 if __name__ == "__main__":

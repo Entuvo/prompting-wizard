@@ -96,15 +96,24 @@ confirm_replacement() {
 
     replacement_allowed=no
     if [ -t 0 ]; then
-        if exec 3<>/dev/tty 2>/dev/null && [ -t 3 ]; then
+        tty_open=no
+        exec 4>&2
+        if exec 3<>/dev/tty 2>/dev/null; then
+            tty_open=yes
+        fi
+        exec 2>&4
+        exec 4>&-
+        if [ "$tty_open" = yes ] && [ -t 3 ]; then
             printf '%s already exists at %s. Replace it? [y/N] ' \
                 "$confirm_label" "$confirm_target" >&3
             reply=
             IFS= read -r reply <&3 || true
-            exec 3>&-
             case "$reply" in
                 y|Y|yes|YES|Yes) replacement_allowed=yes ;;
             esac
+        fi
+        if [ "$tty_open" = yes ]; then
+            exec 3>&-
         fi
     fi
 
@@ -198,6 +207,79 @@ for entry in os.listdir(source):
 PY
 }
 
+rename_exact() {
+    python3 - rename "$1" "$2" <<'PY'
+import ctypes
+import errno
+import os
+import sys
+
+_, source, destination = sys.argv[1:]
+
+
+def rename_without_replacement(src, dst):
+    libc = ctypes.CDLL(None, use_errno=True)
+    encoded_src = os.fsencode(src)
+    encoded_dst = os.fsencode(dst)
+    if sys.platform == "darwin":
+        rename = libc.renamex_np
+        rename.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]
+        rename.restype = ctypes.c_int
+        result = rename(encoded_src, encoded_dst, 0x00000004)  # RENAME_EXCL
+    elif sys.platform.startswith("linux") and hasattr(libc, "renameat2"):
+        rename = libc.renameat2
+        rename.argtypes = [
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_int,
+            ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        rename.restype = ctypes.c_int
+        result = rename(-100, encoded_src, -100, encoded_dst, 1)  # RENAME_NOREPLACE
+    else:
+        raise OSError(
+            errno.ENOTSUP,
+            "atomic no-replace directory rename is unavailable",
+            dst,
+        )
+    if result != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), dst)
+
+
+try:
+    rename_without_replacement(source, destination)
+except OSError as exc:
+    print(f"Error: cannot rename {source} to {destination}: {exc}", file=sys.stderr)
+    raise SystemExit(1)
+PY
+}
+
+directory_identity() {
+    python3 - identity "$1" <<'PY'
+import os
+import sys
+
+stat = os.stat(sys.argv[2], follow_symlinks=False)
+print(f"{stat.st_dev}:{stat.st_ino}")
+PY
+}
+
+same_directory_identity() {
+    python3 - same-identity "$1" "$2" <<'PY'
+import os
+import sys
+
+try:
+    stat = os.stat(sys.argv[2], follow_symlinks=False)
+except OSError:
+    raise SystemExit(1)
+actual = f"{stat.st_dev}:{stat.st_ino}"
+raise SystemExit(0 if actual == sys.argv[3] else 1)
+PY
+}
+
 verify_install_tree() {
     verify_tree=$1
     verify_host=$2
@@ -248,15 +330,19 @@ install_one() (
     backup_path=
     prior_moved=no
     installed_moved=no
+    transaction_state=active
+    stage_identity=
 
     rollback_install() {
         rollback_ok=yes
         if [ "$installed_moved" = yes ] && path_exists "$install_target"; then
-            safe_remove "$install_target" "$install_root" target || rollback_ok=no
+            if same_directory_identity "$install_target" "$stage_identity"; then
+                safe_remove "$install_target" "$install_root" target || rollback_ok=no
+            fi
         fi
-        if [ "$prior_moved" = yes ]; then
+        if [ "$prior_moved" = yes ] && path_exists "$backup_path/original"; then
             if ! path_exists "$install_target"; then
-                mv -- "$backup_path/original" "$install_target" || rollback_ok=no
+                rename_exact "$backup_path/original" "$install_target" || rollback_ok=no
             else
                 rollback_ok=no
             fi
@@ -277,10 +363,16 @@ install_one() (
     installer_exit() {
         install_status=$?
         trap - 0 1 2 15
-        if [ "$install_status" -ne 0 ]; then
+        if [ "$install_status" -ne 0 ] && [ "$transaction_state" != committed ]; then
             set +e
+            restore_expected=no
+            if [ "$prior_moved" = yes ] && path_exists "$backup_path/original"; then
+                restore_expected=yes
+            fi
             if ! rollback_install; then
                 echo "Error: automatic rollback was incomplete; prior data remains in $backup_path" >&2
+            elif [ "$restore_expected" = yes ]; then
+                echo "Error: installation failed; prior installation restored" >&2
             fi
         fi
         exit "$install_status"
@@ -303,28 +395,39 @@ install_one() (
     esac
     copy_skill "$skill_source_real" "$stage_path" "$install_host"
     verify_install_tree "$stage_path" "$install_host"
+    stage_identity=$(directory_identity "$stage_path")
 
     if path_exists "$install_target"; then
+        if [ "$install_replace" != yes ]; then
+            echo "Error: $install_label appeared during staging; refusing to replace it" >&2
+            exit 1
+        fi
         backup_path=$(mktemp -d "$install_root/.prompting-wizard.backup.XXXXXX")
         case "${backup_path%/*}:${backup_path##*/}" in
             "$install_root":.prompting-wizard.backup.?*) ;;
             *) echo "Error: mktemp returned an unsafe backup path" >&2; exit 1 ;;
         esac
-        mv -- "$install_target" "$backup_path/original"
         prior_moved=yes
+        rename_exact "$install_target" "$backup_path/original"
     fi
 
-    mv -- "$stage_path" "$install_target"
     installed_moved=yes
+    rename_exact "$stage_path" "$install_target"
     stage_path=
     verify_install_tree "$install_target" "$install_host"
 
-    if [ "$prior_moved" = yes ]; then
-        safe_remove "$backup_path" "$install_root" backup
-        backup_path=
-        prior_moved=no
-    fi
+    # Verification is the commit point. From here onward the new target must
+    # survive interruption or best-effort cleanup failure.
+    transaction_state=committed
+    cleanup_backup=$backup_path
     installed_moved=no
+    prior_moved=no
+    backup_path=
+    if [ -n "$cleanup_backup" ]; then
+        if ! safe_remove "$cleanup_backup" "$install_root" backup; then
+            echo "Warning: could not completely remove backup: $cleanup_backup" >&2
+        fi
+    fi
     trap - 0 1 2 15
     echo "Installed $install_label: $install_target"
 )
