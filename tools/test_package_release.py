@@ -82,6 +82,30 @@ class PackageReleaseTests(unittest.TestCase):
         digests2 = [hashlib.sha256(path.read_bytes()).hexdigest() for path in second]
         self.assertEqual(digests1, digests2)
 
+    def test_validation_failure_prevents_archive_creation(self):
+        (self.root / "tools").mkdir()
+        shutil.copy2(
+            package_release.ROOT / "tools/validate.py",
+            self.root / "tools/validate.py",
+        )
+        (self.skill / "days/30.md").write_text(
+            "# Day 30\n\nIncomplete lesson.\n",
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            r"days/30\.md: missing '## Concept'",
+        ):
+            package_release.build_all(self.root, self.dist, validate=True)
+
+        for name in (
+            "prompting-wizard-claude-skill.zip",
+            "prompting-wizard-claude-plugin.zip",
+            "prompting-wizard-openai-plugin.zip",
+        ):
+            self.assertFalse((self.dist / name).exists())
+
 
 if __name__ == "__main__":
     unittest.main()
