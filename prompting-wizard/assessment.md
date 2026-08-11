@@ -79,4 +79,6 @@ determiner: 3    numeral: 5    interjection: 4    particle: 2
 - Day 0 — assessment — level working, diagnosis 6/10 — baseline noun 4, verb 3, adjective 2, adverb 3, pronoun 2, preposition 4, conjunction 3, determiner 3, numeral 5, interjection 4, particle 2
 ```
 
+On a stateless host, return the updated `PROGRESS.md` as a downloadable file artifact instead of claiming it was saved across chats. If artifacts are unavailable, show the complete final file in one fenced Markdown block and ask the learner to save it as `PROGRESS.md`. This state export happens before ending the assessment session.
+
 All 11 lever keys must be present. `current_day` starts at 1. Read the installed `version` from `VERSION.md` into `course_version`, and write today's local date as `last_update_check` in `YYYY-MM-DD` form; the literal values above are illustrative. These two update fields are optional when reading an older or rebuilt progress file, so their absence never invalidates learner state. The Day 0 `## Log` line must carry all eleven baseline scores, in the format shown, in addition to the level and diagnosis count — `## Levers` gets overwritten as the course progresses, so this line is the only surviving record of the learner's starting point. Never edit it after it's written. Then tell the learner the assessment is done and the course starts next session.
