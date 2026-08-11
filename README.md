@@ -106,21 +106,52 @@ You bring the professional judgment. Prompting Wizard teaches you how to communi
 
 ## Start the course
 
-Open **Codex** or **Claude Code**, start a new chat, and paste the instruction below. You do not need to open a terminal or install anything yourself—the agent does that work and may ask you to approve it.
+### Claude.ai and Claude Desktop
+
+The normal installation path is **Customize → Skills** or **Customize → Plugins**. Search for **Prompting Wizard**, install it, then start a new chat and say `Start Prompting Wizard.`
+
+**Public directory listing: pending vendor review.** Until it is published, download [`prompting-wizard-claude-skill.zip`](https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-claude-skill.zip) from the latest GitHub release and upload it through **Customize → Skills → Create skill → Upload**. This is the normal custom-skill path for regular Claude chat; Claude Code is not required.
+
+Claude chat may not provide a durable working directory. Attach your latest `PROGRESS.md` when returning; Prompting Wizard returns the updated file after the lesson.
+
+### ChatGPT, Codex app, and Codex CLI
+
+The target normal path is the shared OpenAI plugin directory: install **Prompting Wizard**, then say `Start Prompting Wizard.`
+
+**Public directory listing: pending vendor review.** Until it is published, ask Codex to install the repository skill:
 
 ```text
-Install Prompting Wizard from https://github.com/Entuvo/prompting-wizard and start the course.
-
-If you are Codex, use $skill-installer to install the skill from the repository's prompting-wizard directory. If you are Claude Code, install that same inner prompting-wizard directory as a personal skill using Claude Code's supported personal-skills location. You may run the required file and terminal operations yourself; do not ask me to type shell commands.
-
-Before installing, check whether Prompting Wizard is already installed. Do not overwrite or merge an existing installation without asking me. Do not modify unrelated files. When installation is complete, tell me where you installed it and immediately start the day-0 assessment. If a restart is required before the new skill can load, tell me plainly instead of claiming the course has started.
+Use $skill-installer to install Prompting Wizard from https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard, then start Prompting Wizard in this chat. Do not overwrite an existing installation without asking me.
 ```
 
-Codex uses its built-in skill installer to fetch skills from repositories. Claude Code installs personal skills on the local machine. In both cases, the agent performs the installation; your part is pasting the instruction and approving the action if asked.
+### Claude Code
 
-### Using regular Claude chat or Cowork?
+Add the repository marketplace, install the plugin, and start it:
 
-Claude's chat and Cowork surfaces use account-level skills rather than Claude Code's local personal skills. Anthropic currently installs custom account skills by uploading a packaged ZIP through **Customize → Skills**. Pasting a GitHub link into an ordinary Claude chat does not persistently install it, and regular chat does not provide the persistent local working directory that `PROGRESS.md` needs across lessons. For the one-paste course with progress continuity, open Claude Code in the Claude desktop app rather than a regular chat.
+```text
+/plugin marketplace add Entuvo/prompting-wizard
+/plugin install prompting-wizard@entuvo-prompting
+```
+
+If plugin discovery requires a reload, Claude Code will say so. Otherwise say `Start Prompting Wizard.` immediately.
+
+### Plain terminal
+
+Paste this one command. It uses a temporary clone, validates all 30 lessons, detects Codex and Claude Code, and asks before replacing an existing installation:
+
+```sh
+pw_install_tmp="$(mktemp -d)" && git clone --depth 1 https://github.com/Entuvo/prompting-wizard "$pw_install_tmp/repo" && sh "$pw_install_tmp/repo/install.sh"
+```
+
+### Paste and run without installing
+
+Use this only when the host can fetch GitHub files but cannot install a skill. It loads the course for the current chat; it does not install it persistently.
+
+```text
+Load Prompting Wizard for this chat from https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard.
+
+Read AGENTS.md, then read SKILL.md and follow it directly. Do not stop after packaging or explaining installation. Start the day-0 assessment now. If this chat has no durable working directory, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change. Never claim this direct load is a persistent installation.
+```
 
 ### Updates
 
