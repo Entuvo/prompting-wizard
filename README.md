@@ -110,7 +110,7 @@ You bring the professional judgment. Prompting Wizard teaches you how to communi
 
 The normal installation path is **Customize → Skills** or **Customize → Plugins**. Search for **Prompting Wizard**, install it, then start a new chat and say `Start Prompting Wizard.`
 
-**Public directory listing: pending vendor review.** Until it is published, download [`prompting-wizard-claude-skill.zip`](https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-claude-skill.zip) from the latest GitHub release and upload it through **Customize → Skills → Create skill → Upload**. This is the normal custom-skill path for regular Claude chat; Claude Code is not required.
+**Public directory listing: pending vendor review.** When [`prompting-wizard-claude-skill.zip`](https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-claude-skill.zip) is available from the latest GitHub release, download it and upload it through **Customize → Skills → Create skill → Upload**. If the link returns 404, the release asset is not published yet; use the paste-and-run fallback below. This is the normal custom-skill path for regular Claude chat; Claude Code is not required.
 
 Claude chat may not provide a durable working directory. Attach your latest `PROGRESS.md` when returning; Prompting Wizard returns the updated file after the lesson.
 
