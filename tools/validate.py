@@ -163,10 +163,17 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
         errors,
     )
 
-    if plugin and plugin.get("name") != "prompting-wizard":
+    if plugin is not None and plugin.get("name") != "prompting-wizard":
         errors.append("Claude plugin: name must be prompting-wizard")
-    if plugin and plugin.get("version") != version:
+    if plugin is not None and plugin.get("version") != version:
         errors.append("Claude plugin: version does not match VERSION.md")
+
+    if marketplace is not None:
+        metadata = marketplace.get("metadata")
+        if not isinstance(metadata, dict) or metadata.get("version") != version:
+            errors.append(
+                "Claude marketplace metadata: version does not match VERSION.md"
+            )
 
     entries = marketplace.get("plugins", []) if marketplace else []
     has_canonical_entry = (

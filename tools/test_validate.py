@@ -143,6 +143,7 @@ def build_clean_skill(root, days=(1,)):
     (root.parent / ".claude-plugin" / "marketplace.json").write_text(
         json.dumps(
             {
+                "metadata": {"version": "1.0.0"},
                 "plugins": [
                     {
                         "name": "prompting-wizard",
@@ -309,6 +310,7 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.marketplace_path.write_text(
             json.dumps(
                 {
+                    "metadata": {"version": "1.0.0"},
                     "plugins": [
                         {
                             "name": "prompting-wizard",
@@ -339,6 +341,15 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertTrue(errors[0].startswith("plugin.json: malformed JSON"))
 
+    def test_read_manifest_reports_non_object_without_raising(self):
+        self.plugin_path.write_text("[]", encoding="utf-8")
+        errors = []
+
+        manifest = validate.read_manifest(self.plugin_path, "plugin.json", errors)
+
+        self.assertIsNone(manifest)
+        self.assertEqual(errors, ["plugin.json: manifest must be a JSON object"])
+
     def test_valid_distribution_metadata_reports_no_errors(self):
         errors = []
 
@@ -356,6 +367,42 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         )
         self.assertIn(
             "Claude marketplace: version does not match VERSION.md", errors
+        )
+
+    def test_marketplace_metadata_version_must_match_course_version(self):
+        marketplace = json.loads(self.marketplace_path.read_text(encoding="utf-8"))
+        marketplace["metadata"]["version"] = "9.9.9"
+        self.marketplace_path.write_text(json.dumps(marketplace), encoding="utf-8")
+        errors = []
+
+        validate.check_distribution_metadata("1.0.0", errors)
+
+        self.assertIn(
+            "Claude marketplace metadata: version does not match VERSION.md",
+            errors,
+        )
+
+    def test_empty_plugin_manifest_reports_missing_name_and_version(self):
+        self.plugin_path.write_text("{}", encoding="utf-8")
+        errors = []
+
+        validate.check_distribution_metadata("1.0.0", errors)
+
+        self.assertIn("Claude plugin: name must be prompting-wizard", errors)
+        self.assertIn(
+            "Claude plugin: version does not match VERSION.md", errors
+        )
+
+    def test_plugin_manifest_missing_version_is_rejected(self):
+        self.plugin_path.write_text(
+            json.dumps({"name": "prompting-wizard"}), encoding="utf-8"
+        )
+        errors = []
+
+        validate.check_distribution_metadata("1.0.0", errors)
+
+        self.assertIn(
+            "Claude plugin: version does not match VERSION.md", errors
         )
 
 
