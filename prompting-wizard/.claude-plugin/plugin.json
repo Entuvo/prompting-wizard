@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prompting-wizard",
   "displayName": "Prompting Wizard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A 30-day practical course for learning reliable prompting with real work tasks.",
   "author": {
     "name": "Entuvo Labs",
