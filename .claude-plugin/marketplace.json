@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "entuvo-prompting",
+  "owner": {"name": "Entuvo Labs"},
+  "metadata": {
+    "description": "Practical prompting courses from Entuvo Labs",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "prompting-wizard",
+      "source": "./prompting-wizard",
+      "description": "A 30-day practical prompting course using the learner's real work.",
+      "version": "1.0.0",
+      "category": "productivity",
+      "tags": ["prompting", "education", "course"]
+    }
+  ]
+}

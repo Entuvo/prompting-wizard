@@ -15,6 +15,7 @@ closed (seven fixed, one confirmed intended); the tests that used to pin their
 wrong behaviour now assert the corrected behaviour. See
 .superpowers/audit/wave0-validator-fixes.md.
 """
+import json
 import shutil
 import subprocess
 import sys
@@ -127,12 +128,32 @@ def line_number_of(text, needle):
 def build_clean_skill(root, days=(1,)):
     """Create the smallest skill tree that check() accepts."""
     (root / "days").mkdir(parents=True, exist_ok=True)
+    (root / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+    (root.parent / ".claude-plugin").mkdir(parents=True, exist_ok=True)
     for name in validate.TOP_FILES:
         (root / name).write_text(f"# {name}\n\nplaceholder\n", encoding="utf-8")
     (root / "VERSION.md").write_text(render_version(), encoding="utf-8")
     (root / "CHANGELOG.md").write_text(render_changelog(), encoding="utf-8")
     (root / "assessment.md").write_text(render_assessment(), encoding="utf-8")
     (root / "rubrics.md").write_text(render_rubrics(), encoding="utf-8")
+    (root / ".claude-plugin" / "plugin.json").write_text(
+        json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
+        encoding="utf-8",
+    )
+    (root.parent / ".claude-plugin" / "marketplace.json").write_text(
+        json.dumps(
+            {
+                "plugins": [
+                    {
+                        "name": "prompting-wizard",
+                        "source": "./prompting-wizard",
+                        "version": "1.0.0",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
     for number in days:
         (root / "days" / f"{number:02d}.md").write_text(
             render_day(title=f"# Day {number:02d}"), encoding="utf-8")
@@ -148,6 +169,8 @@ class SkillFixture(unittest.TestCase):
         self.skill = Path(tmp.name) / "prompting-wizard"
 
         self.addCleanup(setattr, validate, "SKILL", validate.SKILL)
+        self.addCleanup(setattr, validate, "ROOT", validate.ROOT)
+        validate.ROOT = self.skill.parent
         validate.SKILL = self.skill
 
         build_clean_skill(self.skill)
@@ -235,6 +258,105 @@ class ContractTests(unittest.TestCase):
 
     def test_day_28_doc_slot_exception_is_pinned(self):
         self.assertEqual(validate.EXTRA_SLOT_DAYS, {28: {"{{DOC}}"}})
+
+
+class DistributionMetadataTests(unittest.TestCase):
+
+    def test_claude_plugin_uses_canonical_root_skill(self):
+        manifest = json.loads(
+            (validate.SKILL / ".claude-plugin/plugin.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(manifest["name"], "prompting-wizard")
+        self.assertNotIn("skills", manifest)
+
+    def test_claude_marketplace_points_to_canonical_skill(self):
+        marketplace = json.loads(
+            (validate.ROOT / ".claude-plugin/marketplace.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        plugin = marketplace["plugins"][0]
+        self.assertEqual(plugin["name"], "prompting-wizard")
+        self.assertEqual(plugin["source"], "./prompting-wizard")
+
+    def test_distribution_versions_match_course_version(self):
+        self.assertEqual(validate.check(), [])
+
+
+class DistributionMetadataValidatorTests(unittest.TestCase):
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        root = Path(tmp.name)
+        skill = root / "prompting-wizard"
+        (root / ".claude-plugin").mkdir()
+        (skill / ".claude-plugin").mkdir(parents=True)
+
+        self.addCleanup(setattr, validate, "ROOT", validate.ROOT)
+        self.addCleanup(setattr, validate, "SKILL", validate.SKILL)
+        validate.ROOT = root
+        validate.SKILL = skill
+
+        self.plugin_path = skill / ".claude-plugin" / "plugin.json"
+        self.marketplace_path = root / ".claude-plugin" / "marketplace.json"
+        self.plugin_path.write_text(
+            json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
+            encoding="utf-8",
+        )
+        self.marketplace_path.write_text(
+            json.dumps(
+                {
+                    "plugins": [
+                        {
+                            "name": "prompting-wizard",
+                            "source": "./prompting-wizard",
+                            "version": "1.0.0",
+                        }
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+
+    def test_read_manifest_returns_json_object(self):
+        errors = []
+
+        manifest = validate.read_manifest(self.plugin_path, "plugin.json", errors)
+
+        self.assertEqual(manifest["name"], "prompting-wizard")
+        self.assertEqual(errors, [])
+
+    def test_read_manifest_reports_malformed_json_without_raising(self):
+        self.plugin_path.write_text("{", encoding="utf-8")
+        errors = []
+
+        manifest = validate.read_manifest(self.plugin_path, "plugin.json", errors)
+
+        self.assertIsNone(manifest)
+        self.assertEqual(len(errors), 1)
+        self.assertTrue(errors[0].startswith("plugin.json: malformed JSON"))
+
+    def test_valid_distribution_metadata_reports_no_errors(self):
+        errors = []
+
+        validate.check_distribution_metadata("1.0.0", errors)
+
+        self.assertEqual(errors, [])
+
+    def test_distribution_versions_must_match_course_version(self):
+        errors = []
+
+        validate.check_distribution_metadata("1.1.0", errors)
+
+        self.assertIn(
+            "Claude plugin: version does not match VERSION.md", errors
+        )
+        self.assertIn(
+            "Claude marketplace: version does not match VERSION.md", errors
+        )
 
 
 # --------------------------------------------------------------------------

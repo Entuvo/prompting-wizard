@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "prompting-wizard",
+  "displayName": "Prompting Wizard",
+  "version": "1.0.0",
+  "description": "A 30-day practical course for learning reliable prompting with real work tasks.",
+  "author": {
+    "name": "Entuvo Labs",
+    "url": "https://github.com/Entuvo"
+  },
+  "homepage": "https://github.com/Entuvo/prompting-wizard",
+  "repository": "https://github.com/Entuvo/prompting-wizard",
+  "license": "MIT",
+  "keywords": ["prompting", "education", "course", "productivity"]
+}

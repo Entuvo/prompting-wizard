@@ -7,6 +7,9 @@ Run:  python3 tools/validate.py             # checks what exists
       python3 tools/validate.py --complete  # also requires all 30 day files
 Exit: 0 clean, 1 problems (listed on stderr).
 """
+from __future__ import annotations
+
+import json
 import re
 import sys
 from pathlib import Path
@@ -128,6 +131,56 @@ def read_text(path, errors, label):
         return None
 
 
+def read_manifest(path: Path, label: str, errors: list[str]) -> dict | None:
+    """Load one JSON manifest, reporting read and parse failures as problems."""
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError) as exc:
+        errors.append(f"{label}: unreadable ({type(exc).__name__})")
+        return None
+    except json.JSONDecodeError as exc:
+        errors.append(
+            f"{label}: malformed JSON (line {exc.lineno} column {exc.colno})"
+        )
+        return None
+
+    if not isinstance(manifest, dict):
+        errors.append(f"{label}: manifest must be a JSON object")
+        return None
+    return manifest
+
+
+def check_distribution_metadata(version: str, errors: list[str]) -> None:
+    """Keep Claude plugin and marketplace metadata aligned with the course."""
+    plugin = read_manifest(
+        SKILL / ".claude-plugin" / "plugin.json",
+        "prompting-wizard/.claude-plugin/plugin.json",
+        errors,
+    )
+    marketplace = read_manifest(
+        ROOT / ".claude-plugin" / "marketplace.json",
+        ".claude-plugin/marketplace.json",
+        errors,
+    )
+
+    if plugin and plugin.get("name") != "prompting-wizard":
+        errors.append("Claude plugin: name must be prompting-wizard")
+    if plugin and plugin.get("version") != version:
+        errors.append("Claude plugin: version does not match VERSION.md")
+
+    entries = marketplace.get("plugins", []) if marketplace else []
+    has_canonical_entry = (
+        isinstance(entries, list)
+        and len(entries) == 1
+        and isinstance(entries[0], dict)
+        and entries[0].get("source") == "./prompting-wizard"
+    )
+    if not has_canonical_entry:
+        errors.append("Claude marketplace: must point to ./prompting-wizard")
+    elif entries[0].get("version") != version:
+        errors.append("Claude marketplace: version does not match VERSION.md")
+
+
 def check_assessment_lever_order(text, errors):
     """Keep both assessment examples in the order used for state tie-breaking."""
     names = "|".join(map(re.escape, LEVERS))
@@ -185,6 +238,12 @@ def check_version_manifest(text, changelog_text, errors):
             errors.append(
                 f"CHANGELOG.md: no release heading for version {version}"
             )
+
+    return (
+        version_lines[0].removeprefix("version: ")
+        if len(version_lines) == 1
+        else None
+    )
 
 
 def check_day(text, label, day_number, rubric_slugs, referenced_slugs, errors):
@@ -295,7 +354,9 @@ def check(require_all_days=False):
             if changelog_path.is_file()
             else None
         )
-        check_version_manifest(text, changelog_text, errors)
+        version = check_version_manifest(text, changelog_text, errors)
+        if version is not None:
+            check_distribution_metadata(version, errors)
 
     rubrics_path = SKILL / "rubrics.md"
     text = load(rubrics_path, "rubrics.md") if rubrics_path.is_file() else None
