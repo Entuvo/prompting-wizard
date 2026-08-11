@@ -42,10 +42,6 @@ command -v python3 >/dev/null 2>&1 || fail "python3 is required"
 
 repo_root_real=$(CDPATH= cd -P -- "$repo_root" && pwd)
 skill_source_real=$(CDPATH= cd -P -- "$skill_source" && pwd)
-home_real=
-if [ -d "$HOME" ]; then
-    home_real=$(CDPATH= cd -P -- "$HOME" && pwd)
-fi
 
 # The canonical source must pass its complete structural validation before a
 # skills root, staging directory, backup, or target is created or changed.
@@ -148,110 +144,6 @@ if [ "$install_codex" = yes ] && [ "$install_claude" = yes ] && \
         [ "$codex_target" = "$claude_target" ]; then
     fail "Codex and Claude Code cannot share one prompting-wizard target"
 fi
-
-safe_remove() {
-    remove_path=$1
-    remove_root=$2
-    remove_kind=$3
-    remove_identity=$4
-    remove_parent=${remove_path%/*}
-    remove_base=${remove_path##*/}
-
-    [ -n "$remove_path" ] || return 1
-    [ -n "$remove_identity" ] || return 1
-    [ "$remove_parent" = "$remove_root" ] || return 1
-    [ "$remove_path" != "$remove_root" ] || return 1
-    [ "$remove_path" != "$repo_root_real" ] || return 1
-    [ "$remove_path" != "$skill_source_real" ] || return 1
-    if [ -n "$home_real" ]; then
-        [ "$remove_path" != "$home_real" ] || return 1
-    fi
-
-    case "$remove_kind:$remove_base" in
-        stage:.prompting-wizard.stage.?*) ;;
-        backup:.prompting-wizard.backup.?*) ;;
-        *) return 1 ;;
-    esac
-
-    python3 - remove-owned "$remove_path" "$remove_root" "$remove_identity" <<'PY'
-import os
-import stat
-import sys
-
-_, path, parent, expected_identity = sys.argv[1:]
-
-
-def identity(value):
-    return f"{value.st_dev}:{value.st_ino}"
-
-
-def preserve(message):
-    print(f"Error: {message}; preserving cleanup path: {path}", file=sys.stderr)
-    raise SystemExit(1)
-
-
-flags = os.O_RDONLY
-flags |= getattr(os, "O_DIRECTORY", 0)
-flags |= getattr(os, "O_NOFOLLOW", 0)
-
-
-def open_matching_directory(name, parent_fd, expected):
-    observed = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
-    if not stat.S_ISDIR(observed.st_mode):
-        preserve("cleanup object is no longer a directory")
-    opened_fd = os.open(name, flags, dir_fd=parent_fd)
-    opened = os.fstat(opened_fd)
-    if not os.path.samestat(observed, opened) or identity(opened) != expected:
-        os.close(opened_fd)
-        preserve("cleanup path identity changed while opening")
-    return opened_fd, opened
-
-
-def remove_contents(directory_fd):
-    for name in os.listdir(directory_fd):
-        observed = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
-        if stat.S_ISDIR(observed.st_mode):
-            child_fd = os.open(name, flags, dir_fd=directory_fd)
-            try:
-                opened = os.fstat(child_fd)
-                if not os.path.samestat(observed, opened):
-                    preserve("cleanup entry identity changed while opening")
-                remove_contents(child_fd)
-                current = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
-                if not os.path.samestat(opened, current):
-                    preserve("cleanup directory identity changed")
-                os.rmdir(name, dir_fd=directory_fd)
-            finally:
-                os.close(child_fd)
-        else:
-            current = os.stat(name, dir_fd=directory_fd, follow_symlinks=False)
-            if not os.path.samestat(observed, current):
-                preserve("cleanup entry identity changed")
-            os.unlink(name, dir_fd=directory_fd)
-
-
-try:
-    parent_fd = os.open(parent, flags)
-    name = os.path.basename(path)
-    root_fd, opened = open_matching_directory(name, parent_fd, expected_identity)
-    if identity(opened) != expected_identity:
-        preserve("cleanup path identity changed")
-except OSError as exc:
-    preserve(f"cannot open cleanup path ({exc})")
-
-try:
-    remove_contents(root_fd)
-    current = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
-    if not os.path.samestat(opened, current):
-        preserve("cleanup path identity changed before removal")
-    os.rmdir(name, dir_fd=parent_fd)
-except OSError as exc:
-    preserve(f"could not remove installer-owned directory ({exc})")
-finally:
-    os.close(root_fd)
-    os.close(parent_fd)
-PY
-}
 
 copy_skill() {
     python3 - "$1" "$2" "$3" <<'PY'
@@ -410,13 +302,14 @@ install_one() (
     installed_moved=no
     transaction_state=active
     stage_identity=
-    backup_identity=
     quarantine_path=
 
     rollback_install() {
         rollback_ok=yes
         concurrent_safe=
         failed_safe=
+        stage_safe=
+        backup_safe=
         live_safe=
         prior_safe=
 
@@ -466,14 +359,11 @@ install_one() (
         fi
         if [ "$installed_moved" = no ] && [ -n "$stage_path" ] && \
                 path_exists "$stage_path"; then
-            safe_remove "$stage_path" "$install_root" stage \
-                "$stage_identity" || rollback_ok=no
+            stage_safe=$stage_path
         fi
         if [ -n "$backup_path" ] && path_exists "$backup_path"; then
-            if ! path_exists "$backup_path/original"; then
-                safe_remove "$backup_path" "$install_root" backup \
-                    "$backup_identity" || rollback_ok=no
-            else
+            backup_safe=$backup_path
+            if path_exists "$backup_path/original"; then
                 rollback_ok=no
             fi
         fi
@@ -482,6 +372,12 @@ install_one() (
         fi
         if [ -n "$failed_safe" ]; then
             echo "Error: failed installation preserved at $failed_safe" >&2
+        fi
+        if [ -n "$stage_safe" ]; then
+            echo "Error: partial staging directory preserved at $stage_safe" >&2
+        fi
+        if [ -n "$backup_safe" ]; then
+            echo "Error: backup directory preserved at $backup_safe" >&2
         fi
         if [ -n "$live_safe" ]; then
             echo "Error: live target preserved at $live_safe" >&2
@@ -539,7 +435,6 @@ install_one() (
             "$install_root":.prompting-wizard.backup.?*) ;;
             *) echo "Error: mktemp returned an unsafe backup path" >&2; exit 1 ;;
         esac
-        backup_identity=$(directory_identity "$backup_path")
         prior_moved=yes
         rename_exact "$install_target" "$backup_path/original"
     fi
@@ -551,18 +446,13 @@ install_one() (
     verify_install_tree "$install_target" "$install_host"
 
     # Verification is the commit point. From here onward the new target must
-    # survive interruption or best-effort cleanup failure.
+    # survive interruption. Preserve the prior installation: a stage or backup
+    # pathname is never sufficient authority for recursive deletion.
     transaction_state=committed
-    cleanup_backup=$backup_path
-    cleanup_backup_identity=$backup_identity
     installed_moved=no
     prior_moved=no
-    backup_path=
-    if [ -n "$cleanup_backup" ]; then
-        if ! safe_remove "$cleanup_backup" "$install_root" backup \
-                "$cleanup_backup_identity"; then
-            echo "Warning: could not completely remove backup: $cleanup_backup" >&2
-        fi
+    if [ -n "$backup_path" ] && path_exists "$backup_path"; then
+        echo "Warning: prior installation backup preserved at $backup_path" >&2
     fi
     trap - 0 1 2 15
     echo "Installed $install_label: $install_target"

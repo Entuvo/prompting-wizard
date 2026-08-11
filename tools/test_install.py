@@ -134,13 +134,20 @@ class InstallerTests(unittest.TestCase):
         leftovers = list(root.glob(".prompting-wizard.*")) if root.exists() else []
         self.assertEqual(leftovers, [])
 
-    def assert_one_preserved_failed_install(self, root, stderr):
+    def assert_one_preserved_failed_install(
+        self, root, stderr, *, expect_empty_backup=False
+    ):
         stages = list(root.glob(".prompting-wizard.stage.*"))
         backups = list(root.glob(".prompting-wizard.backup.*"))
         self.assertEqual(len(stages), 1)
-        self.assertEqual(backups, [])
         self.assertTrue((stages[0] / "SKILL.md").is_file())
         self.assertIn(str(stages[0].resolve()), stderr)
+        if expect_empty_backup:
+            self.assertEqual(len(backups), 1)
+            self.assertEqual(list(backups[0].iterdir()), [])
+            self.assertIn(str(backups[0].resolve()), stderr)
+        else:
+            self.assertEqual(backups, [])
         return stages[0]
 
     def test_detects_codex_and_installs_canonical_skill(self):
@@ -278,7 +285,9 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Replace it?", result.stdout)
         self.assertIn("prior installation restored", result.stdout)
         self.assertEqual((target / "sentinel").read_text(), "keep\n")
-        self.assert_one_preserved_failed_install(target.parent, result.stdout)
+        self.assert_one_preserved_failed_install(
+            target.parent, result.stdout, expect_empty_backup=True
+        )
 
     def test_target_appearing_during_staging_survives_without_authorization(self):
         target = self.home / ".agents/skills/prompting-wizard"
@@ -306,7 +315,7 @@ class InstallerTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual((target / "sentinel").read_text(), "concurrent\n")
         self.assertEqual(sorted(p.name for p in target.iterdir()), ["sentinel"])
-        self.assert_clean_siblings(target.parent)
+        self.assert_one_preserved_failed_install(target.parent, result.stderr)
 
     def test_empty_target_appearing_at_rename_boundary_is_not_replaced(self):
         target = self.home / ".agents/skills/prompting-wizard"
@@ -356,7 +365,10 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse((target / "old").exists())
         self.assertTrue((target / "SKILL.md").is_file())
         self.assertEqual((neighbor / "sentinel").read_text(), "keep")
-        self.assert_clean_siblings(skills_root)
+        backups = list(skills_root.glob(".prompting-wizard.backup.*"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual((backups[0] / "original/old").read_text(), "old")
+        self.assertIn(str(backups[0].resolve()), result.stderr)
 
     def test_validation_failure_mutates_nothing(self):
         broken = self.copy_repo_without("prompting-wizard/days/30.md")
@@ -420,37 +432,29 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((target / "sentinel").read_bytes(), b"keep\x00exact")
         self.assertEqual((target / "nested/data").read_text(), "prior\n")
         self.assertEqual(sorted(p.name for p in target.iterdir()), ["nested", "sentinel"])
-        self.assert_one_preserved_failed_install(skills_root, result.stderr)
+        self.assert_one_preserved_failed_install(
+            skills_root, result.stderr, expect_empty_backup=True
+        )
 
-    def test_backup_cleanup_failure_cannot_remove_the_committed_install(self):
-        if REAL_RM is None:
-            self.skipTest("rm is unavailable")
+    def test_committed_replacement_preserves_prior_install_backup(self):
         target = self.home / ".agents/skills/prompting-wizard"
         target.mkdir(parents=True)
         (target / "old").write_text("old\n", encoding="utf-8")
-        self.stub(
-            "python3",
-            f'if [ "$1" = - ] && [ "$2" = remove-owned ]; then\n'
-            f'  exit 74\n'
-            f'fi\n'
-            f'exec "{sys.executable}" "$@"',
-        )
-        self.stub("rm", f'"{REAL_RM}" "$@"\nexit 74')
 
         result = self.run_install("--codex", "--force")
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((target / "SKILL.md").is_file())
         self.assertFalse((target / "old").exists())
-        self.assertIn("Warning: could not completely remove backup", result.stderr)
+        self.assertIn("Warning: prior installation backup preserved", result.stderr)
         backups = list(target.parent.glob(".prompting-wizard.backup.*"))
         self.assertEqual(len(backups), 1)
         self.assertEqual((backups[0] / "original/old").read_text(), "old\n")
+        self.assertIn(str(backups[0].resolve()), result.stderr)
 
     def test_rollback_stage_cleanup_preserves_a_concurrent_path_replacement(self):
         if REAL_MV is None:
             self.skipTest("mv is unavailable")
-        skills_root = self.home / ".agents/skills"
         displaced_stage = self.sandbox / "displaced-rollback-stage"
         stage_record = self.sandbox / "rollback-stage-path"
         self.stub(
@@ -482,57 +486,48 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((stage / "sentinel").read_text(), "concurrent\n")
         self.assertIn(str(stage), result.stderr)
 
-    def test_committed_backup_cleanup_preserves_a_concurrent_path_replacement(self):
-        if REAL_RM is None or REAL_MV is None:
-            self.skipTest("rm or mv is unavailable")
-        skills_root = self.home / ".agents/skills"
-        target = skills_root / "prompting-wizard"
-        target.mkdir(parents=True)
-        (target / "old").write_text("prior\n", encoding="utf-8")
-        displaced_backup = self.sandbox / "displaced-committed-backup"
-        backup_record = self.sandbox / "committed-backup-path"
-        actor = (
-            f'"{REAL_MV}" "$remove_path" "$PW_DISPLACED_BACKUP"\n'
-            f'mkdir "$remove_path"\n'
-            f'printf "concurrent\\n" > "$remove_path/sentinel"\n'
-            f'printf "%s\\n" "$remove_path" > "$PW_BACKUP_RECORD"\n'
-        )
+    def test_rollback_preserves_stage_swapped_before_identity_capture(self):
+        if REAL_MV is None:
+            self.skipTest("mv is unavailable")
+        displaced_stage = self.sandbox / "pre-identity-displaced-stage"
+        stage_record = self.sandbox / "pre-identity-stage-path"
+        actor_marker = self.sandbox / "pre-identity-actor-ran"
         self.stub(
             "python3",
-            f'if [ "$1" = - ] && [ "$2" = remove-owned ]; then\n'
-            f'  remove_path=$3\n'
-            f'  {actor}'
+            f'if [ "$1" = - ] && [ "$2" = identity ] && '
+            f'[ ! -f "$PW_ACTOR_MARKER" ]; then\n'
+            f'  case "$3" in\n'
+            f'    */.prompting-wizard.stage.*)\n'
+            f'      "{REAL_MV}" "$3" "$PW_DISPLACED_STAGE"\n'
+            f'      mkdir "$3"\n'
+            f'      printf "concurrent\\n" > "$3/sentinel"\n'
+            f'      printf "%s\\n" "$3" > "$PW_STAGE_RECORD"\n'
+            f'      : > "$PW_ACTOR_MARKER"\n'
+            f'      ;;\n'
+            f'  esac\n'
+            f'fi\n'
+            f'if [ "$1" = - ] && '
+            f'[ "$2" = "$PW_REPO_ROOT/prompting-wizard" ]; then\n'
+            f'  exit 75\n'
             f'fi\n'
             f'exec "{sys.executable}" "$@"',
-        )
-        self.stub(
-            "rm",
-            f'remove_path=\n'
-            f'for argument do remove_path=$argument; done\n'
-            f'case "$remove_path" in\n'
-            f'  */.prompting-wizard.backup.*)\n'
-            f'    {actor}'
-            f'    ;;\n'
-            f'esac\n'
-            f'exec "{REAL_RM}" "$@"',
         )
 
         result = self.run_install(
             "--codex",
-            "--force",
             env_extra={
-                "PW_BACKUP_RECORD": str(backup_record),
-                "PW_DISPLACED_BACKUP": str(displaced_backup),
+                "PW_ACTOR_MARKER": str(actor_marker),
+                "PW_DISPLACED_STAGE": str(displaced_stage),
+                "PW_STAGE_RECORD": str(stage_record),
             },
         )
 
-        self.assertEqual(result.returncode, 0, result.stderr)
-        backup = Path(backup_record.read_text().strip())
-        self.assertTrue((target / "SKILL.md").is_file())
-        self.assertEqual((displaced_backup / "original/old").read_text(), "prior\n")
-        self.assertTrue((backup / "sentinel").is_file())
-        self.assertEqual((backup / "sentinel").read_text(), "concurrent\n")
-        self.assertIn(str(backup), result.stderr)
+        self.assertNotEqual(result.returncode, 0)
+        stage = Path(stage_record.read_text().strip())
+        self.assertTrue(displaced_stage.is_dir())
+        self.assertTrue((stage / "sentinel").is_file())
+        self.assertEqual((stage / "sentinel").read_text(), "concurrent\n")
+        self.assertIn(str(stage), result.stderr)
 
     def test_rollback_quarantines_before_identity_check_and_never_deletes_live_target(
         self,
