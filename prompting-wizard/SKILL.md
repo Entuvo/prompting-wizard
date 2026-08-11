@@ -34,6 +34,8 @@ First determine the host's state mode. A durable host can read and write the lea
 
 The installed version is the semantic `version` value in this skill's `VERSION.md`. The trusted update manifest is the raw `VERSION.md` at `https://raw.githubusercontent.com/Entuvo/prompting-wizard/main/prompting-wizard/VERSION.md` and no other location.
 
+Every write to `course_version` or `last_update_check` below is a state change. After all metadata writes for the current update-check branch, apply step 6's durable write or stateless artifact-or-complete-fenced-file delivery rule. Complete that delivery before any notice, wait, update command, stop, or lesson continuation, even if the learner asks for a shorter response or no progress file.
+
 1. If `course_version` is absent or differs from the installed version, write the installed version. This records an update that already happened; it is not evidence that a remote update exists.
 2. An update check is due when the learner explicitly asks to check or update, when `last_update_check` is absent or not a real `YYYY-MM-DD` date, or when at least seven calendar days have elapsed since it. Otherwise stop this check silently. A future date is malformed and therefore due.
 3. When due, first write today's local date to `last_update_check`. Then make one read-only fetch of the trusted manifest if a network-fetch capability is available. The date stays written whether the fetch succeeds, fails, or cannot be attempted, so missing network access does not interrupt every lesson. If no fetch capability exists, continue the lesson without an update message.
