@@ -132,6 +132,15 @@ class InstallerTests(unittest.TestCase):
         leftovers = list(root.glob(".prompting-wizard.*")) if root.exists() else []
         self.assertEqual(leftovers, [])
 
+    def assert_one_preserved_failed_install(self, root, stderr):
+        stages = list(root.glob(".prompting-wizard.stage.*"))
+        backups = list(root.glob(".prompting-wizard.backup.*"))
+        self.assertEqual(len(stages), 1)
+        self.assertEqual(backups, [])
+        self.assertTrue((stages[0] / "SKILL.md").is_file())
+        self.assertIn(str(stages[0].resolve()), stderr)
+        return stages[0]
+
     def test_detects_codex_and_installs_canonical_skill(self):
         self.stub("codex")
 
@@ -267,7 +276,7 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("Replace it?", result.stdout)
         self.assertIn("prior installation restored", result.stdout)
         self.assertEqual((target / "sentinel").read_text(), "keep\n")
-        self.assert_clean_siblings(target.parent)
+        self.assert_one_preserved_failed_install(target.parent, result.stdout)
 
     def test_target_appearing_during_staging_survives_without_authorization(self):
         target = self.home / ".agents/skills/prompting-wizard"
@@ -328,7 +337,7 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(target.is_dir())
         self.assertEqual(target.stat().st_ino, int(inode_record.read_text()))
         self.assertEqual(list(target.iterdir()), [])
-        self.assert_clean_siblings(target.parent)
+        self.assert_one_preserved_failed_install(target.parent, result.stderr)
 
     def test_force_replaces_only_the_named_skill(self):
         skills_root = self.home / ".agents/skills"
@@ -409,7 +418,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual((target / "sentinel").read_bytes(), b"keep\x00exact")
         self.assertEqual((target / "nested/data").read_text(), "prior\n")
         self.assertEqual(sorted(p.name for p in target.iterdir()), ["nested", "sentinel"])
-        self.assert_clean_siblings(skills_root)
+        self.assert_one_preserved_failed_install(skills_root, result.stderr)
 
     def test_backup_cleanup_failure_cannot_remove_the_committed_install(self):
         if REAL_RM is None:
@@ -505,6 +514,141 @@ class InstallerTests(unittest.TestCase):
         prior_safe = backups[0] / "original"
         self.assertEqual((prior_safe / "old").read_text(), "prior\n")
         self.assertIn(str(target.resolve()), result.stderr)
+        self.assertIn(str(prior_safe), result.stderr)
+
+    def test_rollback_never_deletes_a_post_identity_quarantine_replacement(self):
+        if REAL_RM is None or REAL_MV is None:
+            self.skipTest("rm or mv is unavailable")
+        skills_root = self.home / ".agents/skills"
+        target = skills_root / "prompting-wizard"
+        target.mkdir(parents=True)
+        (target / "old").write_text("prior\n", encoding="utf-8")
+        rename_count = self.sandbox / "post-identity-rename-count"
+        actor_marker = self.sandbox / "post-identity-actor-ran"
+        actor_saved = self.sandbox / "post-identity-failed-install"
+        quarantine_record = self.sandbox / "post-identity-quarantine"
+        remove_log = self.sandbox / "post-identity-remove-arguments"
+        self.stub(
+            "python3",
+            f'if [ "$1" = - ] && [ "$2" = rename ]; then\n'
+            f'  count=0\n'
+            f'  [ ! -f "$PW_RENAME_COUNT_FILE" ] || '
+            f'count=$(sed -n "1p" "$PW_RENAME_COUNT_FILE")\n'
+            f'  count=$((count + 1))\n'
+            f'  echo "$count" > "$PW_RENAME_COUNT_FILE"\n'
+            f'  "{sys.executable}" "$@"\n'
+            f'  status=$?\n'
+            f'  if [ "$count" -eq 2 ] && [ "$status" -eq 0 ]; then\n'
+            f'    "{REAL_RM}" -f "$4/SKILL.md"\n'
+            f'  fi\n'
+            f'  exit "$status"\n'
+            f'fi\n'
+            f'if [ "$1" = - ] && [ "$2" = same-identity ]; then\n'
+            f'  "{sys.executable}" "$@"\n'
+            f'  status=$?\n'
+            f'  case "$3" in\n'
+            f'    */.prompting-wizard.stage.*)\n'
+            f'      if [ "$status" -eq 0 ] && [ ! -f "$PW_ACTOR_MARKER" ]; then\n'
+            f'        "{REAL_MV}" "$3" "$PW_ACTOR_SAVED"\n'
+            f'        mkdir "$3"\n'
+            f'        printf "concurrent\\n" > "$3/sentinel"\n'
+            f'        printf "%s\\n" "$3" > "$PW_QUARANTINE_RECORD"\n'
+            f'        : > "$PW_ACTOR_MARKER"\n'
+            f'      fi\n'
+            f'      ;;\n'
+            f'  esac\n'
+            f'  exit "$status"\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
+        )
+        self.stub(
+            "rm",
+            f'printf "%s\\n" "$@" >> "$PW_REMOVE_LOG"\n'
+            f'exec "{REAL_RM}" "$@"',
+        )
+
+        result = self.run_install(
+            "--codex",
+            "--force",
+            env_extra={
+                "PW_ACTOR_MARKER": str(actor_marker),
+                "PW_ACTOR_SAVED": str(actor_saved),
+                "PW_QUARANTINE_RECORD": str(quarantine_record),
+                "PW_REMOVE_LOG": str(remove_log),
+                "PW_RENAME_COUNT_FILE": str(rename_count),
+            },
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((target / "old").read_text(), "prior\n")
+        quarantine = Path(quarantine_record.read_text().strip())
+        self.assertEqual((quarantine / "sentinel").read_text(), "concurrent\n")
+        self.assertTrue(actor_saved.is_dir())
+        removed_paths = (
+            remove_log.read_text().splitlines() if remove_log.exists() else []
+        )
+        self.assertNotIn(str(target.resolve()), removed_paths)
+        self.assertNotIn(str(quarantine), removed_paths)
+        self.assertIn(str(quarantine), result.stderr)
+
+    def test_rollback_reports_live_quarantine_and_prior_when_all_are_occupied(self):
+        if REAL_RM is None:
+            self.skipTest("rm is unavailable")
+        skills_root = self.home / ".agents/skills"
+        target = skills_root / "prompting-wizard"
+        target.mkdir(parents=True)
+        (target / "old").write_text("prior\n", encoding="utf-8")
+        rename_count = self.sandbox / "occupied-rename-count"
+        quarantine_record = self.sandbox / "occupied-quarantine"
+        remove_log = self.sandbox / "occupied-remove-arguments"
+        self.stub(
+            "python3",
+            f'if [ "$1" = - ] && [ "$2" = rename ]; then\n'
+            f'  count=0\n'
+            f'  [ ! -f "$PW_RENAME_COUNT_FILE" ] || '
+            f'count=$(sed -n "1p" "$PW_RENAME_COUNT_FILE")\n'
+            f'  count=$((count + 1))\n'
+            f'  echo "$count" > "$PW_RENAME_COUNT_FILE"\n'
+            f'  if [ "$count" -eq 2 ]; then\n'
+            f'    mkdir "$PW_RACE_TARGET"\n'
+            f'    printf "live\\n" > "$PW_RACE_TARGET/sentinel"\n'
+            f'    printf "%s\\n" "$3" > "$PW_QUARANTINE_RECORD"\n'
+            f'  fi\n'
+            f'fi\n'
+            f'exec "{sys.executable}" "$@"',
+        )
+        self.stub(
+            "rm",
+            f'printf "%s\\n" "$@" >> "$PW_REMOVE_LOG"\n'
+            f'exec "{REAL_RM}" "$@"',
+        )
+
+        result = self.run_install(
+            "--codex",
+            "--force",
+            env_extra={
+                "PW_QUARANTINE_RECORD": str(quarantine_record),
+                "PW_RACE_TARGET": str(target),
+                "PW_REMOVE_LOG": str(remove_log),
+                "PW_RENAME_COUNT_FILE": str(rename_count),
+            },
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((target / "sentinel").read_text(), "live\n")
+        quarantine = Path(quarantine_record.read_text().strip())
+        self.assertTrue((quarantine / "SKILL.md").is_file())
+        backups = list(skills_root.glob(".prompting-wizard.backup.*"))
+        self.assertEqual(len(backups), 1)
+        prior_safe = backups[0] / "original"
+        self.assertEqual((prior_safe / "old").read_text(), "prior\n")
+        removed_paths = (
+            remove_log.read_text().splitlines() if remove_log.exists() else []
+        )
+        self.assertNotIn(str(target.resolve()), removed_paths)
+        self.assertNotIn(str(quarantine), removed_paths)
+        self.assertIn(str(target.resolve()), result.stderr)
+        self.assertIn(str(quarantine), result.stderr)
         self.assertIn(str(prior_safe), result.stderr)
 
 
