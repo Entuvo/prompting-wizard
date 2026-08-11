@@ -44,11 +44,13 @@ class PackageReleaseTests(unittest.TestCase):
         for path in manifests:
             data = json.loads(path.read_text(encoding="utf-8"))
             if path.name == "marketplace.json":
-                versions.append(data["plugins"][0]["version"])
+                versions.extend(
+                    (data["metadata"]["version"], data["plugins"][0]["version"])
+                )
             else:
                 versions.append(data["version"])
         self.assertEqual(expected, "1.1.0")
-        self.assertEqual(versions, [expected, expected, expected])
+        self.assertEqual(versions, [expected, expected, expected, expected])
 
     def test_account_zip_contains_only_canonical_course_files(self):
         account, _, _ = package_release.build_all(
