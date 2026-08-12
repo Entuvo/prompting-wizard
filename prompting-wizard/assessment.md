@@ -6,7 +6,7 @@ About 15 minutes. Run once. Ask the three parts in order. Do not teach during th
 
 Ask for three prompts, one at a time. Give no guidance beyond the brief. Do not run them.
 
-1. **Instruction task:** "Write the prompt you would send to get a model to reformat a messy CSV export into something you could hand to a colleague."
+1. **Instruction task:** "Write the prompt you would send to get a model to clean up a messy set of meeting notes into a structured briefing you could hand to a colleague."
 2. **Analysis task:** "Write the prompt you would send to get a model to tell you what is wrong with a piece of work you produced."
 3. **Open-ended task:** "Write the prompt you would send to get a model to help you think through a decision you are stuck on."
 
@@ -22,12 +22,12 @@ Show these two prompts and ask what is wrong with each. Do not hint.
 
 **Prompt B**
 
-> Go through the codebase and fix the issues with it, and if there are tests update them too, and make sure it still works.
+> Go through the project documents and fix all the issues in them, update the summary section too, and make sure everything is ready to send.
 
 Expected findings — count how many the learner names unprompted, out of 10:
 
 - A: no artifact named (noun); no operation named (verb); "better" and "more professional" are unmeasurable (adjective); "this" has no antecedent (pronoun); the role does nothing (role framing).
-- B: three tasks in one (task decomposition); "the issues" is unbound (determiner); no scope (preposition); no stopping condition (agent and tool prompting); "make sure it still works" is uncheckable (numeral).
+- B: three tasks in one (task decomposition); "the issues" is unbound (determiner); no scope (preposition); no stopping condition (agent and tool prompting); "make sure everything is ready to send" is uncheckable (numeral).
 
 Record the count out of 10.
 
