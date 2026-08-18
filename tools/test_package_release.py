@@ -27,6 +27,12 @@ class PackageReleaseTests(unittest.TestCase):
             package_release.ROOT / "packaging/openai-plugin.json",
             self.root / "packaging/openai-plugin.json",
         )
+        listing = self.root / "assets" / "listing"
+        listing.mkdir(parents=True)
+        shutil.copy2(
+            package_release.ROOT / "assets/listing/logo.png",
+            listing / "logo.png",
+        )
         self.dist = self.root / "dist"
 
     def archive_names(self, path):
@@ -72,6 +78,7 @@ class PackageReleaseTests(unittest.TestCase):
         self.assertIn("prompting-wizard/.codex-plugin/plugin.json", names)
         self.assertIn("prompting-wizard/skills/prompting-wizard/SKILL.md", names)
         self.assertIn("prompting-wizard/LICENSE", names)
+        self.assertIn("prompting-wizard/assets/logo.png", names)
 
     def test_openai_manifest_includes_validator_required_capabilities_array(self):
         _, _, openai = package_release.build_all(
@@ -81,7 +88,23 @@ class PackageReleaseTests(unittest.TestCase):
             manifest = json.loads(
                 archive.read("prompting-wizard/.codex-plugin/plugin.json")
             )
-        self.assertEqual(manifest["interface"].get("capabilities"), [])
+        interface = manifest["interface"]
+        self.assertEqual(interface.get("capabilities"), [])
+        self.assertLessEqual(len(interface["shortDescription"]), 30)
+        self.assertEqual(interface["logo"], "./assets/logo.png")
+        self.assertEqual(interface["composerIcon"], "./assets/logo.png")
+        self.assertEqual(
+            interface["supportURL"],
+            "https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md",
+        )
+        self.assertEqual(
+            interface["privacyPolicyURL"],
+            "https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md",
+        )
+        self.assertEqual(
+            interface["termsOfServiceURL"],
+            "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md",
+        )
 
     def test_packages_exclude_state_and_repository_artifacts(self):
         (self.skill / "PROGRESS.md").write_text("private", encoding="utf-8")

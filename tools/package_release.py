@@ -110,12 +110,16 @@ def build_all(
         skill,
         "prompting-wizard/skills/prompting-wizard",
     )
+    listing_logo = root / "assets" / "listing" / "logo.png"
+    if not listing_logo.is_file():
+        raise ValueError("assets/listing/logo.png is missing")
     openai_entries.extend((
         (
             "prompting-wizard/.codex-plugin/plugin.json",
             openai_manifest_path.read_bytes(),
         ),
         ("prompting-wizard/LICENSE", (root / "LICENSE").read_bytes()),
+        ("prompting-wizard/assets/logo.png", listing_logo.read_bytes()),
     ))
     openai_zip = write_zip(
         dist / "prompting-wizard-openai-plugin.zip",

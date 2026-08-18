@@ -212,3 +212,5 @@ The validator checks required section and tier order, duplicate sections, duplic
 ## License
 
 Prompting Wizard is available under the [MIT License](LICENSE).
+
+[Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)

@@ -290,6 +290,11 @@ def check_codex_plugin_copies(errors: list[str]) -> None:
             ROOT / "packaging" / "openai-plugin.json",
             "Codex plugin manifest",
         ),
+        (
+            plugin / "assets" / "logo.png",
+            ROOT / "assets" / "listing" / "logo.png",
+            "Codex plugin logo",
+        ),
     ]
     for name in CODEX_PLUGIN_TOP_FILES:
         pairs.append(

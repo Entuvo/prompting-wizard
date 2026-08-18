@@ -50,6 +50,10 @@ def sync(root: Path = ROOT) -> Path:
         root / "packaging" / "openai-plugin.json",
         plugin / ".codex-plugin" / "plugin.json",
     )
+    _replace_file(
+        root / "assets" / "listing" / "logo.png",
+        plugin / "assets" / "logo.png",
+    )
     return plugin
 
 

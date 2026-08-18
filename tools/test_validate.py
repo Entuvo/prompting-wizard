@@ -174,6 +174,10 @@ def write_codex_distribution(repo_root, version="1.0.0"):
         shutil.copytree(skill / "days", skill_copy / "days", dirs_exist_ok=True)
     if (repo_root / "LICENSE").is_file():
         shutil.copy2(repo_root / "LICENSE", plugin / "LICENSE")
+    listing_logo = repo_root / "assets" / "listing" / "logo.png"
+    if listing_logo.is_file():
+        (plugin / "assets").mkdir(parents=True, exist_ok=True)
+        shutil.copy2(listing_logo, plugin / "assets" / "logo.png")
 
 
 def build_clean_skill(root, days=(1,)):
@@ -560,6 +564,29 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         validate.check_codex_plugin_copies(errors)
 
         self.assertIn("Codex plugin SKILL.md: missing required copy", errors)
+
+    def test_codex_plugin_missing_logo_is_reported(self):
+        listing = validate.ROOT / "assets" / "listing"
+        listing.mkdir(parents=True)
+        (listing / "logo.png").write_bytes(b"logo")
+        errors = []
+
+        validate.check_codex_plugin_copies(errors)
+
+        self.assertIn("Codex plugin logo: missing required copy", errors)
+
+    def test_codex_plugin_logo_mismatch_is_reported(self):
+        listing = validate.ROOT / "assets" / "listing"
+        listing.mkdir(parents=True)
+        (listing / "logo.png").write_bytes(b"canonical")
+        plugin_logo = validate.ROOT / "plugins" / "prompting-wizard" / "assets"
+        plugin_logo.mkdir(parents=True)
+        (plugin_logo / "logo.png").write_bytes(b"copy")
+        errors = []
+
+        validate.check_codex_plugin_copies(errors)
+
+        self.assertIn("Codex plugin logo: does not match canonical file", errors)
 
     def test_empty_plugin_manifest_reports_missing_name_and_version(self):
         self.plugin_path.write_text("{}", encoding="utf-8")

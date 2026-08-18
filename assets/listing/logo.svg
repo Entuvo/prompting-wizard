@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Prompting Wizard">
+  <rect width="1024" height="1024" rx="192" fill="#1C1915"/>
+  <rect x="72" y="72" width="880" height="880" rx="136" fill="#F3EDE2"/>
+  <g fill="none" stroke="#1C1915" stroke-width="36" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="470" r="196"/>
+    <path d="M512 250v440"/>
+    <path d="M316 470h392"/>
+    <path d="M374 332l276 276"/>
+    <path d="M650 332L374 608"/>
+  </g>
+  <circle cx="512" cy="470" r="28" fill="#C45C26"/>
+  <text x="512" y="860" text-anchor="middle" fill="#1C1915" font-family="Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">PW</text>
+</svg>
