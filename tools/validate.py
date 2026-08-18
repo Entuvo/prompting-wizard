@@ -168,6 +168,28 @@ def check_skill_metadata(text: str, errors: list[str]) -> None:
         )
 
 
+CODEX_PLUGIN_TOP_FILES = (
+    "SKILL.md",
+    "AGENTS.md",
+    "assessment.md",
+    "rubrics.md",
+    "VERSION.md",
+    "CHANGELOG.md",
+)
+
+
+def _codex_plugin_source_path(entry: dict) -> str | None:
+    """Return the relative plugin path from a Codex marketplace entry."""
+    source = entry.get("source")
+    if isinstance(source, str):
+        return source
+    if isinstance(source, dict):
+        path = source.get("path")
+        if isinstance(path, str):
+            return path
+    return None
+
+
 def check_distribution_metadata(version: str, errors: list[str]) -> None:
     """Keep shipped plugin and marketplace metadata aligned with the course."""
     plugin = read_manifest(
@@ -183,6 +205,11 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
     openai_plugin = read_manifest(
         ROOT / "packaging" / "openai-plugin.json",
         "packaging/openai-plugin.json",
+        errors,
+    )
+    codex_marketplace = read_manifest(
+        ROOT / ".agents" / "plugins" / "marketplace.json",
+        ".agents/plugins/marketplace.json",
         errors,
     )
 
@@ -211,6 +238,94 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
         errors.append("Claude marketplace: must point to ./prompting-wizard")
     elif entries[0].get("version") != version:
         errors.append("Claude marketplace: version does not match VERSION.md")
+
+    codex_entries = (
+        codex_marketplace.get("plugins", []) if codex_marketplace else []
+    )
+    codex_entry = (
+        codex_entries[0]
+        if isinstance(codex_entries, list)
+        and len(codex_entries) == 1
+        and isinstance(codex_entries[0], dict)
+        else None
+    )
+    if (
+        codex_entry is None
+        or _codex_plugin_source_path(codex_entry) != "./plugins/prompting-wizard"
+    ):
+        errors.append(
+            "Codex marketplace: must point to ./plugins/prompting-wizard"
+        )
+    elif codex_entry.get("version") != version:
+        errors.append("Codex marketplace: version does not match VERSION.md")
+
+    codex_plugin = ROOT / "plugins" / "prompting-wizard"
+    if not (codex_plugin / ".codex-plugin" / "plugin.json").is_file():
+        errors.append(
+            "Codex plugin: missing plugins/prompting-wizard/.codex-plugin/plugin.json"
+        )
+    if not (codex_plugin / "skills" / "prompting-wizard" / "SKILL.md").is_file():
+        errors.append(
+            "Codex plugin: missing plugins/prompting-wizard/skills/prompting-wizard/SKILL.md"
+        )
+
+
+def _file_is_symlink(path: Path) -> bool:
+    return path.is_symlink()
+
+
+def check_codex_plugin_copies(errors: list[str]) -> None:
+    """Codex omits escaping symlinks, so the plugin tree must be real copies."""
+    plugin = ROOT / "plugins" / "prompting-wizard"
+    skill_copy = plugin / "skills" / "prompting-wizard"
+    if skill_copy.is_symlink():
+        errors.append(
+            "Codex plugin skills/prompting-wizard: must be a real directory, not a symlink"
+        )
+        return
+    pairs = [
+        (plugin / "LICENSE", ROOT / "LICENSE", "Codex plugin LICENSE"),
+        (
+            plugin / ".codex-plugin" / "plugin.json",
+            ROOT / "packaging" / "openai-plugin.json",
+            "Codex plugin manifest",
+        ),
+    ]
+    for name in CODEX_PLUGIN_TOP_FILES:
+        pairs.append(
+            (skill_copy / name, SKILL / name, f"Codex plugin {name}")
+        )
+    for copy, canonical, label in pairs:
+        if _file_is_symlink(copy):
+            errors.append(f"{label}: must be a real file, not a symlink")
+            continue
+        if not canonical.is_file():
+            continue
+        if not copy.is_file():
+            errors.append(f"{label}: missing required copy")
+            continue
+        if copy.read_bytes() != canonical.read_bytes():
+            errors.append(f"{label}: does not match canonical file")
+
+    days_copy = skill_copy / "days"
+    days_canonical = SKILL / "days"
+    if days_copy.is_symlink():
+        errors.append("Codex plugin days/: must be a real directory, not a symlink")
+        return
+    if not days_copy.is_dir() or not days_canonical.is_dir():
+        return
+    for day in range(1, 31):
+        name = f"{day:02d}.md"
+        copy = days_copy / name
+        canonical = days_canonical / name
+        if _file_is_symlink(copy):
+            errors.append(f"Codex plugin days/{name}: must be a real file, not a symlink")
+        elif not canonical.is_file():
+            continue
+        elif not copy.is_file():
+            errors.append(f"Codex plugin days/{name}: missing required copy")
+        elif copy.read_bytes() != canonical.read_bytes():
+            errors.append(f"Codex plugin days/{name}: does not match canonical file")
 
 
 def check_assessment_lever_order(text, errors):
@@ -423,6 +538,7 @@ def check(require_all_days=False):
                 errors.append(
                     f"rubrics.md: rubric '{slug}' is not referenced by any day"
                 )
+        check_codex_plugin_copies(errors)
 
     for path in sorted(SKILL.rglob("*.md")):
         label = str(path.relative_to(SKILL))

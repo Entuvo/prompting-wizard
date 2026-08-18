@@ -102,11 +102,16 @@ class InstallerTests(unittest.TestCase):
             stderr="",
         )
 
+    def copy_distribution_metadata(self, repo):
+        shutil.copytree(ROOT / ".claude-plugin", repo / ".claude-plugin")
+        shutil.copytree(ROOT / ".agents", repo / ".agents")
+        shutil.copytree(ROOT / "packaging", repo / "packaging")
+        shutil.copytree(ROOT / "plugins", repo / "plugins", symlinks=True)
+
     def copy_repo_without(self, relative):
         repo = self.sandbox / "broken-repo"
         shutil.copytree(ROOT / "prompting-wizard", repo / "prompting-wizard")
-        shutil.copytree(ROOT / ".claude-plugin", repo / ".claude-plugin")
-        shutil.copytree(ROOT / "packaging", repo / "packaging")
+        self.copy_distribution_metadata(repo)
         (repo / "tools").mkdir()
         shutil.copy2(ROOT / "tools/validate.py", repo / "tools/validate.py")
         path = repo / relative
@@ -119,8 +124,7 @@ class InstallerTests(unittest.TestCase):
     def copy_repo_with_artifacts(self):
         repo = self.sandbox / "artifact-repo"
         shutil.copytree(ROOT / "prompting-wizard", repo / "prompting-wizard")
-        shutil.copytree(ROOT / ".claude-plugin", repo / ".claude-plugin")
-        shutil.copytree(ROOT / "packaging", repo / "packaging")
+        self.copy_distribution_metadata(repo)
         (repo / "tools").mkdir()
         shutil.copy2(ROOT / "tools/validate.py", repo / "tools/validate.py")
         skill = repo / "prompting-wizard"

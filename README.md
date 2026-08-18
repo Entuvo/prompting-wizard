@@ -106,7 +106,38 @@ You bring the professional judgment. Prompting Wizard teaches you how to communi
 
 ## Start the course
 
-Copy the prompt below and paste it into Claude Desktop, Codex, or another AI assistant. The AI will inspect its own capabilities, choose the installation or loading method it actually supports, and start the course.
+The compare step works best in a coding agent that can run your prompt in a clean, isolated context. Claude Code, Codex, and similar agents can do that. In Claude.ai or ChatGPT chat, the course can still teach, but you will usually paste the practice prompt into a new chat yourself.
+
+After any of the installs below, open a new chat and say: `Start Prompting Wizard.`
+
+### Claude Code
+
+```text
+/plugin marketplace add Entuvo/prompting-wizard
+/plugin install prompting-wizard@entuvo-prompting
+```
+
+Claude Code then updates the plugin through its own marketplace refresh. Do not replace files inside a managed install by hand.
+
+### Codex
+
+```text
+codex plugin marketplace add Entuvo/prompting-wizard
+```
+
+Install Prompting Wizard from that marketplace in the Codex plugin UI, then start the course. Codex updates managed plugins; do not overwrite those files yourself.
+
+### Any agent that can run the skills CLI
+
+```text
+npx skills add Entuvo/prompting-wizard
+```
+
+If the CLI asks which skill, choose `prompting-wizard`. Later, `npx skills update` refreshes installed skills.
+
+### Other chat apps
+
+If your assistant cannot install plugins or skills, paste this prompt. It will use a native install when one exists, otherwise load the course for this chat only.
 
 ```text
 Install or load Prompting Wizard from:
@@ -124,11 +155,13 @@ If this environment cannot preserve files between chats, accept an attached PROG
 If you can neither install the skill nor read its files from GitHub, state exactly which capability is missing. Do not fabricate a successful installation.
 ```
 
-Some AI hosts can install Prompting Wizard persistently. Others can load it only for the current chat. The prompt requires the AI to tell you which outcome actually occurred.
+Some hosts can keep Prompting Wizard between chats. Others can load it only for the current chat. The prompt requires the AI to say which outcome actually occurred.
+
+A local `./install.sh` remains available for air-gapped or pre-listing installs. Prefer the host commands above when they work.
 
 ### Updates
 
-Prompting Wizard checks for a newer version at most once every seven days. When one is available, it shows the version and release-notes link, then asks before changing anything. Updates never replace `PROGRESS.md`, so your current day, scores, tasks, and lesson history stay intact.
+Managed Claude Code, Codex, and skills-CLI installs update through those tools. For a copy loaded some other way, Prompting Wizard checks for a newer version at most once every seven days. When one is available, it shows the version and release-notes link, then asks before changing anything. Updates never replace `PROGRESS.md`, so your current day, scores, tasks, and lesson history stay intact.
 
 To check immediately, tell the tutor: `Check Prompting Wizard for updates.`
 
@@ -164,9 +197,17 @@ Before opening a pull request, run:
 ```bash
 python3 tools/validate.py --complete
 python3 tools/test_validate.py
+python3 tools/test_package_release.py
+python3 tools/test_install.py
 ```
 
-The validator checks required section and tier order, duplicate sections, duplicate and non-empty tiers, the 200-word concept cap, rubric references in both directions, supported domain slots, canonical lever order in `assessment.md`, shipped absolute paths, and the shipped `VERSION.md` semantic version, release-notes URL, and matching `CHANGELOG.md` heading. Changes to `prompting-wizard/days/`, `prompting-wizard/SKILL.md`, or `prompting-wizard/assessment.md` also require human review of their teaching intent.
+If you change files under `prompting-wizard/` or `packaging/openai-plugin.json`, refresh the Codex plugin copies first:
+
+```bash
+python3 tools/sync_codex_plugin.py
+```
+
+The validator checks required section and tier order, duplicate sections, duplicate and non-empty tiers, the 200-word concept cap, rubric references in both directions, supported domain slots, canonical lever order in `assessment.md`, shipped absolute paths, the shipped `VERSION.md` semantic version, release-notes URL, matching `CHANGELOG.md` heading, and that `plugins/prompting-wizard/` is a real-file copy of the course. Changes to `prompting-wizard/days/`, `prompting-wizard/SKILL.md`, or `prompting-wizard/assessment.md` also require human review of their teaching intent.
 
 ## License
 

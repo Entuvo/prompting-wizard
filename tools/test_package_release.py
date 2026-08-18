@@ -39,18 +39,21 @@ class PackageReleaseTests(unittest.TestCase):
             package_release.SKILL / ".claude-plugin/plugin.json",
             package_release.ROOT / ".claude-plugin/marketplace.json",
             package_release.ROOT / "packaging/openai-plugin.json",
+            package_release.ROOT / ".agents/plugins/marketplace.json",
         )
         versions = []
         for path in manifests:
             data = json.loads(path.read_text(encoding="utf-8"))
-            if path.name == "marketplace.json":
+            if path == package_release.ROOT / ".claude-plugin/marketplace.json":
                 versions.extend(
                     (data["metadata"]["version"], data["plugins"][0]["version"])
                 )
+            elif path.name == "marketplace.json":
+                versions.append(data["plugins"][0]["version"])
             else:
                 versions.append(data["version"])
         self.assertEqual(expected, "1.1.0")
-        self.assertEqual(versions, [expected, expected, expected, expected])
+        self.assertEqual(versions, [expected, expected, expected, expected, expected])
 
     def test_account_zip_contains_only_canonical_course_files(self):
         account, _, _ = package_release.build_all(

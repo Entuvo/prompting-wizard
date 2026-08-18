@@ -125,6 +125,57 @@ def line_number_of(text, needle):
     raise AssertionError(f"fixture does not contain {needle!r}")
 
 
+def write_codex_distribution(repo_root, version="1.0.0"):
+    """Minimal Codex marketplace and plugin tree that check() accepts."""
+    (repo_root / ".agents" / "plugins").mkdir(parents=True, exist_ok=True)
+    plugin = repo_root / "plugins" / "prompting-wizard"
+    skill = repo_root / "prompting-wizard"
+    skill_copy = plugin / "skills" / "prompting-wizard"
+    (plugin / ".codex-plugin").mkdir(parents=True, exist_ok=True)
+    skill_copy.mkdir(parents=True, exist_ok=True)
+    (repo_root / ".agents" / "plugins" / "marketplace.json").write_text(
+        json.dumps(
+            {
+                "name": "entuvo-prompting",
+                "plugins": [
+                    {
+                        "name": "prompting-wizard",
+                        "source": {
+                            "source": "local",
+                            "path": "./plugins/prompting-wizard",
+                        },
+                        "version": version,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    openai = repo_root / "packaging" / "openai-plugin.json"
+    if openai.is_file():
+        shutil.copy2(openai, plugin / ".codex-plugin" / "plugin.json")
+    else:
+        (plugin / ".codex-plugin" / "plugin.json").write_text(
+            json.dumps({"name": "prompting-wizard", "version": version}),
+            encoding="utf-8",
+        )
+    for name in (
+        "SKILL.md",
+        "AGENTS.md",
+        "assessment.md",
+        "rubrics.md",
+        "VERSION.md",
+        "CHANGELOG.md",
+    ):
+        source = skill / name
+        if source.is_file():
+            shutil.copy2(source, skill_copy / name)
+    if (skill / "days").is_dir():
+        shutil.copytree(skill / "days", skill_copy / "days", dirs_exist_ok=True)
+    if (repo_root / "LICENSE").is_file():
+        shutil.copy2(repo_root / "LICENSE", plugin / "LICENSE")
+
+
 def build_clean_skill(root, days=(1,)):
     """Create the smallest skill tree that check() accepts."""
     (root / "days").mkdir(parents=True, exist_ok=True)
@@ -160,6 +211,7 @@ def build_clean_skill(root, days=(1,)):
         json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
         encoding="utf-8",
     )
+    write_codex_distribution(root.parent, version="1.0.0")
     for number in days:
         (root / "days" / f"{number:02d}.md").write_text(
             render_day(title=f"# Day {number:02d}"), encoding="utf-8")
@@ -287,6 +339,29 @@ class DistributionMetadataTests(unittest.TestCase):
         self.assertEqual(plugin["name"], "prompting-wizard")
         self.assertEqual(plugin["source"], "./prompting-wizard")
 
+    def test_codex_marketplace_points_to_plugin_tree(self):
+        marketplace = json.loads(
+            (validate.ROOT / ".agents/plugins/marketplace.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        plugin = marketplace["plugins"][0]
+        self.assertEqual(plugin["name"], "prompting-wizard")
+        self.assertEqual(
+            validate._codex_plugin_source_path(plugin),
+            "./plugins/prompting-wizard",
+        )
+        skill = (
+            validate.ROOT
+            / "plugins/prompting-wizard/skills/prompting-wizard/SKILL.md"
+        )
+        self.assertTrue(skill.is_file())
+        self.assertFalse(skill.is_symlink())
+        self.assertEqual(
+            skill.read_bytes(),
+            (validate.SKILL / "SKILL.md").read_bytes(),
+        )
+
     def test_distribution_versions_match_course_version(self):
         self.assertEqual(validate.check(), [])
 
@@ -332,6 +407,11 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.openai_plugin_path.write_text(
             json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
             encoding="utf-8",
+        )
+        (skill / "SKILL.md").write_text("# SKILL.md\n", encoding="utf-8")
+        write_codex_distribution(root, version="1.0.0")
+        self.codex_marketplace_path = (
+            root / ".agents" / "plugins" / "marketplace.json"
         )
 
     def test_read_manifest_returns_json_object(self):
@@ -379,6 +459,9 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.assertIn(
             "Claude marketplace: version does not match VERSION.md", errors
         )
+        self.assertIn(
+            "Codex marketplace: version does not match VERSION.md", errors
+        )
 
     def test_marketplace_metadata_version_must_match_course_version(self):
         marketplace = json.loads(self.marketplace_path.read_text(encoding="utf-8"))
@@ -408,6 +491,75 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.assertIn(
             "OpenAI plugin: version does not match VERSION.md", errors
         )
+
+    def test_codex_marketplace_version_must_match_course_version(self):
+        marketplace = json.loads(
+            self.codex_marketplace_path.read_text(encoding="utf-8")
+        )
+        marketplace["plugins"][0]["version"] = "9.9.9"
+        self.codex_marketplace_path.write_text(
+            json.dumps(marketplace), encoding="utf-8"
+        )
+        errors = []
+
+        validate.check_distribution_metadata("1.0.0", errors)
+
+        self.assertIn(
+            "Codex marketplace: version does not match VERSION.md", errors
+        )
+
+    def test_codex_plugin_symlink_is_rejected(self):
+        skill_copy = (
+            validate.ROOT
+            / "plugins/prompting-wizard/skills/prompting-wizard/SKILL.md"
+        )
+        skill_copy.unlink()
+        skill_copy.symlink_to(validate.SKILL / "SKILL.md")
+        errors = []
+
+        validate.check_codex_plugin_copies(errors)
+
+        self.assertIn(
+            "Codex plugin SKILL.md: must be a real file, not a symlink", errors
+        )
+
+    def test_codex_plugin_copy_must_match_canonical(self):
+        skill_copy = (
+            validate.ROOT
+            / "plugins/prompting-wizard/skills/prompting-wizard/SKILL.md"
+        )
+        skill_copy.write_text("stale copy\n", encoding="utf-8")
+        errors = []
+
+        validate.check_codex_plugin_copies(errors)
+
+        self.assertIn("Codex plugin SKILL.md: does not match canonical file", errors)
+
+    def test_codex_plugin_skill_root_symlink_is_rejected(self):
+        skill_copy = (
+            validate.ROOT / "plugins/prompting-wizard/skills/prompting-wizard"
+        )
+        shutil.rmtree(skill_copy)
+        skill_copy.symlink_to(validate.SKILL)
+        errors = []
+
+        validate.check_codex_plugin_copies(errors)
+
+        self.assertIn(
+            "Codex plugin skills/prompting-wizard: must be a real directory, not a symlink",
+            errors,
+        )
+
+    def test_codex_plugin_missing_copy_is_reported(self):
+        (
+            validate.ROOT
+            / "plugins/prompting-wizard/skills/prompting-wizard/SKILL.md"
+        ).unlink()
+        errors = []
+
+        validate.check_codex_plugin_copies(errors)
+
+        self.assertIn("Codex plugin SKILL.md: missing required copy", errors)
 
     def test_empty_plugin_manifest_reports_missing_name_and_version(self):
         self.plugin_path.write_text("{}", encoding="utf-8")
@@ -1405,6 +1557,7 @@ class CheckDayCoverageTests(SkillFixture):
                 n,
                 replacing(CLEAN_DAY, "## Rubric", f"Score with rubrics.md#{slug}."),
             )
+        write_codex_distribution(validate.ROOT, version="1.0.0")
 
         self.assertEqual(validate.check(require_all_days=True), [])
 
