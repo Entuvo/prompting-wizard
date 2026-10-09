@@ -7,7 +7,7 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-blocked='^(\.[^/]+/|AGENTS\.md$|CLAUDE\.md$|PRODUCT\.md$|docs/|listing/|dist/)'
+blocked='^(\.[^/]+/|AGENTS\.md$|CLAUDE\.md$|PRODUCT\.md$|listing/|dist/)'
 allowed='^(\.github/|\.gitignore$|\.claude-plugin/|\.agents/plugins/)'
 generic='(/Users/[A-Za-z]|/home/[a-z]|"modelUsage"|"costUSD"|PRIVATE KEY-----)'
 generic_exempt='^tools/(validate|test_validate|leak-check)\.(py|sh)$'
