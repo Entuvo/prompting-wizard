@@ -2,7 +2,7 @@
 @font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(fonts/source-sans-3-latin-400-normal.woff2) format("woff2")}
 @font-face{font-family:"Source Sans 3";font-weight:600;font-display:swap;src:url(fonts/source-sans-3-latin-600-normal.woff2) format("woff2")}
 :root{--bg:var(--paper-50);--surface:var(--paper-100);--text:var(--ink-900);--muted:var(--stone-600);--accent:var(--rust-500);--rule:var(--rule-light);--link:var(--rust-700);--btn:var(--rust-700);--on-btn:var(--paper-50);color-scheme:light}
-@media (prefers-color-scheme:dark){:root{--bg:var(--ink-900);--surface:var(--ink-700);--text:var(--paper-50);--muted:var(--stone-300);--accent:var(--rust-300);--rule:var(--rule-dark);--link:var(--rust-300);--btn:var(--rust-300);--on-btn:var(--ink-900);color-scheme:dark}.logo-light{display:none}.logo-dark{display:block!important}}
+@media (prefers-color-scheme:dark){:root{--bg:var(--ink-900);--surface:var(--ink-700);--text:var(--paper-50);--muted:var(--stone-300);--accent:var(--rust-300);--rule:var(--rule-dark);--link:var(--rust-300);--btn:var(--rust-300);--on-btn:var(--ink-900);color-scheme:dark}.logo-light{display:none!important}.logo-dark{display:block!important}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
