@@ -69,6 +69,6 @@ Your progress stays with you, in a plain `PROGRESS.md` file you can read or edit
 
 - [Website](https://entuvo.github.io/prompting-wizard/): the full course outline, install options, `pw` commands and updates
 - [Optional local coaching](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
-- **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.
+- **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.
 
 MIT License · Made by [Entuvo](https://www.entuvo.com), a venture studio that builds AI Native businesses.
