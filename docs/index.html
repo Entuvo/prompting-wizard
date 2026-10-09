@@ -103,7 +103,11 @@ If you can neither install the skill nor read its files from GitHub, state exact
 </div></footer>
 <script>
 document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
-  navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent).then(() => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1500); });
+  const el = document.getElementById(b.dataset.copy);
+  const say = (t) => { b.textContent = t; setTimeout(() => b.textContent = "Copy", 2500); };
+  // If the browser refuses clipboard access, select the text so the reader can copy it by hand.
+  const select = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); say("Press Ctrl/⌘ C"); };
+  (navigator.clipboard ? navigator.clipboard.writeText(el.textContent) : Promise.reject()).then(() => say("Copied"), select);
 }));
 </script>
 </body>
