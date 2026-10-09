@@ -1,6 +1,6 @@
 # Prompting Wizard release notes
 
-## 1.2.0 — unreleased
+## 1.2.0 — 2026-10-09
 
 - Require source blocks in source-dependent practice and inspect actual few-shot failure evidence; clarify the attention-marker and phrasal-verb examples.
 
