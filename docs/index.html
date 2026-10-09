@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompting Wizard — learn to direct AI with your own work</title>
+<meta name="description" content="An open source prompting coach for Claude Code and Codex. Thirty guided lessons, at your own pace, built around your own work.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Prompting Wizard">
+<meta property="og:description" content="An open source prompting coach for Claude Code and Codex, built around your own work.">
+<meta property="og:url" content="https://entuvo.github.io/prompting-wizard/">
+<meta property="og:image" content="https://entuvo.github.io/prompting-wizard/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="wrap">
+<img class="logo logo-light" src="assets/logo-on-light.svg" alt="Prompting Wizard" width="336" height="56">
+<img class="logo logo-dark" src="assets/logo-on-dark.svg" alt="Prompting Wizard" width="336" height="56">
+<div class="hero">
+<h1>Learn to direct AI with your own work.</h1>
+<p class="lead">An open source prompting coach for Claude Code and Codex. Thirty guided lessons, at your own pace.</p>
+<div class="actions"><a class="btn" href="#start">Start the course</a><a href="https://github.com/Entuvo/prompting-wizard">View on GitHub</a></div>
+</div>
+</header>
+<main>
+<section><div class="wrap">
+<h2>Same AI. Clearer direction.</h2>
+<div class="compare">
+<div class="panel draft"><div class="label">Your prompt</div><blockquote>Review this report and tell me what matters.</blockquote></div>
+<div class="panel"><div class="label">A stronger version</div><blockquote>Create a one-page briefing <mark>for a department head</mark> from this report. Identify the three decisions that need attention. For each decision, cite the supporting passage, explain the likely consequence of waiting, and end with one recommended next step.</blockquote></div>
+</div>
+<p>Same AI. The second prompt names the audience, the deliverable, the evidence and the quality bar.</p>
+</div></section>
+<section><div class="wrap">
+<h2>How a lesson works</h2>
+<p>Every lesson follows the same loop, on a task from your own work.</p>
+<ul class="steps">
+<li><h3>Write</h3>Your prompt for a real task.</li>
+<li><h3>Run</h3>It runs exactly as written; it is not quietly improved first.</li>
+<li><h3>Compare</h3>Against one targeted change, on the same material.</li>
+<li><h3>Improve</h3>Name the change that mattered and get a score.</li>
+</ul>
+</div></section>
+<section><div class="wrap">
+<h2>Thirty lessons, four stages</h2>
+<ul class="stages">
+<li><h3>Diagnose</h3>A short assessment records your starting level and the tasks you want help with.</li>
+<li><h3>Control</h3>Eleven language levers: the ordinary parts of language that control what gets made, in what scope, and to what standard.</li>
+<li><h3>Build</h3>Examples, output formats, multi-step tasks, self-review, evaluation criteria and reusable templates.</li>
+<li><h3>Harden</h3>A capstone prompt for one of your real tasks, tested on a case it wasn't designed for.</li>
+</ul>
+</div></section>
+<section><div class="wrap">
+<h2>Who it's for</h2>
+<p>Anyone who already asks AI for help. No coding knowledge is required.</p>
+<ul class="who">
+<li>A <strong>teacher</strong> turns source material into a lesson plan with a defined age level and objective.</li>
+<li>A <strong>lawyer</strong> extracts obligations, dates and exceptions, keeping conclusions tied to the text.</li>
+<li>A <strong>manager</strong> turns meeting notes into decisions, owners and deadlines.</li>
+<li>A <strong>researcher</strong> separates evidence from inference.</li>
+</ul>
+<p>You bring the professional judgment.</p>
+</div></section>
+<section id="start"><div class="wrap">
+<h2>Paste one prompt to start.</h2>
+<p>Paste this into Claude Code or Codex. It installs Prompting Wizard as a plugin and starts the course.</p>
+<div class="code"><button class="copy" type="button" data-copy="prompt">Copy</button><pre id="prompt">Install or load Prompting Wizard from:
+
+https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard
+
+First determine which AI environment you are running in and which capabilities it actually provides. Use its native skill, plugin, marketplace, repository, or filesystem installation method when available.
+
+If persistent installation is unavailable but you can read GitHub, load Prompting Wizard for this chat by reading AGENTS.md and then SKILL.md from that repository path. Follow those instructions directly.
+
+Do not overwrite an existing installation without asking me. Never claim the skill is installed unless the host confirms it. Do not stop after explaining installation or creating a package. Once Prompting Wizard is available, start the Day 0 assessment.
+
+If this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
+
+If you can neither install the skill nor read its files from GitHub, state exactly which capability is missing. Do not fabricate a successful installation.</pre></div>
+<div class="callout"><p>Your practice prompts run for real, and may have the same file and network access as your AI session. Start in a folder you are comfortable letting an AI inspect, not a repository with important uncommitted work.</p></div>
+<h3 id="install" style="margin-top:var(--space-6)">Using commands instead?</h3>
+<details><summary>Claude Code</summary>
+<div class="code"><button class="copy" type="button" data-copy="cc">Copy</button><pre id="cc">/plugin marketplace add Entuvo/prompting-wizard
+/plugin install prompting-wizard@entuvo-prompting</pre></div></details>
+<details><summary>Codex</summary>
+<div class="code"><button class="copy" type="button" data-copy="cx">Copy</button><pre id="cx">codex plugin marketplace add Entuvo/prompting-wizard</pre></div>
+<p>Then install Prompting Wizard from that marketplace in the Codex plugin UI.</p></details>
+<details><summary>Skills CLI</summary>
+<div class="code"><button class="copy" type="button" data-copy="sk">Copy</button><pre id="sk">npx skills add Entuvo/prompting-wizard</pre></div></details>
+<details><summary><code>pw</code> commands</summary>
+<p>help, start, continue, progress, feedback on, feedback off, pause, resume, examples, forget, model.</p></details>
+<details><summary>Updates</summary>
+<p>Managed installs update through Claude Code, Codex or the skills CLI.</p></details>
+</div></section>
+</main>
+<footer><div class="wrap">
+<nav><a href="https://github.com/Entuvo/prompting-wizard/blob/main/COACHING.md">Optional local coaching</a><a href="https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md">Privacy</a><a href="https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md">Terms</a><a href="https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md">Support</a><a href="https://github.com/Entuvo/prompting-wizard">GitHub</a></nav>
+<p>Made by <a href="https://www.entuvo.com">Entuvo</a>, a venture studio that builds AI Native businesses.</p>
+<p>Learning outcomes have not yet been established through human learner testing.</p>
+</div></footer>
+<script>
+document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
+  navigator.clipboard.writeText(document.getElementById(b.dataset.copy).textContent).then(() => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1500); });
+}));
+</script>
+</body>
+</html>
