@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Scan every commit about to be pushed.
+while read -r lref lsha rref rsha; do
+  [[ $lsha =~ ^0+$ ]] && continue
+  tools/leak-check.sh push "$rsha" "$lsha" || exit 1
+done

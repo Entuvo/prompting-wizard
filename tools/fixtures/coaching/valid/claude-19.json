@@ -1,0 +1,7 @@
+{
+  "hook_event_name": "SessionStart",
+  "session_id": "synthetic-session-5",
+  "cwd": "/synthetic/work",
+  "model": "claude-opus-5-5",
+  "source": "startup"
+}

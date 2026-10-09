@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "UserPromptSubmit",
+  "session_id": "synthetic-session-5",
+  "cwd": "/synthetic/work",
+  "prompt": "New task: reply WIZARD_STEER_RESULT only."
+}

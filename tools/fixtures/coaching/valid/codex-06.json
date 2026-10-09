@@ -1,0 +1,9 @@
+{
+  "hook_event_name": "Stop",
+  "session_id": "synthetic-session-1",
+  "turn_id": "synthetic-turn-2",
+  "cwd": "/synthetic/work",
+  "model": "gpt-6-astra",
+  "last_assistant_message": "Command exited 0. Output: `WIZARD_IO_OK`.",
+  "stop_hook_active": true
+}

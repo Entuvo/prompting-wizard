@@ -1,0 +1,7 @@
+{
+  "hook_event_name": "SessionStart",
+  "session_id": "synthetic-session-1",
+  "cwd": "/synthetic/work",
+  "model": "gpt-6-astra",
+  "source": "startup"
+}

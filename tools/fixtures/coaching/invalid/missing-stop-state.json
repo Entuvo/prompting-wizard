@@ -1,0 +1,5 @@
+{
+  "hook_event_name": "Stop",
+  "cwd": "/synthetic/work",
+  "session_id": "synthetic"
+}

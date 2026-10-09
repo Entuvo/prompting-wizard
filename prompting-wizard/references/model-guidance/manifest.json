@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "claude-long-context",
+      "models": [
+        "claude-opus-5-5"
+      ],
+      "task_tags": [
+        "long-context"
+      ],
+      "source_url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#long-context-prompting",
+      "checked_at": "2026-10-08",
+      "revision": "2026-10-08.1",
+      "lessons": [
+        21
+      ],
+      "skills": [
+        "context-ordering"
+      ],
+      "text": "For document inputs above roughly 20,000 tokens, place documents before the query. Distinguish documents and sources clearly. Ground analysis in relevant passages. Verify benefits on your own task."
+    },
+    {
+      "id": "astra-task-boundaries",
+      "models": [
+        "gpt-6-astra"
+      ],
+      "task_tags": [
+        "agentic-work"
+      ],
+      "source_url": "https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra",
+      "checked_at": "2026-10-08",
+      "revision": "2026-09-11.reviewed-2026-10-08",
+      "lessons": [
+        19,
+        23,
+        26
+      ],
+      "skills": [
+        "reasoning-scaffolds",
+        "agent-and-tool-prompting",
+        "token-economy"
+      ],
+      "text": "State the desired completion criteria and authorized scope. Load guidance when relevant to the task. Reassess inherited detailed procedures and repeated verification requirements; keep instructions that solve observed problems."
+    }
+  ]
+}

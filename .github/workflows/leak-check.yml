@@ -1,0 +1,27 @@
+name: Leak check
+on:
+  push:
+    branches: ['**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  leak-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan tree and new commits
+        env:
+          LEAK_DENYLIST: ${{ secrets.LEAK_DENYLIST }}
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT" = push ] && [ -z "$LEAK_DENYLIST" ]; then echo "LEAK_DENYLIST secret missing"; exit 1; fi
+          bash tools/leak-check.sh tree
+          if [ "$EVENT" = pull_request ]; then bash tools/leak-check.sh push "$PR_BASE" "$PR_HEAD"
+          elif [ -n "$BEFORE" ] && ! [[ $BEFORE =~ ^0+$ ]]; then bash tools/leak-check.sh push "$BEFORE" "$AFTER"; fi

@@ -1,0 +1,7 @@
+{
+  "hook_event_name": "Stop",
+  "session_id": "synthetic-session-3",
+  "cwd": "/synthetic/work",
+  "last_assistant_message": "I ran the probe script and it printed `WIZARD_IO_OK`.\n\nWIZARD_PROBE_RESULT",
+  "stop_hook_active": true
+}

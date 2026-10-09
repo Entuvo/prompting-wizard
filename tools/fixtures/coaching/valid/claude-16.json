@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "UserPromptSubmit",
+  "session_id": "synthetic-session-4",
+  "cwd": "/synthetic/work",
+  "prompt": "Use one subagent to reply WIZARD_CHILD_RESULT only. Do no filesystem or network work. Report its exact reply."
+}

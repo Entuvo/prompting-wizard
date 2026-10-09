@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "SessionStart",
+  "session_id": "synthetic-session-3",
+  "cwd": "/synthetic/work",
+  "source": "startup"
+}

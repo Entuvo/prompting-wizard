@@ -1,0 +1,30 @@
+{
+  "name": "prompting-wizard",
+  "version": "1.2.0",
+  "description": "A 30-day practical course for learning reliable prompting with real work tasks.",
+  "author": {"name": "Entuvo", "url": "https://github.com/Entuvo"},
+  "homepage": "https://github.com/Entuvo/prompting-wizard",
+  "repository": "https://github.com/Entuvo/prompting-wizard",
+  "license": "MIT",
+  "keywords": ["prompting", "education", "course", "productivity"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Prompting Wizard",
+    "shortDescription": "A 30-day prompting course",
+    "longDescription": "Learn reliable prompting in 20-minute lessons built around your real work. One assessment, then one lever a day. Progress stays in a local PROGRESS.md file.",
+    "developerName": "Entuvo",
+    "category": "Productivity",
+    "capabilities": [],
+    "websiteURL": "https://github.com/Entuvo/prompting-wizard",
+    "supportURL": "https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md",
+    "privacyPolicyURL": "https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md",
+    "logo": "./assets/logo.png",
+    "composerIcon": "./assets/logo.png",
+    "brandColor": "#C45C26",
+    "defaultPrompt": [
+      "Start Prompting Wizard.",
+      "Continue my Prompting Wizard course."
+    ]
+  }
+}

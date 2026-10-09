@@ -1,0 +1,7 @@
+{
+  "hook_event_name": "Stop",
+  "session_id": "synthetic-session-4",
+  "cwd": "/synthetic/work",
+  "last_assistant_message": "The subagent's exact reply was:\n\nWIZARD_CHILD_RESULT",
+  "stop_hook_active": false
+}

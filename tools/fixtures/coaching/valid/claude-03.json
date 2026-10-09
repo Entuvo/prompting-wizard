@@ -1,0 +1,7 @@
+{
+  "hook_event_name": "Stop",
+  "session_id": "synthetic-session-1",
+  "cwd": "/synthetic/work",
+  "last_assistant_message": "WIZARD_PROBE_FEEDBACK",
+  "stop_hook_active": true
+}

@@ -1,0 +1,8 @@
+{
+  "hook_event_name": "UserPromptSubmit",
+  "session_id": "synthetic-session-1",
+  "turn_id": "synthetic-turn-5",
+  "cwd": "/synthetic/work",
+  "model": "gpt-6-astra",
+  "prompt": "New task: reply WIZARD_STEER_RESULT only."
+}

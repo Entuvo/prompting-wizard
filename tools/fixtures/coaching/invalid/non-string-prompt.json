@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "UserPromptSubmit",
+  "cwd": "/synthetic/work",
+  "session_id": "synthetic",
+  "prompt": {}
+}

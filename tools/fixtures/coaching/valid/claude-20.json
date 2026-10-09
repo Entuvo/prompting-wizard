@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "UserPromptSubmit",
+  "session_id": "synthetic-session-5",
+  "cwd": "/synthetic/work",
+  "prompt": "Reply with WIZARD_PROBE_RESULT only"
+}
