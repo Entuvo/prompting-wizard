@@ -12,17 +12,24 @@
 <meta property="og:url" content="https://entuvo.github.io/prompting-wizard/">
 <meta property="og:image" content="https://entuvo.github.io/prompting-wizard/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="tokens.css">
-<link rel="stylesheet" href="style.css">
+<!-- ?v= is a hash of each file, so a changed stylesheet is never served from cache. Update it when the file changes. -->
+<link rel="stylesheet" href="tokens.css?v=c545f597">
+<link rel="stylesheet" href="style.css?v=2c79fa99">
 </head>
 <body>
 <header class="wrap">
 <img class="logo logo-light" src="assets/logo-on-light.svg" alt="Prompting Wizard" width="336" height="56">
 <img class="logo logo-dark" src="assets/logo-on-dark.svg" alt="Prompting Wizard" width="336" height="56">
 <div class="hero">
+<div>
 <h1>Learn to direct AI with your own work.</h1>
 <p class="lead">An open source prompting coach for Claude Code and Codex. Thirty guided lessons, at your own pace.</p>
 <div class="actions"><a class="btn" href="#start">Start the course</a><a href="https://github.com/Entuvo/prompting-wizard">View on GitHub</a></div>
+</div>
+<!-- Nothing loads from YouTube until the reader presses play. -->
+<button class="video" type="button" data-video="4eeRSs2Gi9s" aria-label="Play the 25-second Prompting Wizard video (loads from YouTube)">
+<img src="assets/video-poster.jpg" alt="" width="540" height="960"><span class="play" aria-hidden="true"></span>
+</button>
 </div>
 </header>
 <main>
@@ -108,6 +115,12 @@ document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click"
   // If the browser refuses clipboard access, select the text so the reader can copy it by hand.
   const select = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); say("Press Ctrl/⌘ C"); };
   (navigator.clipboard ? navigator.clipboard.writeText(el.textContent) : Promise.reject()).then(() => say("Copied"), select);
+}));
+document.querySelectorAll("[data-video]").forEach(b => b.addEventListener("click", () => {
+  const f = document.createElement("iframe");
+  f.src = "https://www.youtube-nocookie.com/embed/" + b.dataset.video + "?autoplay=1&rel=0";
+  f.title = "Prompting Wizard video"; f.allow = "autoplay; encrypted-media; picture-in-picture"; f.allowFullscreen = true;
+  f.className = "video"; b.replaceWith(f);
 }));
 </script>
 </body>
