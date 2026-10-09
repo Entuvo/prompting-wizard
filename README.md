@@ -3,6 +3,8 @@
 <p align="center"><b>An open source prompting coach for Claude Code and Codex, built around your own work.</b><br>
 <a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="COACHING.md">Coaching</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
 
+<p align="center"><a href="https://youtube.com/shorts/4eeRSs2Gi9s"><img src="docs/assets/video-poster.jpg" alt="Watch the 25-second Prompting Wizard video on YouTube" width="220"></a></p>
+
 ## The same AI. Clearer direction.
 
 > Review this report and tell me what matters.
