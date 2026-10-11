@@ -1,7 +1,7 @@
 <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-on-dark.svg"><img src="docs/assets/logo-on-light.svg" alt="Prompting Wizard" width="420"></picture></p>
 
-<p align="center"><b>An open source prompting coach for Claude Code and Codex, built around your own work.</b><br>
-<a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="COACHING.md">Coaching</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
+<p align="center"><b>Learn to prompt through your everyday work. An open source coach, with an optional 30-lesson course.</b><br>
+<a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="NATIVE-APPS.md">ChatGPT &amp; Claude pilot</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
 
 <p align="center"><a href="https://youtube.com/shorts/s2WarFaRY2Q"><img src="docs/assets/video-poster.jpg" alt="Watch the Prompting Wizard video on YouTube" width="220"></a></p>
 
@@ -13,17 +13,25 @@ The AI has to guess what "review" means, who the answer is for, and what shape i
 
 > Create a one-page briefing for a department head from this report. Identify the three decisions that need attention. For each decision, cite the supporting passage, explain the likely consequence of waiting, and end with one recommended next step.
 
-Now it knows the audience, the deliverable, the evidence and the quality bar. This is not about memorizing magic phrases. It is about learning which part of your instruction controls which part of the result.
+Now it knows the audience, the deliverable, the evidence and the quality bar. Prompting Wizard teaches you which choices affect the result, using tasks you already do. A short prompt can be enough; a useful lesson does not always require a rewrite.
 
 ## Start
 
-**What you need**
+Bring a task from your own work. Choose the setup for the app you use:
 
-- **Claude Code or Codex.** Prompting Wizard runs inside either one. New to both? Get [Claude Code](https://claude.com/claude-code) or [Codex](https://developers.openai.com/codex); each needs an account with its provider.
-- **A task from your own work.** Your lessons use it, so keep one in mind.
-- **A folder to practise in.** See [Before your first lesson](#before-your-first-lesson).
+### ChatGPT or Claude — teaching pilot
 
-Choose everyday learning (`pw learn`) without an interview, or the structured course with an initial assessment. Ordinary ChatGPT/Claude users can try the [Learning Card pilot](NATIVE-APPS.md), with manual transfer between chats. Native app compatibility remains unverified.
+1. Copy the [one-time teaching instructions](prompting-wizard/references/native-instructions.txt) into your account instructions, preserving any instructions you already use. Follow the [app setup walkthrough](NATIVE-APPS.md#start-with-lightweight-coaching) for the relevant settings.
+2. Start a new chat and ask “What coaching instructions can you see?” If they did not load, paste the block into that chat.
+3. Do your normal work. The instructions ask the coach to finish your task before offering an occasional learning opportunity. No interview is required.
+
+Instructions alone provide lightweight tips. For lessons and learning history, supply the guide and current Learning Card using the [pilot materials and attachment steps](NATIVE-APPS.md#add-lessons-and-carry-learning-between-chats). The guide/card downloads are not yet published in a release; that page links the source materials and developer build instructions. No coding tool or Python is needed for the lightweight start.
+
+This path is designed for ordinary ChatGPT and Claude chats, including web, desktop and mobile. Native-app compatibility remains unverified and is reserved for the pilot walkthrough. Installing Wizard in Claude Code or Codex does not configure these apps. The choices below are text replies, not added app buttons or registered `pw` commands.
+
+### Claude Code or Codex
+
+Use the installed skill for everyday learning or the optional course. Start in a folder you are comfortable letting your coding agent inspect: practice prompts run with the file and network access available to that session.
 
 Paste this into Claude Code or Codex. It loads Prompting Wizard and offers everyday learning, the structured course, or later.
 
@@ -32,28 +40,60 @@ Install or load Prompting Wizard from:
 
 https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard
 
-First determine which AI environment you are running in and which capabilities it actually provides. Use its native skill, plugin, marketplace, repository, or filesystem installation method when available.
+This setup is for Claude Code or Codex. First determine which of those hosts you are running in and which capabilities it actually provides. Use its native skill, plugin, marketplace, repository, or filesystem installation method when available.
 
 If persistent installation is unavailable but you can read GitHub, load Prompting Wizard for this chat by reading AGENTS.md and then SKILL.md from that repository path. Follow those instructions directly.
 
 Do not overwrite an existing installation without asking me. Never claim the skill is installed unless the host confirms it. Do not stop after explaining installation or creating a package. Once Prompting Wizard is available, offer everyday learning without an interview, the structured course, or later. Honor my choice.
 
-If this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
+For everyday learning, accept my current LEARNING.md if supplied. After I accept a learning record, return the complete updated card for me to retain unless a durable file write succeeds. Never claim it is saved or synced without that write.
+
+For the structured course, if this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
 
 If you can neither install the skill nor read its files from GitHub, state exactly which capability is missing. Do not fabricate a successful installation.
 ```
 
 Prefer commands? See [all install options](https://entuvo.github.io/prompting-wizard/#install).
 
+Everyday learning and Learning Card commands are available on `main`; the latest published release, v1.2.2, does not include this pilot. Use the current source for the commands below.
+
+After loading, ask “Learn through my work; no interview.” The skill alone provides teaching when you ask; it does not automatically watch later work or add after-task invitations. For explicit commands, use your installation's invocation:
+
+| Installation | Everyday learning | Learning Card progress |
+| --- | --- | --- |
+| Claude Code plugin | `/prompting-wizard:pw learn` | `/prompting-wizard:pw learning` |
+| Codex plugin | `$prompting-wizard:pw learn` | `$prompting-wizard:pw learning` |
+| Claude Code standalone skills | `/pw learn` | `/pw learning` |
+| Codex standalone skills | `$pw learn` | `$pw learning` |
+
+With the same invocation, `start` enters the optional course and `progress` shows course progress. Automatic after-result invitations in coding agents require the separate [local coaching setup and workspace opt-in](COACHING.md). Installing the skill or asking for a lesson does not enable collection. Paused, excluded, lesson-only and never-enabled workspaces receive explicitly requested teaching only.
+
 ## Everyday learning
 
-Use `pw learn` to learn through normal work without an interview. Finish the task, then choose Practice, Example, Lesson or Later when a useful teaching opportunity appears. Retry a revised prompt and reflect on what changed. Tips can be occasional, frequent or on request.
+**Finish work → choose a learning opportunity → practise → reflect → retain evidence.** You can stop after any step.
 
-Accepted learning evidence goes into a portable `LEARNING.md` card; `pw learning` shows that progress. Carry the current card between chats or providers manually. Mini-lessons do not advance the separate course. See the [ChatGPT and Claude walkthrough](NATIVE-APPS.md) for one-time instructions, retry examples and card handling.
+When you ask for teaching, or an invitation is enabled through the setup above, a useful opportunity after a completed task might be: “Naming the output could make this request clearer. Practice / Example / Lesson / Later?”
+
+- **Practice:** write your own change and separately predict its effect. If you choose Retry, the coach runs the revised prompt without the prediction, then asks what changed before assessing it.
+- **Example:** see a brief demonstration, with an optional return to practice.
+- **Lesson:** learn the principle using your task, then practise if you want.
+- **Later:** continue your work without a penalty or backlog.
+
+Same-chat retries are exploratory because the earlier answer remains in context. No improvement is a valid result. External actions are never repeated simply to compare prompts.
+
+Tips default to occasional; choose frequent or on-request using the [frequency instructions](NATIVE-APPS.md#start-with-lightweight-coaching). “More”, “less” or “pause coaching” applies to the current chat; change account instructions for later app chats. These preferences do not change coding-host collection settings or hook frequency.
+
+## Carry learning between chats
+
+With the guide and current card available, the coach proposes a short record after meaningful learning. It distinguishes practice with help from independent use; reading an example does not prove that you learned the skill.
+
+In chat apps, when you accept the record, ask for the complete updated `LEARNING.md`, save it yourself, and attach it in your next chat—even when switching between ChatGPT and Claude. Replace an old project upload deliberately. Without the current card, the coach cannot reliably know your learning history. It uses accepted evidence and the current task to suggest a relevant next opportunity.
+
+Nothing synchronizes automatically. Instructions do not watch other chats or connect provider accounts. [Automatic continuity](CONTINUITY.md) is an investigation, not an implemented service.
 
 ## How a course lesson works
 
-Thirty guided lessons, each built on a task from your own working life.
+For a more structured path, choose the optional course: an initial assessment followed by thirty guided lessons, each built on a task from your own working life. Everyday mini-lessons do not advance this course.
 
 - **Write.** You write a prompt for one of your real tasks.
 - **Run.** Your prompt runs exactly as you wrote it. It is not quietly improved first.
@@ -64,7 +104,7 @@ Four stages: **Diagnose, Control, Build, Harden.** Work at your own pace; skippi
 
 ## Who it's for
 
-Anyone who already asks AI for help and wants more control over the result. No coding knowledge is required for the course.
+Anyone who already asks AI for help and wants more control over the result. No coding knowledge is required for the teaching itself.
 
 - A **teacher** turns source material into a lesson plan with a defined age level and objective.
 - A **lawyer** extracts obligations, dates and exceptions, keeping conclusions tied to the text.
@@ -73,11 +113,7 @@ Anyone who already asks AI for help and wants more control over the result. No c
 
 You bring the professional judgment. Prompting Wizard teaches you how to communicate it.
 
-## Before your first lesson
-
-Your practice prompts run for real, and may have the same file and network access as your AI session. Start in a folder you are comfortable letting an AI inspect, not a repository with important uncommitted work.
-
-Your course progress stays with you in `PROGRESS.md`; everyday learning uses `LEARNING.md`. Both are plain files you can inspect. Learning outcomes have not yet been established through human learner testing.
+Course progress is kept in `PROGRESS.md`, or shared local state when the optional coding-host integration is active. Everyday learning uses the separate `LEARNING.md` card; there is no automatic bridge between them. Learning outcomes have not yet been established through human learner testing.
 
 ## More
 
@@ -85,7 +121,7 @@ Your course progress stays with you in `PROGRESS.md`; everyday learning uses `LE
 - [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): a short video from each lesson, with its before and after
 - [ChatGPT and Claude pilot](NATIVE-APPS.md): setup, learning flow and portable Learning Cards
 - [Automatic continuity investigation](CONTINUITY.md): documented options and the untested cross-app experiment
-- [Optional local coaching](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
+- [Optional automatic coaching in Claude Code/Codex: technical setup](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
 - **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.
 
 MIT License · Made by [Entuvo](https://www.entuvo.com), a venture studio that builds AI Native businesses.
