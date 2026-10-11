@@ -46,7 +46,7 @@ Thirty guided lessons, each built on a task from your own working life.
 - **Compare.** When one targeted change would help, both versions run on the same material in separate contexts.
 - **Improve.** You name the change that mattered and get a score against a clear standard.
 
-Four stages: **Diagnose, Control, Build, Harden.** Work at your own pace; skipping a day costs nothing.
+Four stages: **Diagnose, Control, Build, Harden.** Work at your own pace; skipping a session costs nothing.
 
 ## Who it's for
 

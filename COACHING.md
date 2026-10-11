@@ -1,6 +1,6 @@
 # Optional local coaching
 
-Prompting Wizard keeps the portable 30-day course and an optional local integration. The integration uses your host model to explain one useful prompting lesson after a result. Both hosts can use the same local learner profile. There is no account service or cross-device sync.
+Prompting Wizard keeps the portable 30-lesson course and an optional local integration. The integration uses your host model to explain one useful prompting lesson after a result. Both hosts can use the same local learner profile. There is no account service or cross-device sync.
 
 Choose **after-result** for a short coaching note, or **lesson-only** to collect examples for guided lessons without extra inference after each task. **Pause** stops collection. Only workspaces you explicitly enable are collected.
 

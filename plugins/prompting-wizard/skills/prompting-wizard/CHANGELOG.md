@@ -1,5 +1,9 @@
 # Prompting Wizard release notes
 
+## 1.2.1 — 2026-10-11
+
+- Describe the course as 30 self-paced lessons everywhere: plugin and marketplace descriptions, the skill, coaching notes and the README no longer say "30-day", "a lever a day" or "20-minute lessons".
+
 ## 1.2.0 — 2026-10-09
 
 - Require source blocks in source-dependent practice and inspect actual few-shot failure evidence; clarify the attention-marker and phrasal-verb examples.
