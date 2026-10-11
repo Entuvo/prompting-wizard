@@ -71,8 +71,8 @@ pronoun: 2    preposition: 4    conjunction: 3
 determiner: 3    numeral: 5    interjection: 4    particle: 2
 
 ## Tasks
-- Reviewing PRs on the payments service
-- Writing incident postmortems
+- Reviewing grant applications
+- Writing museum exhibition labels
 - Drafting API docs for external partners
 
 ## Log
