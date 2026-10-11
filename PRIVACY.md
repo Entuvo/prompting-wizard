@@ -1,6 +1,6 @@
 # Privacy policy
 
-Last updated: 11 October 2026
+Last updated: 12 October 2026
 
 Prompting Wizard is published by Entuvo. It is a set of files you install into an AI assistant you already use. Entuvo does not operate a Prompting Wizard account system or website backend. The course itself sends Entuvo nothing.
 
@@ -43,3 +43,5 @@ Questions about this policy: open an issue at https://github.com/Entuvo/promptin
 ## Portable Learning Cards
 
 The everyday pilot contains no Wizard cloud service or background native-chat capture. A card contains only accepted learning evidence and preferences; avoid secrets and raw work excerpts. Attaching it to ChatGPT or Claude sends it to that provider under your account settings and its terms. Exporting it does not update or erase older uploads, chat history, backups or provider memory. Corrections/retractions affect the card you retain; delete other copies separately. Existing local coaching capture, retention and opt-in remain unchanged.
+
+The native teaching plugins bundle instructions, rubric references and an empty card. They contain no MCP service, lifecycle hooks, local database or telemetry. They do not read other chats. Selected work and attached cards are processed by the host provider. Installing or removing a plugin does not save or delete your retained cards or prior provider uploads.

@@ -139,7 +139,10 @@ def build_all(
 
 
 if __name__ == "__main__":
+    from build_teaching_plugins import build as build_teaching_plugins
     for artifact in build_all():
         print(artifact.relative_to(ROOT))
     for name in ("prompting-wizard-native-guide.md", "prompting-wizard-learning-card.md"):
         print((DIST / name).relative_to(ROOT))
+    for artifact in build_teaching_plugins(ROOT, DIST):
+        print(artifact.relative_to(ROOT))

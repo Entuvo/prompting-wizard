@@ -229,6 +229,7 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
             )
 
     entries = marketplace.get("plugins", []) if marketplace else []
+    entries = [e for e in entries if isinstance(e, dict) and e.get("name") == "prompting-wizard"] if isinstance(entries, list) else []
     has_canonical_entry = (
         isinstance(entries, list)
         and len(entries) == 1
@@ -243,6 +244,7 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
     codex_entries = (
         codex_marketplace.get("plugins", []) if codex_marketplace else []
     )
+    codex_entries = [e for e in codex_entries if isinstance(e, dict) and e.get("name") == "prompting-wizard"] if isinstance(codex_entries, list) else []
     codex_entry = (
         codex_entries[0]
         if isinstance(codex_entries, list)

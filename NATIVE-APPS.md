@@ -2,6 +2,8 @@
 
 Finish your normal work, then practise one useful prompting skill. No interview required. The same teaching flow is designed for ChatGPT and Claude. This is an early pilot: native web, desktop, iOS and Android setup has not yet been exercised end to end. Installation in Claude Code/Codex does not install account instructions in either consumer app.
 
+For the bundled teaching plugin, start with [plugin installation and device walkthrough](NATIVE-PLUGINS.md). This page is the instructions-and-attachments fallback when plugins are unavailable.
+
 ## Start with lightweight coaching
 
 1. Open the [one-time instructions](prompting-wizard/references/native-instructions.txt). Copy the entire block.
