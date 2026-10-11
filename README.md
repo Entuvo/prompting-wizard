@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/assets/logo-on-light.svg" alt="Prompting Wizard" width="420"></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-on-dark.svg"><img src="docs/assets/logo-on-light.svg" alt="Prompting Wizard" width="420"></picture></p>
 
 <p align="center"><b>An open source prompting coach for Claude Code and Codex, built around your own work.</b><br>
 <a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="COACHING.md">Coaching</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
