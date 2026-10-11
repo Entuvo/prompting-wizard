@@ -25,7 +25,7 @@ Now it knows the audience, the deliverable, the evidence and the quality bar. Th
 
 Choose everyday learning (`pw learn`) without an interview, or the structured course with an initial assessment. Ordinary ChatGPT/Claude users can try the [Learning Card pilot](NATIVE-APPS.md), with manual transfer between chats. Native app compatibility remains unverified.
 
-Paste this into Claude Code or Codex. It installs Prompting Wizard as a plugin and starts the course.
+Paste this into Claude Code or Codex. It loads Prompting Wizard and offers everyday learning, the structured course, or later.
 
 ```text
 Install or load Prompting Wizard from:
@@ -45,7 +45,13 @@ If you can neither install the skill nor read its files from GitHub, state exact
 
 Prefer commands? See [all install options](https://entuvo.github.io/prompting-wizard/#install).
 
-## How a lesson works
+## Everyday learning
+
+Use `pw learn` to learn through normal work without an interview. Finish the task, then choose Practice, Example, Lesson or Later when a useful teaching opportunity appears. Retry a revised prompt and reflect on what changed. Tips can be occasional, frequent or on request.
+
+Accepted learning evidence goes into a portable `LEARNING.md` card; `pw learning` shows that progress. Carry the current card between chats or providers manually. Mini-lessons do not advance the separate course. See the [ChatGPT and Claude walkthrough](NATIVE-APPS.md) for one-time instructions, retry examples and card handling.
+
+## How a course lesson works
 
 Thirty guided lessons, each built on a task from your own working life.
 
@@ -71,12 +77,14 @@ You bring the professional judgment. Prompting Wizard teaches you how to communi
 
 Your practice prompts run for real, and may have the same file and network access as your AI session. Start in a folder you are comfortable letting an AI inspect, not a repository with important uncommitted work.
 
-Your progress stays with you, in a plain `PROGRESS.md` file you can read or edit. Learning outcomes have not yet been established through human learner testing.
+Your course progress stays with you in `PROGRESS.md`; everyday learning uses `LEARNING.md`. Both are plain files you can inspect. Learning outcomes have not yet been established through human learner testing.
 
 ## More
 
 - [Website](https://entuvo.github.io/prompting-wizard/): the full course outline, install options, `pw` commands and updates
 - [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): a short video from each lesson, with its before and after
+- [ChatGPT and Claude pilot](NATIVE-APPS.md): setup, learning flow and portable Learning Cards
+- [Automatic continuity investigation](CONTINUITY.md): documented options and the untested cross-app experiment
 - [Optional local coaching](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
 - **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.
 
