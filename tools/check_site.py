@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check that every local stylesheet in docs/*.html carries ?v=<hash of the file>.
+"""Check that every local stylesheet in docs/**/*.html carries ?v=<hash of the file>.
 
 Pages caches stylesheets for 10 minutes; the hash makes browsers fetch a changed file at once.
 Run:  python3 tools/check_site.py          (exit 1 on a missing or stale hash)
@@ -20,20 +20,20 @@ def file_hash(path):
 
 def main(fix):
     problems = 0
-    for page in sorted(DOCS.glob("*.html")):
+    for page in sorted(DOCS.rglob("*.html")):
         text = page.read_text()
 
         def check(m):
             nonlocal problems
             target = page.parent / m.group(2)
             if not target.is_file():
-                print(f"{page.name}: {m.group(2)} not found")
+                print(f"{page.relative_to(DOCS)}: {m.group(2)} not found")
                 problems += 1
                 return m.group(0)
             want = file_hash(target)
             if m.group(3) != want:
                 if not fix:
-                    print(f"{page.name}: {m.group(2)} needs ?v={want} (has {m.group(3) or 'none'}); run with --fix")
+                    print(f"{page.relative_to(DOCS)}: {m.group(2)} needs ?v={want} (has {m.group(3) or 'none'}); run with --fix")
                     problems += 1
                 return f"{m.group(1)}{m.group(2)}?v={want}{m.group(4)}"
             return m.group(0)
@@ -41,7 +41,7 @@ def main(fix):
         new = LINK.sub(check, text)
         if fix and new != text:
             page.write_text(new)
-            print(f"{page.name}: hashes updated")
+            print(f"{page.relative_to(DOCS)}: hashes updated")
     return 1 if problems else 0
 
 

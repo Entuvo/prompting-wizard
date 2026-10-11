@@ -17,6 +17,14 @@ Now it knows the audience, the deliverable, the evidence and the quality bar. Th
 
 ## Start
 
+**What you need**
+
+- **Claude Code or Codex.** Prompting Wizard runs inside either one. New to both? Get [Claude Code](https://claude.com/claude-code) or [Codex](https://developers.openai.com/codex); each needs an account with its provider.
+- **A task from your own work.** Your lessons use it, so keep one in mind.
+- **A folder to practise in.** See [Before your first lesson](#before-your-first-lesson).
+
+The first session is a short assessment: it records your starting level and the tasks you want help with.
+
 Paste this into Claude Code or Codex. It installs Prompting Wizard as a plugin and starts the course.
 
 ```text
@@ -68,6 +76,7 @@ Your progress stays with you, in a plain `PROGRESS.md` file you can read or edit
 ## More
 
 - [Website](https://entuvo.github.io/prompting-wizard/): the full course outline, install options, `pw` commands and updates
+- [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): a short video from each lesson, with its before and after
 - [Optional local coaching](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
 - **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.
 
