@@ -34,7 +34,7 @@ If the task has no instance of the property the rubric measures — no branch to
 | 4 | Exactly one operation named, and it is the operation wanted, but expressed with a generic synonym ("check" instead of "audit") where a more specific verb in the same family exists. |
 | 5 | Exactly one operation named, it is the operation actually wanted, and no verb in the same family names it more narrowly. |
 
-**Fastest fix:** name the operation: summarise, rank, critique, refactor, enumerate.
+**Fastest fix:** name the operation: summarise, rank, critique, compare, enumerate.
 
 ## Adjective
 
@@ -94,7 +94,7 @@ If the task has no instance of the property the rubric measures — no branch to
 
 ## Conjunction
 
-**Measures:** conditional logic.
+**Measures:** conditional logic. A branch is a choice between possible outcomes.
 
 | Score | Anchor |
 |---|---|

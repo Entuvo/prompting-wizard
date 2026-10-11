@@ -1,5 +1,10 @@
 # Prompting Wizard release notes
 
+## 1.2.2 — 2026-10-11
+
+- Reworked examples in Lessons 2, 6, 9, 10, 20 and 28 around meeting agendas, notes, factual corrections, spreadsheets and document reviews, preserving each lesson's teaching point.
+- Varied the assessment task examples and clarified the Verb and Conjunction rubric wording.
+
 ## 1.2.1 — 2026-10-11
 
 - Describe the course as 30 self-paced lessons everywhere: plugin and marketplace descriptions, the skill, coaching notes and the README no longer say "30-day", "a lever a day" or "20-minute lessons".
