@@ -39,3 +39,7 @@ Lesson prompts run in your AI assistant, with that assistant's file and network 
 ## Contact
 
 Questions about this policy: open an issue at https://github.com/Entuvo/prompting-wizard/issues
+
+## Portable Learning Cards
+
+The everyday pilot contains no Wizard cloud service or background native-chat capture. A card contains only accepted learning evidence and preferences; avoid secrets and raw work excerpts. Attaching it to ChatGPT or Claude sends it to that provider under your account settings and its terms. Exporting it does not update or erase older uploads, chat history, backups or provider memory. Corrections/retractions affect the card you retain; delete other copies separately. Existing local coaching capture, retention and opt-in remain unchanged.

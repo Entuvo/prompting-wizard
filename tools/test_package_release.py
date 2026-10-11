@@ -84,6 +84,20 @@ class PackageReleaseTests(unittest.TestCase):
         self.assertNotIn('prompting-wizard/references/private.json',names)
         self.assertFalse(any('__pycache__' in name for name in names))
 
+    def test_native_material_and_card_ship_without_personal_learning_state(self):
+        (self.skill/'LEARNING.md').write_text('PRIVATE LEARNER RECORD')
+        archives=package_release.build_all(self.root,self.dist,validate=False)
+        self.assertTrue((self.dist/'prompting-wizard-native-guide.md').is_file())
+        self.assertTrue((self.dist/'prompting-wizard-learning-card.md').is_file())
+        for archive_path in archives:
+            with zipfile.ZipFile(archive_path) as archive:
+                names=archive.namelist()
+                prefix='prompting-wizard/' if archive_path.name.endswith('claude-skill.zip') else 'prompting-wizard/skills/prompting-wizard/'
+                for name in ('scripts/learning.py','references/learning-policy.md','references/learning-card.md',
+                             'references/learning-catalog.json','references/native-instructions.txt'):
+                    self.assertEqual(archive.read(prefix+name),(self.skill/name).read_bytes())
+                self.assertFalse(any(name.endswith('/LEARNING.md') for name in names))
+
     def test_course_symlink_cannot_package_external_content(self):
         target=self.skill/'scripts/store.py'
         external=self.root/'private.py';external.write_text('private')

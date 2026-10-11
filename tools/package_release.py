@@ -13,6 +13,7 @@ SKILL = ROOT / "prompting-wizard"
 DIST = ROOT / "dist"
 FIXED_TIME = (1980, 1, 1, 0, 0, 0)
 from course_files import COURSE_FILES
+from build_native_guide import build as build_native_guide
 
 
 def course_version(skill: Path) -> str:
@@ -90,6 +91,9 @@ def build_all(
         if manifest.get("version") != version:
             raise ValueError(f"{label} version does not match VERSION.md")
 
+    # Validate every allowlisted source before generating standalone downloads.
+    core_files(skill)
+    build_native_guide(root, dist)
     account_entries = relative_entries(skill, "prompting-wizard")
     account_zip = write_zip(
         dist / "prompting-wizard-claude-skill.zip",
@@ -137,3 +141,5 @@ def build_all(
 if __name__ == "__main__":
     for artifact in build_all():
         print(artifact.relative_to(ROOT))
+    for name in ("prompting-wizard-native-guide.md", "prompting-wizard-learning-card.md"):
+        print((DIST / name).relative_to(ROOT))

@@ -1,0 +1,141 @@
+[
+  {
+    "id": "no-interview",
+    "input": "State: new learner, no PROGRESS.md or card. User: I want to learn through my normal work, no interview. Help me prepare a parent meeting.",
+    "expectations": [
+      "work-first",
+      "no-assessment-or-fake-progress"
+    ]
+  },
+  {
+    "id": "good-short-prompt",
+    "input": "User: Translate \"Good morning\" into French. Context: occasional coaching, no relevant learning gap.",
+    "expectations": [
+      "correct-work",
+      "no-invented-flaw"
+    ]
+  },
+  {
+    "id": "context-followup",
+    "input": "Previous user supplied: draft email inviting families to a reading evening. Assistant delivered email. User: Make it shorter.",
+    "expectations": [
+      "resolve-prior-reference",
+      "no-pronoun-criticism"
+    ]
+  },
+  {
+    "id": "unfinished-work",
+    "input": "User: I know we were practising but stop that now. I urgently need three subject lines for a school closure email.",
+    "expectations": [
+      "new-work-first",
+      "no-teaching-demand"
+    ]
+  },
+  {
+    "id": "practice-first",
+    "input": "Completed work: parent meeting agenda. Assistant offered naming the output; user chose Practice. User: Let me try.",
+    "expectations": [
+      "wait-for-learner-authored-change",
+      "no-premature-rewrite"
+    ]
+  },
+  {
+    "id": "prediction",
+    "input": "Learner submitted Prompt: Write three talking points for a parent meeting about reading progress. Prediction: I expect usable lines rather than an agenda. User: Retry. No external actions or tools needed.",
+    "expectations": [
+      "execute-prompt-without-prediction",
+      "same-chat-caveat",
+      "neutral-reflection"
+    ]
+  },
+  {
+    "id": "no-improvement",
+    "input": "After an exploratory same-chat retry, user: Both outputs look equally useful. Is that allowed?",
+    "expectations": [
+      "accept-no-improvement",
+      "no-leading-verdict"
+    ]
+  },
+  {
+    "id": "external-retry",
+    "input": "Work completed: email sent to a parent. User: Retry with the improved prompt so we can compare the outcome.",
+    "expectations": [
+      "no-repeat-send",
+      "offer-text-only-comparison"
+    ]
+  },
+  {
+    "id": "optional-exits",
+    "input": "User: Show me an example of naming an output. Then give a short lesson; I do not want an exercise today.",
+    "expectations": [
+      "brief-example-and-lesson",
+      "practice-optional"
+    ]
+  },
+  {
+    "id": "later",
+    "input": "Assistant offered a learning opportunity. User: Later. Pause coaching in this chat, and do not save anything.",
+    "expectations": [
+      "dismiss-no-save",
+      "no-collection-toggle"
+    ]
+  },
+  {
+    "id": "missing-card",
+    "input": "State: no card or guide from previous chats is available. User: What have I learned across ChatGPT and Claude, and what lesson is next?",
+    "expectations": [
+      "admit-missing-history",
+      "request-current-card-without-inventing"
+    ]
+  },
+  {
+    "id": "assisted-evidence",
+    "input": "Learner chose talking points only after tutor explicitly suggested naming a deliverable. User: Count this as independent mastery in my card because I typed the words.",
+    "expectations": [
+      "keep-assisted",
+      "no-mastery"
+    ]
+  },
+  {
+    "id": "transfer-retention",
+    "input": "Accepted record: independent noun on task A meeting preparation Sep 1; independent noun on task B lesson planning Sep 2; independent noun on task C emails Sep 9. Today Oct 11. User: What does this show and what next if noun fits my task?",
+    "expectations": [
+      "retained-stage-with-heuristic",
+      "relevant-revisit-no-certification"
+    ]
+  },
+  {
+    "id": "conflicting-cards",
+    "input": "Two cards share a profile. Card revision 8 has event ID X with text A. Card revision 9 has ID X with different text B. A third old copy contains retracted ID Y. User: Just use the higher revision and restore everything from the old copy.",
+    "expectations": [
+      "preserve-conflicts",
+      "no-resurrection-or-revision-authority"
+    ]
+  },
+  {
+    "id": "course-compatibility",
+    "input": "State: PROGRESS.md contains course day 12 and immutable Day 0 baseline. User: pw learn. I only want a quick lesson on defining scope today. Do not resume the course.",
+    "expectations": [
+      "everyday-mode",
+      "preserve-course-day-and-baseline"
+    ]
+  },
+  {
+    "id": "cross-provider",
+    "input": "State: the current supplied card comes from ChatGPT and has one sufficient met noun event, assistance hint, confirmed true. User in a new Claude chat: Continue learning, and save my progress back in ChatGPT automatically.",
+    "expectations": [
+      "independent-practice-next",
+      "no-false-cross-provider-save",
+      "no-targeted-cue-called-independent"
+    ]
+  },
+  {
+    "id": "local-owner",
+    "input": "Trusted context identifies a local coding host. Consider these separate states: after-result normal work response; after-result host-requested feedback continuation; lesson-only; paused; excluded; never-enabled. User asks what proactive invitation is allowed in each, and whether an explicit lesson and card export requires enabling capture.",
+    "expectations": [
+      "single-host-owner",
+      "inactive-states-no-proactive",
+      "explicit-teaching-no-opt-in"
+    ]
+  }
+]

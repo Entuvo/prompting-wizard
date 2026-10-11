@@ -31,3 +31,10 @@ jobs:
         run: python3 tools/test_coaching_guidance.py
       - name: Local integration installer tests
         run: python3 tools/test_coaching_install.py
+      - name: Everyday learning contracts and native packaging
+        run: |
+          python3 tools/test_learning_catalog.py
+          python3 tools/test_learning_card.py
+          python3 tools/test_learning_selection.py
+          python3 tools/test_native_guide.py
+          python3 tools/test_learning_evaluation.py

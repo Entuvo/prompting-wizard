@@ -82,3 +82,7 @@ An observation is bounded raw evidence. A coaching finding is a temporary hypoth
 Add a host only with official event documentation, sanitized live callbacks, pairing/steering/loop tests and ordinary permission/trust probes. Never parse undocumented private transcripts. Add model guidance only with exact documented model identifiers, task scope, official source URL, checked date and revision. Unknown identities fall back to core principles; a source refresh never rewrites past scores silently.
 
 `record` accepts bounded JSON on stdin. For short paraphrased findings, `record --json JSON` accepts one quoted argument with identical validation. Arguments can appear in process listings and host tool logs; use stdin for sensitive text. Hooks never put captured prompt/result text into shell commands. See the tutor procedure in [coaching.md](prompting-wizard/references/coaching.md).
+
+## Everyday teaching pilot
+
+Use `pw learn` to learn through work without an assessment, or `pw learning` to inspect a supplied Learning Card. See [native-app pilot](NATIVE-APPS.md). Cards are separate from course progress and the local database; there is no automatic import/export bridge yet. Existing host feedback owns the one optional after-result invitation. Lesson-only, paused, excluded and never-enabled workspaces receive explicit teaching only. Native instructions cannot enable local collection. More/less coaching changes invitations, not hook frequency or quota use.

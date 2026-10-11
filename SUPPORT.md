@@ -11,3 +11,7 @@ Prompting Wizard is maintained in the open.
 There is no email support queue and no account to recover. If `PROGRESS.md` is lost, the course asks whether to rebuild from a day number or re-run the assessment.
 
 For local coaching, include host surface/version, Python version and content-free `status` output in a bug report. Do not attach your learner database, prompt excerpts or host transcripts. See [compatibility and controls](COACHING.md).
+
+## Learning Card pilot
+
+See [native setup](NATIVE-APPS.md). Native web/desktop/iOS/Android are unverified pilot surfaces. Report the app/surface, date, missing step and a synthetic example; do not attach your personal card. Keep your latest complete card and a backup. With a missing card, the coach cannot reconstruct accepted history or safely claim mastery. A newly exported card does not replace an older project upload.
