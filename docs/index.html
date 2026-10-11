@@ -14,7 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- ?v= is a hash of each file, so a changed stylesheet is never served from cache. Run python3 tools/check_site.py --fix after editing one. -->
 <link rel="stylesheet" href="tokens.css?v=c545f597">
-<link rel="stylesheet" href="style.css?v=de39dc39">
+<link rel="stylesheet" href="style.css?v=7d9b9294">
 </head>
 <body>
 <header class="wrap">
@@ -28,10 +28,11 @@
 </div>
 </div>
 <!-- Nothing loads from YouTube until the reader presses play. -->
-<button class="video" type="button" data-video="_a40fI-F5HM" aria-label="Play the Prompting Wizard video (loads from YouTube)">
-<img src="assets/video-poster-landscape.jpg" alt="" width="1280" height="720"><span class="play" aria-hidden="true"></span>
+<!-- Phones get the vertical cut of the same video. -->
+<button class="video hero-video" type="button" data-video="_a40fI-F5HM" data-video-tall="s2WarFaRY2Q" aria-label="Play the Prompting Wizard video (loads from YouTube)">
+<picture><source media="(max-width: 640px)" srcset="assets/video-poster.jpg"><img src="assets/video-poster-landscape.jpg" alt="" width="1280" height="720"></picture><span class="play" aria-hidden="true"></span>
 </button>
-<p class="more-video">More on YouTube: <a href="https://www.youtube.com/playlist?list=PLHG7b8_3xqp0">the episode series</a> · <a href="https://www.youtube.com/playlist?list=PLAfFRd4Idz1U">a short video for each lesson</a></p>
+<p class="more-video">Watch <a href="lessons/">a short video from each lesson</a>, or <a href="https://www.youtube.com/playlist?list=PLHG7b8_3xqp0">the episode series</a> on YouTube.</p>
 </header>
 <main>
 <section><div class="wrap">
@@ -74,6 +75,14 @@
 </div></section>
 <section id="start"><div class="wrap">
 <h2>Paste one prompt to start.</h2>
+<h3>What you need</h3>
+<ul class="need">
+<li><strong>Claude Code or Codex.</strong> Prompting Wizard runs inside either one. New to both? Get <a href="https://claude.com/claude-code">Claude Code</a> or <a href="https://developers.openai.com/codex">Codex</a>; each needs an account with its provider.</li>
+<li><strong>A task from your own work.</strong> Your lessons use it, so keep one in mind.</li>
+<li><strong>A folder to practise in.</strong> See the note below the prompt.</li>
+</ul>
+<p>The first session is a short assessment: it records your starting level and the tasks you want help with.</p>
+<div class="later"><p><strong>Not at your computer?</strong> Copy the link and open it there when you're ready.</p><button class="btn" type="button" data-copy="startlink">Copy the link</button><span id="startlink" hidden>https://entuvo.github.io/prompting-wizard/#start</span></div>
 <p>Paste this into Claude Code or Codex. It installs Prompting Wizard as a plugin and starts the course.</p>
 <div class="code"><button class="copy" type="button" data-copy="prompt">Copy</button><pre id="prompt">Install or load Prompting Wizard from:
 
@@ -111,17 +120,18 @@ If you can neither install the skill nor read its files from GitHub, state exact
 </div></footer>
 <script>
 document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
-  const el = document.getElementById(b.dataset.copy);
-  const say = (t) => { b.textContent = t; setTimeout(() => b.textContent = "Copy", 2500); };
+  const el = document.getElementById(b.dataset.copy), label = b.dataset.label || (b.dataset.label = b.textContent);
+  const say = (t) => { b.textContent = t; setTimeout(() => b.textContent = label, 2500); };
   // If the browser refuses clipboard access, select the text so the reader can copy it by hand.
   const select = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); say("Press Ctrl/⌘ C"); };
   (navigator.clipboard ? navigator.clipboard.writeText(el.textContent) : Promise.reject()).then(() => say("Copied"), select);
 }));
 document.querySelectorAll("[data-video]").forEach(b => b.addEventListener("click", () => {
   const f = document.createElement("iframe");
-  f.src = "https://www.youtube-nocookie.com/embed/" + b.dataset.video + "?autoplay=1&rel=0";
+  const id = b.dataset.videoTall && matchMedia("(max-width: 640px)").matches ? b.dataset.videoTall : b.dataset.video;
+  f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0";
   f.title = "Prompting Wizard video"; f.allow = "autoplay; encrypted-media; picture-in-picture"; f.allowFullscreen = true;
-  f.className = "video"; b.replaceWith(f);
+  f.className = b.className; b.replaceWith(f);
 }));
 </script>
 </body>
