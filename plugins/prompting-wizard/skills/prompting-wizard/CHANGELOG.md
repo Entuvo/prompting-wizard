@@ -1,5 +1,13 @@
 # Prompting Wizard release notes
 
+## 1.3.0 — 2026-10-11
+
+- Added an everyday teaching pilot: optional interview, work first, Practice / Example / Lesson / Later, learner prediction and opt-in exploratory retry.
+- Added a portable Learning Card with strict validation, conflict-safe merging, retractions, evidence stages and task-relevant next opportunities. Independent evidence requires an uncued task; guided changes remain assisted.
+- Added compact native-app instructions, a standalone guide/card build, and `pw learn` / `pw learning` routing. Existing course progress, baselines and local capture controls remain separate.
+- Added synthetic teaching scenarios and offline evaluation receipts. Native ChatGPT/Claude web, desktop and mobile walkthroughs remain unverified; human learning efficacy is not established.
+- Investigated remote connectors for future automatic continuity. This pilot requires manual card transfer and has no shared service or automatic cross-app synchronization.
+
 ## 1.2.2 — 2026-10-11
 
 - Reworked examples in Lessons 2, 6, 9, 10, 20 and 28 around meeting agendas, notes, factual corrections, spreadsheets and document reviews, preserving each lesson's teaching point.

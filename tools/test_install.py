@@ -32,6 +32,15 @@ class InstallerTests(unittest.TestCase):
         self.bin = self.sandbox / "bin"
         self.bin.mkdir()
 
+    def test_learning_resources_survive_standalone_install(self):
+        result=self.run_install('--claude-code')
+        self.assertEqual(result.returncode,0,result.stderr)
+        target=self.home/'.claude/skills/prompting-wizard'
+        for name in ('scripts/learning.py','references/learning-policy.md','references/learning-card.md',
+                     'references/learning-catalog.json','references/native-instructions.txt'):
+            self.assertEqual((target/name).read_bytes(),(ROOT/'prompting-wizard'/name).read_bytes())
+        self.assertFalse((target/'LEARNING.md').exists())
+
     def stub(self, name, body="exit 0"):
         path = self.bin / name
         path.write_text(f"#!/bin/sh\n{body}\n", encoding="utf-8")

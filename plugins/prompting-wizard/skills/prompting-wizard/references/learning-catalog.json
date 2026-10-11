@@ -1,0 +1,158 @@
+[
+  {
+    "skill": "noun",
+    "label": "Choosing an output",
+    "lesson": "days/01.md",
+    "rubric": "rubrics.md#noun"
+  },
+  {
+    "skill": "verb",
+    "label": "Making the action clear",
+    "lesson": "days/02.md",
+    "rubric": "rubrics.md#verb"
+  },
+  {
+    "skill": "adjective",
+    "label": "Defining quality",
+    "lesson": "days/03.md",
+    "rubric": "rubrics.md#adjective"
+  },
+  {
+    "skill": "adverb",
+    "label": "Setting depth",
+    "lesson": "days/04.md",
+    "rubric": "rubrics.md#adverb"
+  },
+  {
+    "skill": "preposition",
+    "label": "Defining scope",
+    "lesson": "days/05.md",
+    "rubric": "rubrics.md#preposition"
+  },
+  {
+    "skill": "pronoun",
+    "label": "Making references clear",
+    "lesson": "days/08.md",
+    "rubric": "rubrics.md#pronoun"
+  },
+  {
+    "skill": "conjunction",
+    "label": "Stating conditions",
+    "lesson": "days/09.md",
+    "rubric": "rubrics.md#conjunction"
+  },
+  {
+    "skill": "determiner",
+    "label": "Clarifying which items",
+    "lesson": "days/10.md",
+    "rubric": "rubrics.md#determiner"
+  },
+  {
+    "skill": "numeral",
+    "label": "Choosing useful quantities",
+    "lesson": "days/11.md",
+    "rubric": "rubrics.md#numeral"
+  },
+  {
+    "skill": "interjection",
+    "label": "Signalling priorities",
+    "lesson": "days/12.md",
+    "rubric": "rubrics.md#interjection"
+  },
+  {
+    "skill": "particle",
+    "label": "Choosing precise phrases",
+    "lesson": "days/13.md",
+    "rubric": "rubrics.md#particle"
+  },
+  {
+    "skill": "role-framing",
+    "label": "Making roles useful",
+    "lesson": "days/15.md",
+    "rubric": "rubrics.md#role-framing"
+  },
+  {
+    "skill": "few-shot-examples",
+    "label": "Teaching with examples",
+    "lesson": "days/16.md",
+    "rubric": "rubrics.md#few-shot-examples"
+  },
+  {
+    "skill": "output-schemas",
+    "label": "Specifying output structure",
+    "lesson": "days/17.md",
+    "rubric": "rubrics.md#output-schemas"
+  },
+  {
+    "skill": "task-decomposition",
+    "label": "Splitting work",
+    "lesson": "days/18.md",
+    "rubric": "rubrics.md#task-decomposition"
+  },
+  {
+    "skill": "reasoning-scaffolds",
+    "label": "Structuring reasoning",
+    "lesson": "days/19.md",
+    "rubric": "rubrics.md#reasoning-scaffolds"
+  },
+  {
+    "skill": "negative-constraints",
+    "label": "Stating exclusions",
+    "lesson": "days/20.md",
+    "rubric": "rubrics.md#negative-constraints"
+  },
+  {
+    "skill": "context-ordering",
+    "label": "Organizing context",
+    "lesson": "days/21.md",
+    "rubric": "rubrics.md#context-ordering"
+  },
+  {
+    "skill": "system-prompts",
+    "label": "Separating standing instructions",
+    "lesson": "days/22.md",
+    "rubric": "rubrics.md#system-prompts"
+  },
+  {
+    "skill": "agent-and-tool-prompting",
+    "label": "Directing tools and stopping",
+    "lesson": "days/23.md",
+    "rubric": "rubrics.md#agent-and-tool-prompting"
+  },
+  {
+    "skill": "self-critique-loops",
+    "label": "Checking output",
+    "lesson": "days/24.md",
+    "rubric": "rubrics.md#self-critique-loops"
+  },
+  {
+    "skill": "writing-evals",
+    "label": "Setting evaluation criteria",
+    "lesson": "days/25.md",
+    "rubric": "rubrics.md#writing-evals"
+  },
+  {
+    "skill": "token-economy",
+    "label": "Removing unnecessary words",
+    "lesson": "days/26.md",
+    "rubric": "rubrics.md#token-economy"
+  },
+  {
+    "skill": "failure-diagnosis",
+    "label": "Diagnosing failures",
+    "lesson": "days/27.md",
+    "rubric": "rubrics.md#failure-diagnosis"
+  },
+  {
+    "skill": "prompt-library",
+    "label": "Reusing prompts",
+    "lesson": "days/28.md",
+    "rubric": "rubrics.md#prompt-library"
+  },
+  {
+    "skill": "capstone",
+    "label": "Combining skills",
+    "lesson": "days/29.md",
+    "rubric": "rubrics.md#capstone"
+  }
+]

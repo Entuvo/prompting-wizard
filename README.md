@@ -23,7 +23,7 @@ Now it knows the audience, the deliverable, the evidence and the quality bar. Th
 - **A task from your own work.** Your lessons use it, so keep one in mind.
 - **A folder to practise in.** See [Before your first lesson](#before-your-first-lesson).
 
-The first session is a short assessment: it records your starting level and the tasks you want help with.
+Choose everyday learning (`pw learn`) without an interview, or the structured course with an initial assessment. Ordinary ChatGPT/Claude users can try the [Learning Card pilot](NATIVE-APPS.md), with manual transfer between chats. Native app compatibility remains unverified.
 
 Paste this into Claude Code or Codex. It installs Prompting Wizard as a plugin and starts the course.
 
@@ -36,7 +36,7 @@ First determine which AI environment you are running in and which capabilities i
 
 If persistent installation is unavailable but you can read GitHub, load Prompting Wizard for this chat by reading AGENTS.md and then SKILL.md from that repository path. Follow those instructions directly.
 
-Do not overwrite an existing installation without asking me. Never claim the skill is installed unless the host confirms it. Do not stop after explaining installation or creating a package. Once Prompting Wizard is available, start the Day 0 assessment.
+Do not overwrite an existing installation without asking me. Never claim the skill is installed unless the host confirms it. Do not stop after explaining installation or creating a package. Once Prompting Wizard is available, offer everyday learning without an interview, the structured course, or later. Honor my choice.
 
 If this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
 

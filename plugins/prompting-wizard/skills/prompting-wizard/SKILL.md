@@ -1,11 +1,11 @@
 ---
 name: prompting-wizard
-description: Use when the user wants to learn, practise, or improve prompting through a 30-lesson course that assesses them once and teaches one prompting lever per lesson using their real tasks.
+description: Use when the user wants to learn, practise, or improve prompting through everyday work or the optional 30-lesson course, using their own tasks.
 ---
 
 # Prompting Wizard
 
-Thirty lessons, one per session, at the learner's own pace.
+Learn through everyday work, or choose thirty structured lessons at your own pace.
 
 For explicit `pw` invocations, help, progress, feedback settings, collection controls, saved examples, or model-guidance requests, read `references/commands.md` first. Follow its routing before the Every session flow; a control request must not start a lesson or assessment.
 
@@ -13,11 +13,21 @@ First determine the host's state mode. A durable host can read and write the lea
 
 - On a durable host, look for `PROGRESS.md` in the learner's working directory.
 - On a stateless host, look for an attached file named `PROGRESS.md`. Treat its contents exactly as the working copy for this session.
-- If Prompting Wizard was fetched and read directly rather than installed, say once that it is loaded for this chat, not persistently installed, then continue with the day-0 assessment in this session. Do not stop merely to package or explain installation.
+- If Prompting Wizard was fetched and read directly rather than installed, say once that it is loaded for this chat, not persistently installed, then follow the mode choice below in this session. Do not stop merely to package or explain installation.
 
 ## Local coaching integration
 
 When the host supplies a Prompting Wizard session token, read `references/coaching.md` before assessment, lesson work, or reviewing saved learning history/progress. Enter tutor mode before these learning conversations, including status-only requests, to suppress collection, then follow its evidence and transaction rules alongside the lesson loop. Without that token, continue the standalone course; do not invent automatic capture or cross-tool persistence.
+
+## Choose learning mode before assessment
+
+An explicit `pw learn`, “learn through my work”, or “no interview” enters everyday learning immediately. Read `references/learning-policy.md`, `references/learning-card.md`, and `references/learning-catalog.json`. Finish any requested work first; load relevant rubric Measures when teaching. Use the current supplied `LEARNING.md` if available; without it, admit missing history and teach from current context. No mandatory profile setup or assessment. Offer an empty card only when useful, with a fresh profile UUID at first use. Never create `PROGRESS.md`, fabricate Day 0/scores/current_day, or advance the course for everyday practice.
+
+For a new learner without an explicit mode choice, offer **structured course / learn through work / later** once. Honor the answer without asking again. Existing course learners resume the course only when requested; everyday practice leaves their baseline, log and day unchanged. Missing course state still follows the recovery rules below when the learner selects the course; missing state never proves novice ability. `pw learning` shows card evidence and one relevant next opportunity with its reason; `pw progress` remains course progress.
+
+Local hosts must enter/renew/exit existing tutor suppression for everyday practice and card review, including follow-ups. Explicit teaching does not enable capture. With trusted local integration, the host-requested continuation is the sole proactive feedback owner; do not append another invitation to work. In lesson-only, paused, excluded or never-enabled local workspaces, offer no proactive teaching, even if account instructions request it. Explicitly requested learning remains available in those states. Without local integration, native account instructions own the invitation. No automatic replay of external actions for teaching.
+
+Everyday cards are exported separately from the local course database. Never call `commit_lesson` with invented course progress to save a card. Without a successful write, deliver a complete replacement for the learner to retain and re-attach; never claim cross-chat save or sync. Chat-local “pause coaching” only stops invitations; `pw pause` retains its collection-control meaning.
 
 ## Every session
 

@@ -1,6 +1,8 @@
 """Explicit distribution allowlist. Learner data and local hooks never ship."""
 TOP_FILES = ('SKILL.md','AGENTS.md','assessment.md','rubrics.md','VERSION.md','CHANGELOG.md')
 EXTRA_FILES = (
+    'scripts/learning.py','references/learning-policy.md','references/learning-card.md',
+    'references/learning-catalog.json','references/native-instructions.txt',
     'scripts/store.py','scripts/wizard.py','references/coaching.md','references/commands.md',
     'references/model-guidance/manifest.json',
     'references/model-guidance/claude-long-context.md',
