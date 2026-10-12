@@ -23,6 +23,8 @@ Bring a task from your own work. Choose the setup for the app you use:
 
 The **Prompting Wizard — Everyday** plugin bundles the teaching guide, rubrics and empty Learning Card. Use the [ChatGPT and Claude plugin setup](NATIVE-PLUGINS.md) for packages, account/workspace installation routes and the device walkthrough. These are pilot packages; a public listing and native compatibility have not been verified.
 
+Marketplace preparation is documented in the [submission packet](MARKETPLACE-SUBMISSION.md). The plugin has not been submitted to either public directory.
+
 After installation, select the plugin if needed and say: “Teach me through my work; no interview. Keep tips occasional.” Do your normal work first, then choose whether to practise or take a short lesson. Keep your current `LEARNING.md` and attach it in each new chat that needs your learning history; installing the plugin does not synchronize progress or guarantee automatic activation.
 
 If plugins are unavailable to your account, use the [one-time instructions and manual guide setup](NATIVE-APPS.md). That fallback starts with lightweight tips; the full teaching flow needs the guide. No coding tool is required for either learner experience. The choices below are text replies, not added app buttons or registered `pw` commands.

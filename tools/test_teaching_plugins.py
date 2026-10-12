@@ -41,6 +41,9 @@ class TeachingPluginTests(unittest.TestCase):
                 self.assertEqual(manifest['name'], 'prompting-wizard-teacher')
                 self.assertEqual(manifest['version'], '0.1.0')
                 self.assertIn('LICENSE', names)
+                self.assertIn('README.md', names)
+                self.assertEqual(z.read('README.md'),
+                                 (self.root / 'plugins/prompting-wizard-teacher/README.md').read_bytes())
         self.assertEqual(*payloads)
         guide = payloads[0]['skills/learn/references/guide.md'].decode()
         self.assertEqual(guide.count('**Measures:**'), 26)
@@ -63,6 +66,7 @@ class TeachingPluginTests(unittest.TestCase):
 
     def test_symlink_source_rejected_before_archives(self):
         for name in ('plugins/prompting-wizard-teacher/skills/learn/SKILL.md',
+                     'plugins/prompting-wizard-teacher/README.md',
                      'assets/listing/logo.png', 'LICENSE'):
             p = self.root / name
             old = p.read_bytes()
@@ -115,6 +119,14 @@ class TeachingPluginTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, '200-character'):
             self.builder.build(self.root, self.root / 'dist')
         self.assertFalse(list((self.root / 'dist').glob('*.zip')))
+
+    def test_listing_readme_requires_40_words_outside_code_blocks(self):
+        path = self.root / 'plugins/prompting-wizard-teacher/README.md'
+        for fence in ('```', '~~~~'):
+            path.write_text('Short listing.\n' + fence + '\n' + 'word ' * 50 + '\n' + fence + '\n')
+            with self.assertRaisesRegex(ValueError, 'README.*40 words'):
+                self.builder.build(self.root, self.root / 'dist')
+            self.assertFalse(list((self.root / 'dist').glob('*.zip')))
 
     def test_canonical_policy_change_reaches_both_packages(self):
         p = self.root / 'prompting-wizard/references/learning-policy.md'

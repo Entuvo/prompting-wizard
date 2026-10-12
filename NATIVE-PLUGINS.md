@@ -4,6 +4,8 @@ The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-
 
 These are buildable pilot packages, not a published directory listing or a verified native-app installation. The user walkthrough still needs to establish installation, activation and manual card transfer on each surface. Existing `prompting-wizard` course packages remain separate.
 
+Maintainers: the [marketplace submission packet](MARKETPLACE-SUBMISSION.md) contains prepared listing fields, data-handling answers, test cases and the remaining owner inputs. Neither directory submission nor publication has occurred.
+
 ## Packages
 
 Build from a source checkout:
@@ -68,7 +70,7 @@ Local package tests and model simulations do not establish these native results 
 
 ## Maintainers
 
-`plugins/prompting-wizard-teacher/skills/learn/SKILL.md` and the two manifests are canonical native entry files. The guide/card, license and logo in that tree are generated from existing sources:
+`plugins/prompting-wizard-teacher/skills/learn/SKILL.md`, its plugin-folder `README.md` and the two manifests are canonical native files. The guide/card, license and logo in that tree are generated from existing sources:
 
 ```sh
 python3 tools/build_teaching_plugins.py --sync

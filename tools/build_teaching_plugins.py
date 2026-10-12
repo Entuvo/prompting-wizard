@@ -2,6 +2,7 @@
 """Build skills-only native packages and check their generated repository assets."""
 import argparse
 import json
+import re
 import tempfile
 from pathlib import Path
 
@@ -11,7 +12,7 @@ from validate import check_skill_metadata
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = Path('plugins/prompting-wizard-teacher')
-CANONICAL = ('plugin.json', '.claude-plugin/plugin.json', 'skills/learn/SKILL.md')
+CANONICAL = ('plugin.json', '.claude-plugin/plugin.json', 'skills/learn/SKILL.md', 'README.md')
 
 
 def safe_path(root, name):
@@ -25,6 +26,11 @@ def safe_path(root, name):
 def entries(root=ROOT):
     """Explicit allowlist: never collect a user's working card or local runtime."""
     data = {name: safe_path(root, PLUGIN / name).read_bytes() for name in CANONICAL}
+    listing = re.sub(r'(?ms)^ {0,3}(`{3,}|~{3,})[^\n]*\n.*?^ {0,3}\1[ \t]*$',
+                     '', data['README.md'].decode('utf-8'))
+    listing = re.sub(r'(?m)^(?: {4}|\t).*$', '', listing)
+    if len(listing.split()) < 40:
+        raise ValueError('Plugin README must contain at least 40 words outside code blocks')
     errors = []
     check_skill_metadata(data['skills/learn/SKILL.md'].decode('utf-8'), errors)
     if errors:
