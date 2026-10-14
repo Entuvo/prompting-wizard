@@ -1,6 +1,6 @@
 # Everyday teaching plugin: submission packet
 
-Prepared 12 October 2026. Updated 14 October 2026. Candidate version **0.2.0**, which adds an on-request review of an uploaded data export; this is preparation, not a submitted or approved listing. Native device tests and portal checks remain pending. Submit only the everyday plugin, not the separate `prompting-wizard` course. Manual Learning Cards remain the continuity mechanism.
+Prepared 12 October 2026. Updated 14 October 2026. Candidate version **0.2.1**, which adds an on-request review of an uploaded data export; this is preparation, not a submitted or approved listing. Native device tests and portal checks remain pending. Submit only the everyday plugin, not the separate `prompting-wizard` course. Manual Learning Cards remain the continuity mechanism.
 
 ## Release eligibility gates
 
@@ -22,7 +22,7 @@ Prepared clarification for Anthropic (not sent):
 | Publisher | Entuvo — existing project identity; owner must confirm publishing identity |
 | Category | Productivity |
 | Short description | Learn through everyday work |
-| Version | 0.2.0 (unpublished native pilot; 0.1.0 was never submitted) |
+| Version | 0.2.1 (unpublished native pilot; earlier versions were never submitted) |
 | Source | `https://github.com/Entuvo/prompting-wizard` |
 | Claude plugin path | `plugins/prompting-wizard-teacher` |
 | Proposed tracked branch | `main`, after the reviewed changes are merged; do not submit a branch without checking its exact commit |
