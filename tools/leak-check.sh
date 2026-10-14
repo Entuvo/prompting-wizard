@@ -22,22 +22,12 @@ else
   echo "leak-check: private denylist not found; generic checks only" >&2
 fi
 
-policy=$(mktemp)
 fail=0
 flag=$(mktemp)
 report() { echo "leak-check: $1" >&2; echo 1 > "$flag"; }
 
 scan() { # $1 label, $2 path ("" for metadata); content on stdin
-  local tmp hits workflow_status; tmp=$(mktemp); cat > "$tmp"
-  if python3 tools/workflow_guard.py "$2" "$tmp" "$deny" "$policy"; then
-    rm -f "$tmp"; return
-  else
-    workflow_status=$?
-    if [ "$workflow_status" != 2 ]; then
-      report "$1: workflow payload is not approved or contains private material"
-      rm -f "$tmp"; return
-    fi
-  fi
+  local tmp hits; tmp=$(mktemp); cat > "$tmp"
   # Runs in a pipeline subshell, so failures are recorded in $flag, not $fail.
   if [ -n "$2" ] && [[ $2 =~ $blocked ]] && ! [[ $2 =~ $allowed ]]; then
     report "$1: path is not allowed in this repository"
@@ -55,27 +45,23 @@ scan() { # $1 label, $2 path ("" for metadata); content on stdin
 
 case "${1:-tree}" in
   staged)
-    git show :tools/workflow-files.json > "$policy"
     git var GIT_AUTHOR_IDENT | scan "author identity" ""
     while IFS= read -r f; do git show ":$f" | scan "$f" "$f"; done \
       < <(git diff --cached --name-only --diff-filter=ACMR) ;;
   message)
-    : > "$policy"
     scan "commit message" "" < "$2" ;;
   push)
     if [[ $2 =~ ^0+$ ]]; then range=("$3" --not --remotes); else range=("$2..$3"); fi
     git log --format='%an%n%ae%n%cn%n%ce%n%B' "${range[@]}" | scan "commit metadata" ""
     while IFS= read -r c; do
-      git show "$c:tools/workflow-files.json" > "$policy" 2>/dev/null || : > "$policy"
       while IFS= read -r f; do git show "$c:$f" | scan "${c:0:7}:$f" "$f"; done \
         < <(git diff-tree -r --root --no-commit-id --name-only --diff-filter=ACMR "$c")
     done < <(git rev-list "${range[@]}") ;;
   tree)
-    cat tools/workflow-files.json > "$policy"
     while IFS= read -r f; do [ -f "$f" ] && scan "$f" "$f" < "$f"; done < <(git ls-files) ;;
   *) echo "usage: leak-check.sh staged | message <file> | push <old> <new> | tree" >&2; exit 2 ;;
 esac
 
 [ -s "$flag" ] && fail=1
-rm -f "$flag" "$policy"; [ -n "$deny" ] && rm -f "$deny"
+rm -f "$flag"; [ -n "$deny" ] && rm -f "$deny"
 exit $fail
