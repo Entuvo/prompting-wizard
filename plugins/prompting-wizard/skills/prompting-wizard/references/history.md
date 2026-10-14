@@ -58,15 +58,38 @@ Present `baseline` in plain language:
 - **Costly turns**: overall, for openers and for replies to the assistant's options, and the most costly task types.
 - **Weakest levers**: the three lowest lever means with `n` ≥ 20. Treat smaller `n` as thin evidence.
 - **Top gaps**: the most frequent gaps among costly prompts.
-- **Unwritten rules**: what drives frustration. A `system-prompts` gap usually means a rule the learner keeps restating, which belongs in their own CLAUDE.md or AGENTS.md. Offer to draft that text for them to place themselves.
+- **Unwritten rules**: what drives frustration. A `system-prompts` gap usually means a rule the learner keeps restating, which belongs in their own CLAUDE.md or AGENTS.md. Offer to draft that text for them to place themselves; never write it into those files.
 - **Strengths**: the exemplar count, plus one strength.
 
 Quote at most one short prompt excerpt, and only from the learner's own data in this chat.
 
-Then offer:
-- **Course**: propose starting lever scores, each lever mean rounded. The learner confirms. Record them as a separate log line, `Day 0 — history — N prompts, START → END — baseline noun X, …`. Never edit the assessment's Day 0 line or skip the assessment.
-- **Lessons**: suggest starting with the days that teach the two costliest gaps.
-- **Learning Card**: propose at most three `natural-use` events with `assistance: none`, one per costliest gap. Each needs a paraphrased `learner_action` and no raw excerpt. Append only the events the learner accepts.
+## 6. Casebook (offer; on yes)
+
+```
+python3 scripts/history.py cases --root ROOT --run RUN
+```
+
+This writes one dossier per costly gap (up to four), plus `exemplars`. Write each page to `casebook/` following `references/history-casebook.md`. Dispatch one isolated agent per dossier where available; otherwise write the pages in sequence. Give the learner the casebook path. Say that the casebook holds their verbatim prompts and expires with the run after 30 days, so they should copy out anything they want to keep.
+
+## 7. Course and Learning Card (offer each; write only what the learner accepts)
+
+- **Course** (only if `PROGRESS.md` exists): add one log line in this exact shape:
+
+  `- History — YYYY-MM-DD — HOST N prompts — levers noun X, verb X, adjective X, adverb X, preposition X, pronoun X, conjunction X, determiner X, numeral X, interjection X, particle X — casebook ABSOLUTE_CASEBOOK_PATH`
+
+  - Each `X` is that lever's mean, rounded to a whole number, or `-` where its `n` is below 5.
+  - This line is informational. Never edit the Day 0 line or `## Levers`, never skip the assessment, and never change `current_day`.
+  - Suggest starting with the lessons named in the `cases` output for the two costliest gaps. Change the day only if the learner asks.
+- **Learning Card** (only with a supplied or current `LEARNING.md`): propose at most one event per costly gap, and no more than three. Each event uses:
+  - `activity: natural-use`, `assistance: none`, `outcome: not-yet`, `comparison: none`;
+  - `source`: the host;
+  - `context_quality`: `sufficient`, or `partial` when coverage was limited;
+  - `task_family`: the most common task type for that gap;
+  - `task_id`: `history-RUN-<key>`;
+  - `learner_action`: a paraphrase under 200 characters with no raw excerpt (for example, "Opened planning tasks without naming what was in or out of scope; scope arrived a turn later");
+  - `reflection: null`.
+
+  Append only the events the learner accepts, then set `confirmed: true` and validate them under `references/learning-card.md`.
 
 ## Delete
 

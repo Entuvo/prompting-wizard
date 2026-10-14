@@ -274,6 +274,25 @@ class RuntimeTests(unittest.TestCase):
             self.assertIn(expected, text)
         self.assertFalse((self.run / 'scored.jsonl').exists())
 
+    def test_cases_pick_costliest_gaps_with_lessons_and_followups(self):
+        episodes = [{'id': i, 'session': 's', 'turn': i, 'kind': 'prompt', 'prompt': f'p{i}', 'reply_first': f'r{i}',
+                     'reply_last': '', 'out_tokens': 10 * i, 'tool_calls': i} for i in range(6)]
+        history.write_jsonl(self.run / 'episodes.jsonl', episodes)
+        rows = [episodes[i] | score_row(i, gap='preposition') for i in range(4)]
+        rows += [episodes[4] | score_row(4, gap='noun'), episodes[5] | score_row(5, 'steer', 'clean')]
+        history.write_jsonl(self.run / 'scored.jsonl', rows)
+        code, out = self.cli('cases', '--run', 'r1')
+        self.assertEqual(code, 0)
+        self.assertEqual([t['key'] for t in out['themes']], ['preposition'])  # noun has < 3 costly prompts
+        self.assertEqual(out['themes'][0]['lesson'], 'days/05.md')
+        text = (self.run / 'cases' / 'preposition.md').read_text()
+        self.assertIn('USER +1: p1', text)
+        self.assertTrue((self.run / 'cases' / 'exemplars.md').exists())
+
+    def test_cases_need_merged_scores(self):
+        code, out = self.cli('cases', '--run', 'r1')
+        self.assertEqual((code, out['ok']), (1, False))
+
     def test_unknown_gap_key_is_rejected(self):
         self.assertIn('gap agent_tool', history.validate_score(score_row(0, gap='agent_tool')))
 

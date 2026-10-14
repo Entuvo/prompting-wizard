@@ -9,6 +9,7 @@ import collections
 import json
 import re
 import tempfile
+from pathlib import Path
 
 BUILTIN_COMMANDS = {'model', 'clear', 'compact', 'config', 'effort', 'fast', 'login', 'logout', 'mcp', 'resume',
                     'exit', 'permissions', 'cost', 'status', 'help', 'doctor', 'hooks', 'memory', 'init', 'plugin',
@@ -317,6 +318,60 @@ def baseline(rows):
     }
 
 
+def write_cases(run, top=4, per_key=12, minimum=3):
+    """Casebook material: for the costliest gap keys, the strongest scored cases with what followed."""
+    catalog = {e['skill']: e for e in json.loads(
+        (Path(__file__).resolve().parents[1] / 'references' / 'learning-catalog.json').read_text(encoding='utf-8'))}
+    with open(run / 'scored.jsonl', encoding='utf-8') as fh:
+        rows = [json.loads(line) for line in fh]
+    with open(run / 'episodes.jsonl', encoding='utf-8') as fh:
+        chains = collections.defaultdict(list)
+        for ep in map(json.loads, fh):
+            chains[ep['session']].append(ep)
+    for chain in chains.values():
+        chain.sort(key=lambda e: e['turn'])
+    severity = {o: i for i, o in enumerate(COSTLY)}
+    rank = lambda r: (-r['teach'], severity.get(r['outcome'], 9), -(r['out_tokens'] or 0), -r['tool_calls'])
+    costly = [r for r in rows if r['outcome'] in COSTLY]
+    counts = collections.Counter(g['key'] for r in costly for g in r['gaps'])
+    keys = [k for k, n in counts.most_common() if n >= minimum][:top]
+    out_dir = run / 'cases'
+    out_dir.mkdir(exist_ok=True)
+    (run / 'casebook').mkdir(exist_ok=True)
+    themes = []
+    summary = baseline(rows)
+    def dossier(name, title, picked, header=''):
+        with open(out_dir / f'{name}.md', 'w', encoding='utf-8') as fh:
+            fh.write(f'# {title}\n\n{header}{len(picked)} cases below, strongest first.\n\n')
+            for r in picked:
+                chain = chains[r['session']]
+                pos = next(i for i, e in enumerate(chain) if e['id'] == r['id'])
+                gaps = '; '.join(f"{g['key']}={g['score']}: {g.get('evidence', '')}" for g in r['gaps'])
+                fh.write(f"## id={r['id']} · {r['task_type']} · {r['role']} · {r['outcome']} · teach={r['teach']} · "
+                         f"tools={r['tool_calls']}\nGAPS: {gaps or '—'}\nMISSING: {r.get('missing_info') or '—'}\n")
+                if pos:
+                    fh.write(f"PREV ASSISTANT: {_clip(chain[pos - 1]['reply_last'] or chain[pos - 1]['reply_first'], 300)}\n")
+                fh.write(f"PROMPT:\n{_clip(r['prompt'], 2500)}\nREPLY (start): {_clip(r['reply_first'], 350)}\n")
+                for j, e in enumerate([e for e in chain[pos + 1:] if e['kind'] == 'prompt'][:3], 1):
+                    fh.write(f"USER +{j}: {_clip(e['prompt'], 400)}\n")
+                fh.write('\n')
+    for key in keys:
+        picked = sorted((r for r in costly if any(g['key'] == key for g in r['gaps'])), key=rank)[:per_key]
+        entry = catalog.get(key, {})
+        lever = summary['levers'].get(key, {})
+        header = (f"Lesson: {entry.get('label', key)} ({entry.get('lesson', 'n/a')}). This gap appeared in "
+                  f"{counts[key]} of {len(costly)} costly prompts, out of {len(rows)} scored."
+                  + (f" Opener mean for this lever: {lever['mean']} (n={lever['n']})." if lever.get('n') else '') + '\n')
+        dossier(key, f"{entry.get('label', key)} ({key})", picked, header)
+        themes.append({'key': key, 'label': entry.get('label'), 'lesson': entry.get('lesson'),
+                       'costly_prompts': counts[key], 'cases': len(picked)})
+    exemplars = [r for r in rows if r.get('exemplar')][:per_key]
+    if exemplars:
+        dossier('exemplars', 'Prompts that worked first time', exemplars)
+    return {'themes': themes, 'exemplars': len(exemplars), 'cases_dir': str(out_dir),
+            'casebook_dir': str(run / 'casebook')}
+
+
 def purge(history_root, now=None):
     """Raw history runs follow the 30-day raw-evidence rule."""
     import shutil
@@ -347,20 +402,18 @@ def main(argv=None):
     import argparse
     import datetime
     import os
-    import sys
-    from pathlib import Path
     import history_hosts
 
     parser = argparse.ArgumentParser(description='Learn from past work history. See references/history.md.')
     sub = parser.add_subparsers(dest='command', required=True)
-    for name in ('scan', 'merge', 'delete'):
+    for name in ('scan', 'merge', 'cases', 'delete'):
         cmd = sub.add_parser(name)
         cmd.add_argument('--root', required=True, type=Path)
         if name == 'scan':
             cmd.add_argument('--host', required=True, choices=['claude-code', 'codex'])
             cmd.add_argument('--days', type=int, default=90)
             cmd.add_argument('--cap', type=int, default=300)
-        if name == 'merge':
+        if name in ('merge', 'cases'):
             cmd.add_argument('--run', required=True)
         if name == 'delete':
             group = cmd.add_mutually_exclusive_group(required=True)
@@ -400,6 +453,11 @@ def main(argv=None):
                 summary = baseline(rows)
                 (run / 'baseline.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
                 out.update(ok=True, run=run.name, baseline=summary)
+        elif args.command == 'cases':
+            run = history_root / args.run
+            if not (run / 'scored.jsonl').exists():
+                raise ValueError('Merge the scores before building cases')
+            out.update(ok=True, run=run.name, **write_cases(run))
         else:
             import shutil
             targets = [history_root / args.run] if args.run else [p for p in history_root.glob('*/')]

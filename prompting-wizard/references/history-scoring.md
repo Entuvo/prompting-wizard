@@ -75,7 +75,10 @@ Write one JSON object per line, one line for every episode in the batch. Use no 
 - **One role per prompt.** For a prompt that mixes two, use the role of its main ask. A question about the assistant's last output is a `steer`.
 - **No prompting cause.** If an outcome came from a tool, auth, rate-limit or infrastructure failure, or from a blocked action, use `unclear` with no gaps, whether or not the learner was frustrated.
 - **`teach` needs a gap.** `teach` above 0 requires at least one gap. Clean and `unclear` episodes score 0.
-- **`missing_info`** applies to any role. Use `null` when nothing was missing.
-- **N/A levers.** For openers, a lever is `null` when the prompt has no instance of the property, for example no pronoun to bind, no quantity that matters, or no branch. Ignore the rubric's note about `PROGRESS.md`; it does not apply here.
+- **`missing_info`** applies to any role. It may name context the learner supplied several turns later, even when NEXT looked clean; in that case keep `gaps` empty and leave the outcome unchanged. Use `null` when nothing was missing.
+- **Openers include short task starts.** A status check or question that starts a new piece of work ("anything uncommitted?") is an `opener` and needs `levers`.
+- **Answers can carry gaps.** An `answer` that adds its own content beyond approving or choosing may carry a gap on that added content.
+- **Repeated needs.** When the learner restates a need they already gave in an earlier episode ("explain in natural language" again), put the `system-prompts` gap on each repeat, not on the first statement. The repetition is the evidence.
+- **N/A levers.** For openers, a lever is `null` when the prompt has no instance of the property, for example no pronoun to bind, no quantity that matters, no branch, or no phrasal verb. Ignore the rubric's note about `PROGRESS.md`; it does not apply here.
 
 Score every episode. Never skip one, and never add one. Quote the learner's words in `evidence` where you can.

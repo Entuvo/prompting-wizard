@@ -123,9 +123,9 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
 - `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex.
-- `prompting-wizard/references/history.md` (tutor procedure) and `history-scoring.md` (scorer spec); `history-casebook.md` next.
+- `prompting-wizard/references/history.md` (tutor procedure) and `history-scoring.md` (scorer spec); `history-casebook.md` (casebook page spec).
 - `prompting-wizard/references/commands.md`: `history` routing. `history.py` owns its own `scan`/`merge`/`delete` CLI, so `wizard.py` never imports a host SDK.
-- `SKILL.md` / `assessment.md`: optional history baseline line, and case substitution into lessons.
+- `SKILL.md` / `days/30.md`: an informational `- History — …` log line (never a second Day 0 line, since day 30 reads Day 0 as the course-entry baseline), one own-history case after each lesson's Before / After, and a labelled past-work column on day 30.
 - `PRIVACY.md`, `COACHING.md`, `CHANGELOG.md`: the new one-shot read, retention, and what reaches the provider.
 - `tools/test_history.py` plus `tools/fixtures/history/`: synthetic sessions only.
 
@@ -141,9 +141,9 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 
 1. This doc approved, and the ADR decision recorded.
 2. ~~Confirm the Codex thread-read API and the SDK-dependency choice.~~ Done.
-3. `history.py` plus the Claude Code adapter plus fixtures and tests.
-4. Scoring spec plus the `pw history` command and consent flow.
-5. Outputs wired into the course baseline, lesson cases and card candidates.
+3. ~~`history.py` plus the Claude Code adapter plus fixtures and tests.~~ Done.
+4. ~~Scoring spec plus the `pw history` command and consent flow.~~ Done.
+5. ~~Outputs wired into the course baseline, lesson cases and card candidates.~~ Done.
 6. Codex adapter. Then privacy and docs updates, then release notes.
 
 ## Coverage finding (14 October 2026)
