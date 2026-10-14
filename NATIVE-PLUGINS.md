@@ -21,7 +21,7 @@ python3 tools/package_release.py
 | `prompting-wizard-native-guide.md` | Fallback guide for manual attachment |
 | `prompting-wizard-learning-card.md` | Empty card; the coach creates a fresh profile ID at first use |
 
-Both ZIPs have their manifest and `skills/` directly at the archive root. Neither requires a local Python runtime, hooks, MCP server, API key or a Wizard account. The developer build uses Python; the learner uses the host app. ZIPs contain no learner history. Release downloads will only be available after a maintainer publishes these assets; this document does not imply publication.
+Both ZIPs have their manifest and `skills/` directly at the archive root. Neither requires a local Python runtime, hooks, MCP server, API key or a Wizard account. The developer build uses Python; the learner uses the host app. ZIPs contain no learner history. Each [GitHub Release](https://github.com/Entuvo/prompting-wizard/releases/latest) attaches both ZIPs, built from that release's tag. A release download is not a directory listing.
 
 ## Claude pilot installation
 

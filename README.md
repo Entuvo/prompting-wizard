@@ -1,6 +1,6 @@
 <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-on-dark.svg"><img src="docs/assets/logo-on-light.svg" alt="Prompting Wizard" width="420"></picture></p>
 
-<p align="center"><b>Learn to prompt through your everyday work. An open source coach, with an optional 30-lesson course.</b><br>
+<p align="center"><b>Learn to prompt through your everyday work in Claude Code, Codex, ChatGPT and Claude. An open source coach that can review your past chats, with an optional 30-lesson course.</b><br>
 <a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="NATIVE-PLUGINS.md">ChatGPT &amp; Claude plugins</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
 
 <p align="center"><a href="https://youtube.com/shorts/s2WarFaRY2Q"><img src="docs/assets/video-poster.jpg" alt="Watch the Prompting Wizard video on YouTube" width="220"></a></p>
@@ -55,7 +55,7 @@ If you can neither install the skill nor read its files from GitHub, state exact
 
 Prefer commands? See [all install options](https://entuvo.github.io/prompting-wizard/#install).
 
-Everyday learning and Learning Card commands are available on `main`; the latest published release, v1.2.2, does not include this pilot. Use the current source for the commands below.
+Everyday learning, Learning Card and `pw history` commands ship in [1.4 and later](https://github.com/Entuvo/prompting-wizard/releases/latest).
 
 After loading, ask “Learn through my work; no interview.” The skill alone provides teaching when you ask; it does not automatically watch later work or add after-task invitations. For explicit commands, use your installation's invocation:
 
