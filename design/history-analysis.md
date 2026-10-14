@@ -48,7 +48,7 @@ The pilot's key insight: **the learner's next message is a free label.** "No, I 
 **Read host history only through documented interfaces, once, on explicit request, and keep raw excerpts local.**
 
 - **Claude Code**: the Claude Agent SDK documents `list_sessions()` and `get_session_messages(session_id)` (Python) / `listSessions()` / `getSessionMessages()` (TypeScript). Use those. Do not parse `~/.claude/projects/*.jsonl` directly. The pilot did, and it needed undocumented record-type knowledge (`isMeta`, `isSidechain`, `entrypoint`, command wrappers).
-- **Codex**: the Codex SDK documents thread APIs (`thread_resume(..., include_turns=True)`). Rollout files at `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl` are defined only in source (`codex-rs/rollout`). **Open:** confirm a documented way to list threads and read their turns. If none exists, Codex history ships later rather than parsing rollout files.
+- **Codex**: the Codex Python SDK documents `Codex.thread_list(cwd=, source_kinds=, limit=, cursor=, ...)`, and the app-server documents `thread/read` and `thread/items/list` (paginated thread history). Use those, with `source_kinds` excluding non-interactive threads. Rollout files at `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl` are defined only in source (`codex-rs/rollout`); do not read them. Confirmed via Context7 against `openai/codex` main, 14 October 2026. Pin and recheck the SDK version at implementation.
 - This keeps COACHING.md's contributor rule, "Never parse undocumented private transcripts", intact. No exception is needed.
 
 Alternatives rejected:
@@ -116,7 +116,7 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 | Host | v1 | Reading | Scoring | Notes |
 |---|---|---|---|---|
 | Claude Code | yes | Agent SDK session APIs | parallel isolated subagents | pilot-proven |
-| Codex | yes if a documented thread-read API is confirmed | Codex SDK / app-server | `spawn_agent` or sequential | otherwise v1.1 |
+| Codex | yes | Codex SDK `thread_list` + app-server `thread/items/list` | `spawn_agent` or sequential | otherwise v1.1 |
 | ChatGPT / Claude apps | v2 | learner uploads the provider's data export | in-chat, sampled (~50 openers) | output is card candidates only, since there is no local storage for a casebook |
 
 ## Changes by file (planned)
@@ -140,7 +140,7 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 ## Milestones
 
 1. This doc approved, and the ADR decision recorded.
-2. Confirm the Codex thread-read API and the SDK-dependency choice.
+2. ~~Confirm the Codex thread-read API and the SDK-dependency choice.~~ Done.
 3. `history.py` plus the Claude Code adapter plus fixtures and tests.
 4. Scoring spec plus the `pw history` command and consent flow.
 5. Outputs wired into the course baseline, lesson cases and card candidates.
@@ -149,7 +149,7 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 ## Resolved defaults (maintainer, 14 October 2026)
 
 1. **SDK dependency**: acceptable for `pw history` only. The course and coaching runtime stay stdlib-only. A missing SDK gives a clear install message, not a fallback to file parsing.
-2. **Codex**: ship it in v1 only if a documented thread list/read API is confirmed. Otherwise v1 is Claude Code only, and Codex follows when such an API exists.
+2. **Codex**: in v1. The documented thread list/read APIs were confirmed (see the Decision section).
 3. **Retention**: casebook pages and episodes follow the 30-day raw-evidence rule. The learner can copy out anything they want to keep.
 4. **Assessment**: a history baseline adds to the assessment and never replaces it. Assessment still runs; the history line is logged next to Day 0.
 5. **Default sample**: last 90 days, capped at 300 prompts, and the learner can widen either. The token estimate is shown before scoring.
