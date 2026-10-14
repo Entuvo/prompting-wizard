@@ -227,8 +227,9 @@ def accesses(command, filename):
     if not command.startswith('/bin/') and re.match(r'^[A-Z][A-Za-z]+ \{', command):  # Read {...}, Grep {...}
         return touches(command, filename)
     shell = re.sub(r'^\S*sh -\w*c ', '', command).strip('\'"')
-    return any(touches(seg, filename) and not RUNTIME_CALL.match(seg)
-               for seg in re.split(r'\s*(?:;|&&|\|\||\||\n)\s*', shell))
+    segments = re.split(r'\s*(?:;|&&|\|\||\||&|\n)\s*', shell)  # && and || before single & and |
+    return any(touches(seg, filename) and not RUNTIME_CALL.match(seg.replace('"', '').replace("'", ''))
+               for seg in segments)
 
 
 def rule_checks(checks, result, work):

@@ -40,10 +40,12 @@ class HarnessTests(unittest.TestCase):
         f = 'chatgpt-export.json'
         for command in ("/bin/zsh -lc 'python3 history.py scan --host claude; cat /w/chatgpt-export.json'",
                         'Grep {"glob": "*.json", "pattern": "history.py"}',
-                        'cat /w/[c]hatgpt-export.json', 'Grep {"glob": "[c]hatgpt-*.json"}'):
+                        'cat /w/[c]hatgpt-export.json', 'Grep {"glob": "[c]hatgpt-*.json"}',
+                        'python3 history.py scan --file /w/x.json & cat /w/chatgpt-export.json'):
             self.assertTrue(e.accesses(command, f), command)
         for command in ("/bin/zsh -lc 'python3 .agents/skills/x/scripts/history.py scan --file /w/chatgpt-export.json'",
-                        'python3 -I history.py scan --host chatgpt --file /w/chatgpt-export.json'):
+                        'python3 -I history.py scan --host chatgpt --file /w/chatgpt-export.json',
+                        'python3 "/w/scripts/history.py" scan --file /w/chatgpt-export.json'):
             self.assertFalse(e.accesses(command, f), command)
 
     def test_runtime_refusal_is_not_access_but_a_run_would_fail(self):
