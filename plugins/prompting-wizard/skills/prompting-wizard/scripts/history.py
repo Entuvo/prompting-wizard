@@ -395,18 +395,21 @@ HOST_NAME = {'claude': 'Claude Code', 'chatgpt': 'Codex'}
 
 
 def current_provider(env):
-    """Provider of the coding host running this script, from the variables each host sets; None if unknown.
-    Codex wins when both are present: it is the innermost host when launched from a Claude Code terminal."""
-    if env.get('CODEX_THREAD_ID') or env.get('CODEX_SESSION_ID'):
-        return 'chatgpt'
-    if env.get('CLAUDE_CODE_SESSION_ID') or env.get('CLAUDECODE'):
-        return 'claude'
-    return None
+    """Provider of the coding host running this script, from the variables each host sets: 'chatgpt',
+    'claude', None (no host detected) or 'ambiguous' (both set, e.g. one host launched from the other)."""
+    codex = bool(env.get('CODEX_THREAD_ID') or env.get('CODEX_SESSION_ID'))
+    claude = bool(env.get('CLAUDE_CODE_SESSION_ID') or env.get('CLAUDECODE'))
+    if codex and claude:
+        return 'ambiguous'
+    return 'chatgpt' if codex else 'claude' if claude else None
 
 
 def provider_guard(source, env):
     """Each provider's history is scored only by that provider's host. -> error message or None."""
     here, wanted = current_provider(env), SOURCE_PROVIDER[source]
+    if here == 'ambiguous':
+        return ('Cannot tell whether this is Codex or Claude Code: both hosts\' session variables are set, so one was '
+                'launched from the other. Run pw history directly in the host whose history you want to review.')
     if here and here != wanted:
         return (f'{HOST_NAME[here]} reviews only {"Claude" if here == "claude" else "ChatGPT"} history; '
                 f'review this {"Claude" if wanted == "claude" else "ChatGPT"} history in {HOST_NAME[wanted]} instead.')

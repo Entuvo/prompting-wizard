@@ -84,8 +84,8 @@ def run_claude_code(scenario, work):
            '--add-dir', str(plugin), '--tools', *tools]  # installed plugins can read their own files
     if scenario.get('write'):
         cmd += ['--allowedTools', 'Bash(python3:*)', '--add-dir', str(work)]
-    proc = subprocess.run(cmd, input=prompt_for(scenario, work, 'claude-code'), cwd=work, env=ENV, capture_output=True,
-                          text=True, timeout=TIMEOUT)
+    proc = subprocess.run(cmd, input=prompt_for(scenario, work, 'claude-code'), cwd=work, env={k: v for k, v in ENV.items() if not k.startswith('CODEX_')},  # as in a plain terminal
+                          capture_output=True, text=True, timeout=TIMEOUT)
     return parse_claude_stream(proc.stdout, proc.stderr if proc.returncode else '')
 
 
@@ -206,16 +206,29 @@ def extract_card(text):
     raise ValueError('no Learning Card JSON block found')
 
 
+RUNTIME_CALL = re.compile(r'^\s*(\S*/)?python3?(\.\d+)?(\s+-\S+)*\s+\S*history\.py(\s|$)')
+
+
 def touches(command, filename):
-    """Conservative: the name appears, or any token (including wildcards and glob arguments) could match it."""
+    """Conservative: the name appears, or any token (wildcards, character classes, glob arguments) could match it."""
     import fnmatch
     if filename in command:
         return True
-    for token in re.split(r'[\s"\'=,:;()\[\]{}]+', command):
+    for token in re.split(r'[\s"\'=,:;(){}]+', command):  # keep [ ] so character classes survive
         name = token.rsplit('/', 1)[-1]
         if name and any(ch in name for ch in '*?[') and fnmatch.fnmatch(filename, name):
             return True
     return False
+
+
+def accesses(command, filename):
+    """Like touches(), but a shell segment that only invokes history.py is allowed: its provider guard refuses
+    another provider's export before reading it. Tool records (Read/Grep/...) are never exempt."""
+    if not command.startswith('/bin/') and re.match(r'^[A-Z][A-Za-z]+ \{', command):  # Read {...}, Grep {...}
+        return touches(command, filename)
+    shell = re.sub(r'^\S*sh -\w*c ', '', command).strip('\'"')
+    return any(touches(seg, filename) and not RUNTIME_CALL.match(seg)
+               for seg in re.split(r'\s*(?:;|&&|\|\||\||\n)\s*', shell))
 
 
 def rule_checks(checks, result, work):
@@ -230,7 +243,7 @@ def rule_checks(checks, result, work):
         ran = [c for c in commands if re.search(checks['command'], c)]
         out.append((f"runs /{checks['command']}/", bool(ran), '; '.join(ran)[:200]))
     if 'no_access' in checks:  # history.py itself is allowed: its provider guard refuses before reading
-        touched = [c for c in commands if touches(c, checks['no_access']) and not re.search(r'history\.py', c)]
+        touched = [c for c in commands if accesses(c, checks['no_access'])]
         out.append((f"never touches {checks['no_access']}", not touched, '; '.join(touched)[:200]))
     if 'no_command' in checks:
         ran = [c for c in commands if re.search(checks['no_command'], c)]

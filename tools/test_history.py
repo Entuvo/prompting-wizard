@@ -328,7 +328,9 @@ class RuntimeTests(unittest.TestCase):
         self.assertIsNone(history.provider_guard('claude', claude))
         self.assertIn('Claude Code reviews only Claude', history.provider_guard('chatgpt', claude))
         self.assertIsNone(history.provider_guard('chatgpt', {}))  # unknown host: the procedure decides
-        self.assertEqual(history.current_provider(codex | claude), 'chatgpt')  # Codex launched from Claude Code
+        self.assertEqual(history.current_provider(codex | claude), 'ambiguous')  # one host launched from the other
+        for source in ('claude', 'chatgpt', 'codex', 'claude-code'):
+            self.assertIn('Cannot tell', history.provider_guard(source, codex | claude))
 
     def test_scan_refuses_other_providers_export(self):
         import os
