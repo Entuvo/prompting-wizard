@@ -1,0 +1,99 @@
+[
+ {
+  "uuid": "k1",
+  "name": "Board memo",
+  "created_at": "2025-10-09T08:00:00Z",
+  "updated_at": "2025-10-09T08:10:00Z",
+  "chat_messages": [
+   {
+    "uuid": "h1",
+    "sender": "human",
+    "text": "Summarise the board deck",
+    "files": [
+     {
+      "file_name": "deck.png"
+     }
+    ],
+    "content": [
+     {
+      "type": "text",
+      "text": "Summarise the board deck"
+     }
+    ]
+   },
+   {
+    "uuid": "b1",
+    "sender": "assistant",
+    "text": "Here are 12 points...",
+    "content": [
+     {
+      "type": "tool_use",
+      "name": "web_search"
+     },
+     {
+      "type": "text",
+      "text": "Here are 12 points..."
+     }
+    ]
+   },
+   {
+    "uuid": "h2",
+    "sender": "human",
+    "text": "too long, 3 bullets for the CFO",
+    "content": []
+   }
+  ]
+ },
+ {
+  "uuid": "k2",
+  "name": "Trip plan",
+  "created_at": "2025-10-08T09:00:00Z",
+  "updated_at": "2025-10-08T09:05:00Z",
+  "chat_messages": [
+   {
+    "uuid": "h3",
+    "sender": "human",
+    "text": "plan a trip",
+    "content": [
+     {
+      "type": "text",
+      "text": "plan a trip"
+     }
+    ]
+   },
+   {
+    "uuid": "b3",
+    "sender": "assistant",
+    "text": "Where would you like to go, and for how long?",
+    "content": [
+     {
+      "type": "text",
+      "text": "Where would you like to go, and for how long?"
+     }
+    ]
+   },
+   {
+    "uuid": "h4",
+    "sender": "human",
+    "text": "Lisbon, 3 days in May, two adults, mid budget, a day-by-day table",
+    "content": [
+     {
+      "type": "text",
+      "text": "Lisbon, 3 days in May, two adults, mid budget, a day-by-day table"
+     }
+    ]
+   },
+   {
+    "uuid": "b4",
+    "sender": "assistant",
+    "text": "| Day | Plan |",
+    "content": [
+     {
+      "type": "text",
+      "text": "| Day | Plan |"
+     }
+    ]
+   }
+  ]
+ }
+]

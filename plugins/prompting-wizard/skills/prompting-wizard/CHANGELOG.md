@@ -1,5 +1,10 @@
 # Prompting Wizard release notes
 
+## 1.4.2 — 2026-10-14
+
+- `pw history` now ends a scan with a direct yes/no question before scoring, instead of only describing the consent.
+- Everyday plugin 0.2.1: the in-app export review names at most three skills in total, and its card records never quote the export.
+
 ## 1.4.1 — 2026-10-14
 
 - `pw history` now always ends a scan with the scoring disclosure and asks for a second consent, even when the learner has already asked to stop before scoring.
