@@ -63,6 +63,6 @@ Mini-lessons never advance the separate 30-lesson course. In installed coding-ag
 
 ## Limits and automatic continuity
 
-This pilot does not watch other chats, run background capture, or sync accounts. Local coding-host collection still uses its existing explicit opt-in and controls; these account instructions do not enable it. Exported cards do not synchronize with the local course database yet.
+This pilot does not watch other chats, run background capture, or sync accounts. Reviewing past chats requires you to upload an export, and that review is only in the plugin. Local coding-host collection still uses its existing explicit opt-in and controls; these account instructions do not enable it. Exported cards do not synchronize with the local course database yet.
 
 A shared authenticated connector is the next candidate for reducing manual transfer. [Continuity investigation](CONTINUITY.md) separates documented capabilities from the untested cross-app round-trip. No Wizard service, new account or integration is installed by this pilot. Human learning outcomes remain unvalidated.

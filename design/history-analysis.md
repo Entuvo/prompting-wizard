@@ -1,6 +1,6 @@
 # Design: learning from past work history
 
-Status: approved for implementation · Branch: `feat/history-analysis` · Drafted 14 October 2026
+Status: implemented in 1.4.0 (Claude Code, Codex, ChatGPT and Claude app exports) · Branch: `feat/history-analysis` · Drafted 14 October 2026
 
 ## Problem
 
@@ -18,7 +18,6 @@ An explicit, one-shot `pw history` action that reads the learner's past sessions
 
 ## Non-goals (v1)
 
-- ChatGPT and Claude app exports (v2; see Host matrix).
 - Background or recurring reading. Every run is learner-initiated.
 - Any Entuvo service, upload, or telemetry.
 - Writing to CLAUDE.md, AGENTS.md, settings or memory files.
@@ -49,6 +48,7 @@ The pilot's key insight: **the learner's next message is a free label.** "No, I 
 
 - **Claude Code**: the Claude Agent SDK documents `list_sessions()` and `get_session_messages(session_id)` (Python) / `listSessions()` / `getSessionMessages()` (TypeScript). Use those. Do not parse `~/.claude/projects/*.jsonl` directly. The pilot did, and it needed undocumented record-type knowledge (`isMeta`, `isSidechain`, `entrypoint`, command wrappers).
 - **Codex**: the Codex Python SDK documents `Codex.thread_list(cwd=, source_kinds=, limit=, cursor=, ...)`, and the app-server documents `thread/read` and `thread/items/list` (paginated thread history). Use those, with `source_kinds` excluding non-interactive threads. Rollout files at `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl` are defined only in source (`codex-rs/rollout`); do not read them. Confirmed via Context7 against `openai/codex` main, 14 October 2026. Pin and recheck the SDK version at implementation.
+- **ChatGPT and Claude app exports**: the learner downloads their data export from the app's settings and supplies the `.zip` or `conversations.json`. An export is a file the learner requested and chose to hand over, not a host's private transcript store. Its format is not formally specified, so readers validate its shape and fail closed with a clear message. Archives are read in memory and never extracted.
 - This keeps COACHING.md's contributor rule, "Never parse undocumented private transcripts", intact. No exception is needed.
 
 Alternatives rejected:
@@ -113,16 +113,19 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 
 ## Host matrix
 
-| Host | v1 | Reading | Scoring | Notes |
-|---|---|---|---|---|
-| Claude Code | yes | Agent SDK session APIs | parallel isolated subagents | pilot-proven |
-| Codex | yes | Codex SDK `thread_list` + app-server `thread/items/list` | `spawn_agent` or sequential | otherwise v1.1 |
-| ChatGPT / Claude apps | v2 | learner uploads the provider's data export | in-chat, sampled (~50 openers) | output is card candidates only, since there is no local storage for a casebook |
+| Source | Reading | Scoring | Notes |
+|---|---|---|---|
+| Claude Code | Agent SDK session APIs | parallel isolated subagents | current chain only (see Coverage finding) |
+| Codex | Codex SDK `thread_list` + app-server `thread/read` | `spawn_agent` or sequential | no per-turn output tokens |
+| ChatGPT export, from a coding host | `--host chatgpt --file EXPORT` | as above | current branch plus edited prompts (`edited` hint) |
+| Claude app export, from a coding host | `--host claude --file EXPORT` | as above | linear conversation as exported |
+| ChatGPT / Claude apps | learner uploads the export to the Everyday plugin | in-chat, up to 30 recent conversations | no local storage: an aggregate, 3 cases and card candidates only |
 
 ## Changes by file (planned)
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
-- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex.
+- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex, and export readers for ChatGPT and Claude.
+- `plugins/prompting-wizard-teacher/skills/learn/SKILL.md`: in-app export review (plugin 0.2.0).
 - `prompting-wizard/references/history.md` (tutor procedure) and `history-scoring.md` (scorer spec); `history-casebook.md` (casebook page spec).
 - `prompting-wizard/references/commands.md`: `history` routing. `history.py` owns its own `scan`/`merge`/`delete` CLI, so `wizard.py` never imports a host SDK.
 - `SKILL.md` / `days/30.md`: an informational `- History — …` log line (never a second Day 0 line, since day 30 reads Day 0 as the course-entry baseline), one own-history case after each lesson's Before / After, and a labelled past-work column on day 30.
@@ -144,7 +147,8 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 3. ~~`history.py` plus the Claude Code adapter plus fixtures and tests.~~ Done.
 4. ~~Scoring spec plus the `pw history` command and consent flow.~~ Done.
 5. ~~Outputs wired into the course baseline, lesson cases and card candidates.~~ Done.
-6. Codex adapter. Then privacy and docs updates, then release notes.
+6. ~~Codex adapter. Then privacy and docs updates, then release notes.~~ Done.
+7. ~~ChatGPT and Claude export readers, and the in-app export review in the Everyday plugin (0.2.0).~~ Done.
 
 ## Coverage finding (14 October 2026)
 
