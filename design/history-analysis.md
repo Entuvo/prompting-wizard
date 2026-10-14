@@ -113,13 +113,16 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 
 ## Host matrix
 
+Each provider's history stays with that provider: scoring sends excerpts through the current host's model, so a host reviews only its own provider's export and declines the other.
+
+
 | Source | Reading | Scoring | Notes |
 |---|---|---|---|
 | Claude Code | Agent SDK session APIs | parallel isolated subagents | current chain only (see Coverage finding) |
 | Codex | Codex SDK `thread_list` + app-server `thread/read` | `spawn_agent` or sequential | no per-turn output tokens |
-| ChatGPT export, from a coding host | `--host chatgpt --file EXPORT` | as above | current branch plus edited prompts (`edited` hint) |
-| Claude app export, from a coding host | `--host claude --file EXPORT` | as above | linear conversation as exported |
-| ChatGPT / Claude apps | learner uploads the export to the Everyday plugin | in-chat, up to 30 recent conversations | no local storage: an aggregate, 3 cases and card candidates only |
+| ChatGPT export, from Codex | `--host chatgpt --file EXPORT` | as above | current branch plus edited prompts (`edited` hint) |
+| Claude app export, from Claude Code | `--host claude --file EXPORT` | as above | linear conversation as exported |
+| ChatGPT / Claude apps | learner uploads that app's own export to the Everyday plugin | in-chat, up to 30 recent conversations | no local storage: an aggregate, 3 cases and card candidates only |
 
 ## Changes by file (planned)
 

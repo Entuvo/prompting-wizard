@@ -34,24 +34,41 @@ import threading
 CODEX_LOCK = threading.Lock()  # one Codex process at a time: parallel runs can race on refreshing the login
 
 
-def attachment(name):
+PROVIDER = {'claude-code': 'claude', 'claude-api': 'claude', 'codex': 'chatgpt', 'openai-api': 'chatgpt'}
+LABEL = {'claude': 'Claude', 'chatgpt': 'ChatGPT'}
+
+
+def exports(host):
+    """-> (own provider, other provider) for a host: each provider's history stays with that provider."""
+    own = PROVIDER[host]
+    return own, 'chatgpt' if own == 'claude' else 'claude'
+
+
+def attachment(name, host=None):
+    if name in ('own-export', 'other-export'):
+        provider = exports(host)[0 if name == 'own-export' else 1]
+        text = (FIXTURES / f'{provider}-export.json').read_text(encoding='utf-8')
+        return f'\n\nAttached file conversations.json:\n```json\n{text}\n```'
     if name == 'empty-card':
         text = (EVERYDAY / 'skills' / 'learn' / 'references' / 'empty-card.md').read_text(encoding='utf-8')
         return f'\n\nAttached file LEARNING.md:\n{text}'
-    if name == 'chatgpt-export':
-        text = (FIXTURES / 'chatgpt-export.json').read_text(encoding='utf-8')
-        return f'\n\nAttached file conversations.json:\n```json\n{text}\n```'
     return ''
 
 
-def prompt_for(scenario, work):
-    text = scenario['prompt'].replace('{EXPORT}', str(work / 'claude-export.json')).replace('{ROOT}', str(work / 'data'))
-    return text + attachment(scenario.get('attach', ''))
+def prompt_for(scenario, work, host):
+    own, other = exports(host)
+    text = scenario['prompt']
+    for key, value in {'{EXPORT}': str(work / f'{own}-export.json'), '{OTHER_EXPORT}': str(work / f'{other}-export.json'),
+                       '{EXPORT_HOST}': own, '{OTHER_HOST}': other, '{EXPORT_NAME}': LABEL[own],
+                       '{OTHER_NAME}': LABEL[other], '{ROOT}': str(work / 'data')}.items():
+        text = text.replace(key, value)
+    return text + attachment(scenario.get('attach', ''), host)
 
 
 def prepare(work, scenario):
     work.mkdir(parents=True)
-    shutil.copy(FIXTURES / 'claude-export.json', work / 'claude-export.json')
+    for provider in LABEL:
+        shutil.copy(FIXTURES / f'{provider}-export.json', work / f'{provider}-export.json')
     skills = work / '.agents' / 'skills'  # Codex discovers project skills here
     source = COURSE if scenario['plugin'] == 'course' else EVERYDAY
     shutil.copytree(source / 'skills', skills)
@@ -67,8 +84,8 @@ def run_claude_code(scenario, work):
            '--add-dir', str(plugin), '--tools', *tools]  # installed plugins can read their own files
     if scenario.get('write'):
         cmd += ['--allowedTools', 'Bash(python3:*)', '--add-dir', str(work)]
-    proc = subprocess.run(cmd, input=prompt_for(scenario, work), cwd=work, env=ENV, capture_output=True,
-                          text=True, timeout=TIMEOUT)
+    proc = subprocess.run(cmd, input=prompt_for(scenario, work, 'claude-code'), cwd=work, env={k: v for k, v in ENV.items() if not k.startswith('CODEX_')},  # as in a plain terminal
+                          capture_output=True, text=True, timeout=TIMEOUT)
     return parse_claude_stream(proc.stdout, proc.stderr if proc.returncode else '')
 
 
@@ -81,8 +98,14 @@ def parse_claude_stream(stdout, error=''):
             continue
         if event.get('type') == 'assistant':
             for block in (event.get('message') or {}).get('content') or []:
-                if block.get('type') == 'tool_use' and block.get('name') == 'Bash':
-                    commands.append((block.get('input') or {}).get('command', ''))
+                if block.get('type') != 'tool_use':
+                    continue
+                args = block.get('input') or {}
+                if block.get('name') == 'Bash':
+                    commands.append(args.get('command', ''))
+                elif block.get('name') != 'Skill':  # Skill only passes the request text; it reads no file
+                    # Read, Grep, Glob, ...: every argument is evidence of file access
+                    commands.append(f"{block.get('name')} {json.dumps(args, sort_keys=True)}")
         elif event.get('type') == 'result':
             text = event.get('result') or ''
     return {'text': text, 'commands': commands, 'raw': stdout, 'error': error.strip()[-500:]}
@@ -91,9 +114,10 @@ def parse_claude_stream(stdout, error=''):
 def run_codex(scenario, work):
     cmd = ['codex', 'exec', '--json', '--skip-git-repo-check', '-C', str(work),
            '--sandbox', 'workspace-write' if scenario.get('write') else 'read-only']
-    env = {k: v for k, v in ENV.items() if k != 'OPENAI_API_KEY'}  # use the CLI's own login, not the API key
+    # Use the CLI's own login, not the API key; drop the parent Claude Code session's variables, as in a plain terminal.
+    env = {k: v for k, v in ENV.items() if k != 'OPENAI_API_KEY' and not k.startswith('CLAUDE_CODE') and k != 'CLAUDECODE'}
     with CODEX_LOCK:
-        proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work), cwd=work, env=env, capture_output=True,
+        proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work, 'codex'), cwd=work, env=env, capture_output=True,
                               text=True, timeout=TIMEOUT)
     return parse_codex_stream(proc.stdout, proc.stderr if proc.returncode else '')
 
@@ -115,10 +139,16 @@ def parse_codex_stream(stdout, error=''):
     return {'text': text, 'commands': commands, 'raw': stdout, 'error': (error or '').strip()[-500:]}
 
 
-def everyday_instructions():
+APP_IDENTITY = {'claude-api': 'You are Claude, running in the Claude app (an Anthropic host).',
+                'openai-api': 'You are ChatGPT, running in the ChatGPT app (an OpenAI host).'}
+
+
+def everyday_instructions(host=None):
+    """The app's own system prompt tells the model which product it is; the API alone does not."""
     skill = (EVERYDAY / 'skills' / 'learn' / 'SKILL.md').read_text(encoding='utf-8')
     guide = (EVERYDAY / 'skills' / 'learn' / 'references' / 'guide.md').read_text(encoding='utf-8')
-    return f'{skill}\n\n---\nBundled guide (references/guide.md):\n\n{guide}'
+    identity = APP_IDENTITY.get(host, '')
+    return f'{identity}\n\n{skill}\n\n---\nBundled guide (references/guide.md):\n\n{guide}'.lstrip()
 
 
 def post_json(url, headers, body):
@@ -140,7 +170,7 @@ def run_claude_api(scenario, work, post=post_json):
                  **({'anthropic-workspace-id': os.environ['ANTHROPIC_WORKSPACE_ID']}
                     if os.environ.get('ANTHROPIC_WORKSPACE_ID') else {})},
                 {'model': os.environ.get('E2E_CLAUDE_MODEL', 'claude-opus-5-5'), 'max_tokens': 4000,
-                 'system': everyday_instructions(), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work)}]})
+                 'system': everyday_instructions('claude-api'), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work, 'claude-api')}]})
     text = ''.join(b.get('text', '') for b in data.get('content') or [] if b.get('type') == 'text')
     return {'text': text, 'commands': [], 'raw': json.dumps(data), 'error': ''}
 
@@ -150,8 +180,8 @@ def run_openai_api(scenario, work, post=post_json):
     if not key:
         return {'skipped': 'OPENAI_API_KEY not set'}
     data = post('https://api.openai.com/v1/responses', {'authorization': f'Bearer {key}'},
-                {'model': os.environ.get('E2E_OPENAI_MODEL', 'gpt-5.4'), 'instructions': everyday_instructions(),
-                 'input': prompt_for(scenario, work)})
+                {'model': os.environ.get('E2E_OPENAI_MODEL', 'gpt-5.4'), 'instructions': everyday_instructions('openai-api'),
+                 'input': prompt_for(scenario, work, 'openai-api')})
     text = data.get('output_text') or ''.join(
         c.get('text', '') for o in data.get('output') or [] for c in o.get('content') or [] if c.get('type') == 'output_text')
     return {'text': text, 'commands': [], 'raw': json.dumps(data), 'error': ''}
@@ -176,6 +206,32 @@ def extract_card(text):
     raise ValueError('no Learning Card JSON block found')
 
 
+RUNTIME_CALL = re.compile(r'^\s*(\S*/)?python3?(\.\d+)?(\s+-\S+)*\s+\S*history\.py(\s|$)')
+
+
+def touches(command, filename):
+    """Conservative: the name appears, or any token (wildcards, character classes, glob arguments) could match it."""
+    import fnmatch
+    if filename in command:
+        return True
+    for token in re.split(r'[\s"\'=,:;(){}]+', command):  # keep [ ] so character classes survive
+        name = token.rsplit('/', 1)[-1]
+        if name and any(ch in name for ch in '*?[') and fnmatch.fnmatch(filename, name):
+            return True
+    return False
+
+
+def accesses(command, filename):
+    """Like touches(), but a shell segment that only invokes history.py is allowed: its provider guard refuses
+    another provider's export before reading it. Tool records (Read/Grep/...) are never exempt."""
+    if not command.startswith('/bin/') and re.match(r'^[A-Z][A-Za-z]+ \{', command):  # Read {...}, Grep {...}
+        return touches(command, filename)
+    shell = re.sub(r'^\S*sh -\w*c ', '', command).strip('\'"')
+    segments = re.split(r'\s*(?:;|&&|\|\||\||&|\n)\s*', shell)  # && and || before single & and |
+    return any(touches(seg, filename) and not RUNTIME_CALL.match(seg.replace('"', '').replace("'", ''))
+               for seg in segments)
+
+
 def rule_checks(checks, result, work):
     text, commands = result['text'], result['commands']
     out = []
@@ -187,9 +243,15 @@ def rule_checks(checks, result, work):
     if 'command' in checks:
         ran = [c for c in commands if re.search(checks['command'], c)]
         out.append((f"runs /{checks['command']}/", bool(ran), '; '.join(ran)[:200]))
+    if 'no_access' in checks:  # history.py itself is allowed: its provider guard refuses before reading
+        touched = [c for c in commands if accesses(c, checks['no_access'])]
+        out.append((f"never touches {checks['no_access']}", not touched, '; '.join(touched)[:200]))
     if 'no_command' in checks:
         ran = [c for c in commands if re.search(checks['no_command'], c)]
         out.append((f"does not run /{checks['no_command']}/", not ran, '; '.join(ran)[:200]))
+    if checks.get('no_run_created'):
+        runs = list((work / 'data' / 'history').glob('*/sample.jsonl'))
+        out.append(('creates no history run', not runs, str(runs[0].parent.name) if runs else ''))
     if checks.get('run_created'):
         runs = list((work / 'data' / 'history').glob('*/sample.jsonl'))
         out.append(('creates a history run', bool(runs), str(runs[0].parent.name) if runs else ''))
@@ -256,7 +318,10 @@ def run_one(host, scenario, base, use_judge):
         return {'host': host, 'scenario': scenario['id'], 'status': 'skipped', 'detail': result['skipped'], 'checks': []}
     (work / 'output.md').write_text(result['text'], encoding='utf-8')
     (work / 'raw.jsonl').write_text(result['raw'], encoding='utf-8')
-    checks = rule_checks(scenario.get('checks', {}), result, work)
+    other = exports(host)[1]
+    resolved = {k: (v.replace('{OTHER_EXPORT_FILE}', f'{other}-export.json') if isinstance(v, str) else v)
+                for k, v in scenario.get('checks', {}).items()}
+    checks = rule_checks(resolved, result, work)
     if result['error'] and not result['text']:
         checks.insert(0, {'check': 'host run completed', 'pass': False, 'detail': result['error']})
     elif use_judge and scenario.get('expect'):

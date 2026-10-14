@@ -26,7 +26,48 @@ class HarnessTests(unittest.TestCase):
                      {'type': 'tool_use', 'name': 'Read', 'input': {'file_path': 'x'}}]}},
                  {'type': 'result', 'result': 'Found 2 prompts.'}]
         r = e.parse_claude_stream('\n'.join(map(json.dumps, lines)) + '\nnot json')
-        self.assertEqual((r['text'], r['commands']), ('Found 2 prompts.', ['python3 scripts/history.py scan']))
+        self.assertEqual((r['text'], r['commands']), ('Found 2 prompts.', ['python3 scripts/history.py scan', 'Read {"file_path": "x"}']))
+
+    def test_claude_stream_records_file_access(self):
+        lines = [{'type': 'assistant', 'message': {'content': [
+            {'type': 'tool_use', 'name': 'Read', 'input': {'file_path': '/w/chatgpt-export.json'}}]}},
+                 {'type': 'result', 'result': 'I cannot review that.'}]
+        r = e.parse_claude_stream('\n'.join(map(json.dumps, lines)))
+        got = e.rule_checks({'no_access': 'chatgpt-export.json'}, r, self.work)
+        self.assertFalse(got[0]['pass'])  # reading the wrong export fails even if the reply declines
+
+    def test_access_check_has_no_runtime_or_bracket_bypass(self):
+        f = 'chatgpt-export.json'
+        for command in ("/bin/zsh -lc 'python3 history.py scan --host claude; cat /w/chatgpt-export.json'",
+                        'Grep {"glob": "*.json", "pattern": "history.py"}',
+                        'cat /w/[c]hatgpt-export.json', 'Grep {"glob": "[c]hatgpt-*.json"}',
+                        'python3 history.py scan --file /w/x.json & cat /w/chatgpt-export.json'):
+            self.assertTrue(e.accesses(command, f), command)
+        for command in ("/bin/zsh -lc 'python3 .agents/skills/x/scripts/history.py scan --file /w/chatgpt-export.json'",
+                        'python3 -I history.py scan --host chatgpt --file /w/chatgpt-export.json',
+                        'python3 "/w/scripts/history.py" scan --file /w/chatgpt-export.json'):
+            self.assertFalse(e.accesses(command, f), command)
+
+    def test_runtime_refusal_is_not_access_but_a_run_would_fail(self):
+        result = {'text': 'refused', 'commands': ['python3 history.py scan --host claude --file /w/claude-export.json']}
+        got = {c['check']: c['pass'] for c in e.rule_checks({'no_access': 'claude-export.json', 'no_run_created': True},
+                                                             result, self.work)}
+        self.assertTrue(all(got.values()))
+        (self.work / 'data' / 'history' / 'r1').mkdir(parents=True)
+        (self.work / 'data' / 'history' / 'r1' / 'sample.jsonl').write_text('')
+        self.assertFalse(e.rule_checks({'no_run_created': True}, result, self.work)[0]['pass'])
+
+    def test_skill_invocation_is_not_file_access(self):
+        lines = [{'type': 'assistant', 'message': {'content': [
+            {'type': 'tool_use', 'name': 'Skill', 'input': {'args': 'history --file /w/chatgpt-export.json'}}]}}]
+        self.assertEqual(e.parse_claude_stream('\n'.join(map(json.dumps, lines)))['commands'], [])
+
+    def test_no_access_catches_wildcards_and_glob_arguments(self):
+        for command in ('cat /w/*-export.json', 'Grep {"glob": "*.json", "pattern": "mapping"}',
+                        'ls chatgpt-export.json', 'head /w/chat*'):
+            self.assertTrue(e.touches(command, 'chatgpt-export.json'), command)
+        for command in ('python3 history.py scan --host claude --file /w/claude-export.json', 'ls'):
+            self.assertFalse(e.touches(command, 'chatgpt-export.json'), command)
 
     def test_codex_stream_text_and_commands(self):
         lines = [{'type': 'item.completed', 'item': {'type': 'command_execution', 'command': 'ls'}},
@@ -82,6 +123,16 @@ class HarnessTests(unittest.TestCase):
         finally:
             e.os.environ.clear()
             e.os.environ.update(env)
+
+    def test_each_host_gets_its_own_providers_export(self):
+        scenario = {'prompt': '{EXPORT_NAME} at {EXPORT}, other {OTHER_NAME} --host {EXPORT_HOST}', 'attach': 'own-export'}
+        claude = e.prompt_for(scenario, self.work, 'claude-code')
+        self.assertIn('Claude at', claude)
+        self.assertIn('claude-export.json, other ChatGPT --host claude', claude)
+        self.assertIn('chat_messages', claude)  # attached Claude export
+        codex = e.prompt_for(scenario | {'attach': 'other-export'}, self.work, 'codex')
+        self.assertIn('ChatGPT at', codex)
+        self.assertIn('chat_messages', codex)  # the other provider's export, for a decline scenario
 
     def test_scenarios_are_well_formed(self):
         scenarios = json.loads((e.FIXTURES / 'scenarios.json').read_text())
