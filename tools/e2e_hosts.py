@@ -6,7 +6,8 @@ settings, history or cards.
   python3 tools/e2e_hosts.py [--hosts claude-code,codex,claude-api,openai-api] [--scenarios id,...]
                              [--no-judge] [--workers 4] [--out e2e-results]
 
-API simulations need ANTHROPIC_API_KEY / OPENAI_API_KEY and are skipped without them. They test the plugin's
+API simulations need ANTHROPIC_API_KEY / OPENAI_API_KEY and are skipped without them. A key that is not scoped
+to a workspace also needs ANTHROPIC_WORKSPACE_ID. They test the plugin's
 instructions, not native app loading, activation or uploads.
 """
 import argparse
@@ -29,6 +30,8 @@ EVERYDAY = ROOT / 'plugins' / 'prompting-wizard-teacher'
 HOSTS = ('claude-code', 'codex', 'claude-api', 'openai-api')
 TIMEOUT = 420
 ENV = {**os.environ, 'PROMPTING_WIZARD_EXPERIMENT': '1'}  # installed coaching hooks become no-ops
+import threading
+CODEX_LOCK = threading.Lock()  # one Codex process at a time: parallel runs can race on refreshing the login
 
 
 def attachment(name):
@@ -88,8 +91,10 @@ def parse_claude_stream(stdout, error=''):
 def run_codex(scenario, work):
     cmd = ['codex', 'exec', '--json', '--skip-git-repo-check', '-C', str(work),
            '--sandbox', 'workspace-write' if scenario.get('write') else 'read-only']
-    proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work), cwd=work, env=ENV, capture_output=True,
-                          text=True, timeout=TIMEOUT)
+    env = {k: v for k, v in ENV.items() if k != 'OPENAI_API_KEY'}  # use the CLI's own login, not the API key
+    with CODEX_LOCK:
+        proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work), cwd=work, env=env, capture_output=True,
+                              text=True, timeout=TIMEOUT)
     return parse_codex_stream(proc.stdout, proc.stderr if proc.returncode else '')
 
 
@@ -117,9 +122,13 @@ def everyday_instructions():
 
 
 def post_json(url, headers, body):
+    import urllib.error
     request = urllib.request.Request(url, json.dumps(body).encode(), {'content-type': 'application/json', **headers})
-    with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
-        return json.loads(response.read())
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+            return json.loads(response.read())
+    except urllib.error.HTTPError as exc:  # surface the provider's reason; never the request headers
+        raise RuntimeError(f'HTTP {exc.code}: {exc.read().decode("utf-8", "replace")[:300]}') from None
 
 
 def run_claude_api(scenario, work, post=post_json):
@@ -127,7 +136,9 @@ def run_claude_api(scenario, work, post=post_json):
     if not key:
         return {'skipped': 'ANTHROPIC_API_KEY not set'}
     data = post('https://api.anthropic.com/v1/messages',
-                {'x-api-key': key, 'anthropic-version': '2023-06-01'},
+                {'x-api-key': key, 'anthropic-version': '2023-06-01',
+                 **({'anthropic-workspace-id': os.environ['ANTHROPIC_WORKSPACE_ID']}
+                    if os.environ.get('ANTHROPIC_WORKSPACE_ID') else {})},
                 {'model': os.environ.get('E2E_CLAUDE_MODEL', 'claude-opus-5-5'), 'max_tokens': 4000,
                  'system': everyday_instructions(), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work)}]})
     text = ''.join(b.get('text', '') for b in data.get('content') or [] if b.get('type') == 'text')

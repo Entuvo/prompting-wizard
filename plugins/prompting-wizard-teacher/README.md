@@ -33,6 +33,6 @@ This package declares no connectors, MCP servers, hooks, scripts, credentials, t
 
 ## Pilot status and support
 
-Version 0.2.0 adds an on-request review of an uploaded ChatGPT or Claude data export. Native ChatGPT/Claude web, desktop and phone installation, activation and card transfer remain unverified; local package checks and synthetic model tests are not device testing. Marketplace approval and availability are not claimed. This everyday plugin is separate from Prompting Wizard's optional 30-lesson coding-agent course. Human learning effectiveness has not been validated.
+Version 0.2.1 (0.2.0 added an on-request review of an uploaded ChatGPT or Claude data export; 0.2.1 tightens its limits). Native ChatGPT/Claude web, desktop and phone installation, activation and card transfer remain unverified; local package checks and synthetic model tests are not device testing. Marketplace approval and availability are not claimed. This everyday plugin is separate from Prompting Wizard's optional 30-lesson coding-agent course. Human learning effectiveness has not been validated.
 
 Report installation or teaching problems through [GitHub Issues](https://github.com/Entuvo/prompting-wizard/issues), using synthetic examples rather than personal cards or transcripts. Maintained by Entuvo; distributed under the [MIT License](LICENSE). See [privacy](https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md) and [terms](https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md).
