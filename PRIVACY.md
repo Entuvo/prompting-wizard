@@ -1,6 +1,6 @@
 # Privacy policy
 
-Last updated: 11 October 2026
+Last updated: 14 October 2026
 
 Prompting Wizard is published by Entuvo. It is a set of files you install into an AI assistant you already use. Entuvo does not operate a Prompting Wizard account system or website backend. The course itself sends Entuvo nothing.
 
@@ -24,6 +24,23 @@ Both local hosts can use the same directory. When a lesson reads examples from a
 
 Use the runtime to inspect, exclude, pause or delete managed learning data. Deletion includes associated pending findings and drafts. Host transcripts, terminal/tool histories, process arguments, explicit exports and external backups are separate; the project cannot erase them or promise forensic erasure. Use stdin rather than command arguments for sensitive record text. See [controls and setup](COACHING.md).
 
+## Learning from past work history
+
+`pw history` runs only when you ask, one time. It reads one of the following:
+
+- your Claude Code or Codex sessions, through that host's documented SDK, skipping workspaces excluded from local coaching;
+- a ChatGPT or Claude data export that you downloaded and chose to supply.
+
+It never parses private transcript files. An export archive is read in memory and never extracted. You confirm twice: once before anything is read, and again before scoring.
+
+Scoring sends a sample of your prompts and the assistant's replies (300 by default) through the AI provider you are already using, under its terms, and uses your quota. If you upload one provider's export into another provider's chat, your history goes to that second provider. Secrets that look like API keys, tokens, long hex strings or email addresses are masked before anything is written or sent. Pattern masking cannot catch everything.
+
+In Claude Code and Codex, results are written under `history/` in a local data directory you choose, with owner-only permissions. They include verbatim prompts, the casebook pages and an aggregate baseline. Runs are deleted 30 days after they are written, on the next runtime invocation, or sooner with `delete`.
+
+In the ChatGPT and Claude apps, nothing is stored by Prompting Wizard. Findings appear in the reply, and the uploaded file stays in that chat under the provider's retention.
+
+Nothing is added to `PROGRESS.md`, a Learning Card, CLAUDE.md, AGENTS.md or any settings file unless you accept it. A Learning Card entry contains a paraphrase, never an excerpt. Entuvo receives nothing. Host transcripts and provider exports are governed by their own retention, and this project cannot delete them.
+
 ## What the course may fetch
 
 A locally loaded copy may read the public `VERSION.md` file from this GitHub repository to see whether a newer version exists. Automatic checks happen at most once every seven days. An explicit "check for updates" request, or a missing or unreadable last-check date, can fetch again sooner. That request goes to GitHub, not to an Entuvo server.
@@ -43,3 +60,5 @@ Questions about this policy: open an issue at https://github.com/Entuvo/promptin
 ## Portable Learning Cards
 
 The everyday pilot contains no Wizard cloud service or background native-chat capture. A card contains only accepted learning evidence and preferences; avoid secrets and raw work excerpts. Attaching it to ChatGPT or Claude sends it to that provider under your account settings and its terms. Exporting it does not update or erase older uploads, chat history, backups or provider memory. Corrections/retractions affect the card you retain; delete other copies separately. Existing local coaching capture, retention and opt-in remain unchanged.
+
+The native teaching plugins bundle instructions, rubric references and an empty card. They contain no MCP service, lifecycle hooks, local database or telemetry. They do not read other chats. Selected work and attached cards are processed by the host provider. Installing or removing a plugin does not save or delete your retained cards or prior provider uploads.

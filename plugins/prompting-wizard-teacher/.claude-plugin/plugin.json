@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "prompting-wizard-teacher",
+  "version": "0.2.0",
+  "description": "Learn prompting through everyday work, with optional practice and portable Learning Cards. Native-app pilot.",
+  "author": {
+    "name": "Entuvo",
+    "url": "https://github.com/Entuvo"
+  },
+  "homepage": "https://github.com/Entuvo/prompting-wizard/blob/main/NATIVE-PLUGINS.md",
+  "repository": "https://github.com/Entuvo/prompting-wizard",
+  "license": "MIT",
+  "keywords": [
+    "prompting",
+    "teaching",
+    "learning",
+    "productivity"
+  ],
+  "displayName": "Prompting Wizard \u2014 Everyday"
+}

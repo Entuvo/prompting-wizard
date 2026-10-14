@@ -1,5 +1,14 @@
 # Prompting Wizard release notes
 
+## 1.4.0 — 2026-10-14
+
+- Added `pw history` for Claude Code and Codex. It is an explicit, one-shot read of your recent sessions through each host's documented SDK, with two consents: one before reading and one before scoring. It finds the prompts that cost you turns and turns them into an aggregate baseline, a casebook of your own prompts with single-edit rewrites, and lesson suggestions.
+- Course: an informational `History` log line records lever means from past work. It is kept apart from the Day 0 baseline. Lessons can show one of your own cases after the Before / After, and day 30 shows past-work scores as a separate column.
+- `pw history` also reads a ChatGPT or Claude data export (`--host chatgpt|claude --file EXPORT`). ChatGPT prompts you edited in place are kept and scored with what the edit added.
+- Everyday plugin 0.2.0: on request, reviews an uploaded export inside ChatGPT or Claude. It covers up to 30 recent conversations and reports the top gaps and three of your own cases, with nothing stored.
+- Learning Card: up to three paraphrased `natural-use` candidates, appended only when accepted.
+- History runs are local, owner-only, honor coaching exclusions and expire after 30 days. Transcript files are never parsed, and the learner's config files are never written.
+
 ## 1.3.0 — 2026-10-11
 
 - Added an everyday teaching pilot: optional interview, work first, Practice / Example / Lesson / Later, learner prediction and opt-in exploratory retry.

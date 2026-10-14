@@ -2,6 +2,8 @@
 
 Finish your normal work, then practise one useful prompting skill. No interview required. The same teaching flow is designed for ChatGPT and Claude. This is an early pilot: native web, desktop, iOS and Android setup has not yet been exercised end to end. Installation in Claude Code/Codex does not install account instructions in either consumer app.
 
+For the bundled teaching plugin, start with [plugin installation and device walkthrough](NATIVE-PLUGINS.md). This page is the instructions-and-attachments fallback when plugins are unavailable.
+
 ## Start with lightweight coaching
 
 1. Open the [one-time instructions](prompting-wizard/references/native-instructions.txt). Copy the entire block.
@@ -61,6 +63,6 @@ Mini-lessons never advance the separate 30-lesson course. In installed coding-ag
 
 ## Limits and automatic continuity
 
-This pilot does not watch other chats, run background capture, or sync accounts. Local coding-host collection still uses its existing explicit opt-in and controls; these account instructions do not enable it. Exported cards do not synchronize with the local course database yet.
+This pilot does not watch other chats, run background capture, or sync accounts. Reviewing past chats requires you to upload an export, and that review is only in the plugin. Local coding-host collection still uses its existing explicit opt-in and controls; these account instructions do not enable it. Exported cards do not synchronize with the local course database yet.
 
 A shared authenticated connector is the next candidate for reducing manual transfer. [Continuity investigation](CONTINUITY.md) separates documented capabilities from the untested cross-app round-trip. No Wizard service, new account or integration is installed by this pilot. Human learning outcomes remain unvalidated.

@@ -1,7 +1,7 @@
 <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-on-dark.svg"><img src="docs/assets/logo-on-light.svg" alt="Prompting Wizard" width="420"></picture></p>
 
 <p align="center"><b>Learn to prompt through your everyday work. An open source coach, with an optional 30-lesson course.</b><br>
-<a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="NATIVE-APPS.md">ChatGPT &amp; Claude pilot</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
+<a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="NATIVE-PLUGINS.md">ChatGPT &amp; Claude plugins</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
 
 <p align="center"><a href="https://youtube.com/shorts/s2WarFaRY2Q"><img src="docs/assets/video-poster.jpg" alt="Watch the Prompting Wizard video on YouTube" width="220"></a></p>
 
@@ -21,13 +21,13 @@ Bring a task from your own work. Choose the setup for the app you use:
 
 ### ChatGPT or Claude — teaching pilot
 
-1. Copy the [one-time teaching instructions](prompting-wizard/references/native-instructions.txt) into your account instructions, preserving any instructions you already use. Follow the [app setup walkthrough](NATIVE-APPS.md#start-with-lightweight-coaching) for the relevant settings.
-2. Start a new chat and ask “What coaching instructions can you see?” If they did not load, paste the block into that chat.
-3. Do your normal work. The instructions ask the coach to finish your task before offering an occasional learning opportunity. No interview is required.
+The **Prompting Wizard — Everyday** plugin bundles the teaching guide, rubrics and empty Learning Card. Use the [ChatGPT and Claude plugin setup](NATIVE-PLUGINS.md) for packages, account/workspace installation routes and the device walkthrough. These are pilot packages; a public listing and native compatibility have not been verified.
 
-Instructions alone provide lightweight tips. For lessons and learning history, supply the guide and current Learning Card using the [pilot materials and attachment steps](NATIVE-APPS.md#add-lessons-and-carry-learning-between-chats). The guide/card downloads are not yet published in a release; that page links the source materials and developer build instructions. No coding tool or Python is needed for the lightweight start.
+Marketplace preparation is documented in the [submission packet](MARKETPLACE-SUBMISSION.md). The plugin has not been submitted to either public directory.
 
-This path is designed for ordinary ChatGPT and Claude chats, including web, desktop and mobile. Native-app compatibility remains unverified and is reserved for the pilot walkthrough. Installing Wizard in Claude Code or Codex does not configure these apps. The choices below are text replies, not added app buttons or registered `pw` commands.
+After installation, select the plugin if needed and say: “Teach me through my work; no interview. Keep tips occasional.” Do your normal work first, then choose whether to practise or take a short lesson. Keep your current `LEARNING.md` and attach it in each new chat that needs your learning history; installing the plugin does not synchronize progress or guarantee automatic activation.
+
+If plugins are unavailable to your account, use the [one-time instructions and manual guide setup](NATIVE-APPS.md). That fallback starts with lightweight tips; the full teaching flow needs the guide. No coding tool is required for either learner experience. The choices below are text replies, not added app buttons or registered `pw` commands.
 
 ### Claude Code or Codex
 
@@ -83,6 +83,20 @@ Same-chat retries are exploratory because the earlier answer remains in context.
 
 Tips default to occasional; choose frequent or on-request using the [frequency instructions](NATIVE-APPS.md#start-with-lightweight-coaching). “More”, “less” or “pause coaching” applies to the current chat; change account instructions for later app chats. These preferences do not change coding-host collection settings or hook frequency.
 
+## Learn from your past work
+
+`pw history` reads your recent work once and shows where your prompts cost you turns. It looks for the follow-up that says "no, I meant…", an interrupted run, a prompt you edited, or a rule you had to repeat. It turns those into a baseline, a casebook of your own prompts with one-edit rewrites, and lesson suggestions. It asks before reading and again before scoring, because scoring sends the sampled prompts through your assistant and uses your quota.
+
+| Source | How it is read |
+|---|---|
+| Claude Code sessions | Claude Agent SDK (`pip install claude-agent-sdk`) |
+| Codex sessions | Codex SDK (`pip install openai-codex`) |
+| ChatGPT or Claude app data export | the `.zip` or `conversations.json` you download from the app's settings; no SDK needed |
+
+In Claude Code or Codex, results stay in a local folder you choose and are deleted after 30 days. Transcript files are never parsed. Nothing is written to your course, Learning Card or config files unless you accept it.
+
+Inside ChatGPT or Claude, the Everyday plugin can review an export you upload, up to 30 recent conversations. It reports your top gaps and three of your own cases in the chat, and proposes card records for you to accept. It cannot store a casebook. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
+
 ## Carry learning between chats
 
 With the guide and current card available, the coach proposes a short record after meaningful learning. It distinguishes practice with help from independent use; reading an example does not prove that you learned the skill.
@@ -119,7 +133,7 @@ Course progress is kept in `PROGRESS.md`, or shared local state when the optiona
 
 - [Website](https://entuvo.github.io/prompting-wizard/): the full course outline, install options, `pw` commands and updates
 - [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): a short video from each lesson, with its before and after
-- [ChatGPT and Claude pilot](NATIVE-APPS.md): setup, learning flow and portable Learning Cards
+- [ChatGPT and Claude plugins](NATIVE-PLUGINS.md): package setup, device walkthrough and portable Learning Cards
 - [Automatic continuity investigation](CONTINUITY.md): documented options and the untested cross-app experiment
 - [Optional automatic coaching in Claude Code/Codex: technical setup](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
 - **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.

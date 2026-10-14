@@ -38,3 +38,9 @@ jobs:
           python3 tools/test_learning_selection.py
           python3 tools/test_native_guide.py
           python3 tools/test_learning_evaluation.py
+          python3 tools/test_history.py
+      - name: Native teaching plugin packages
+        run: |
+          python3 tools/build_teaching_plugins.py --check
+          python3 tools/test_teaching_plugins.py
+          python3 tools/build_teaching_plugins.py

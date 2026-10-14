@@ -1,6 +1,6 @@
 ---
 name: pw
-description: Use when the user invokes pw or asks for Prompting Wizard commands, everyday learning, Learning Card, course progress, feedback settings, saved examples, or model-specific prompting help.
+description: Use when the user invokes pw or asks for Prompting Wizard commands, everyday learning, Learning Card, course progress, learning from past work history, feedback settings, saved examples, or model-specific prompting help.
 ---
 
 # Prompting Wizard commands

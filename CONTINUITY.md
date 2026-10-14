@@ -1,6 +1,6 @@
 # Automatic continuity investigation
 
-Checked 11 October 2026. **A shared remote connector is plausible; automatic cross-app learning continuity is not yet demonstrated.** The shipped pilot uses manual Learning Card transfer. No service or account connection has been created.
+Checked 12 October 2026. **A shared remote connector is plausible; automatic cross-app learning continuity is not yet demonstrated.** The [native plugin pilot](NATIVE-PLUGINS.md) bundles teaching materials and uses manual Learning Card transfer. No service or account connection has been created.
 
 ## What current documentation establishes
 
@@ -12,6 +12,10 @@ Checked 11 October 2026. **A shared remote connector is plausible; automatic cro
 | Browser extension | A possible separate browser product. | Would require independent implementation/testing and would not cover native mobile/desktop chats. Not selected for this pilot. |
 
 Sources: [ChatGPT plugins](https://learn.chatgpt.com/docs/plugins), [building an MCP server](https://developers.openai.com/plugins/build/mcp-server), [Claude remote connectors](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp), [Claude tool access](https://support.claude.com/en/articles/13730515-manage-claude-s-tool-access). These are documented platform capabilities, not tests of Prompting Wizard on those surfaces.
+
+Claude also documents [account-installed plugins](https://support.claude.com/en/articles/13837440-use-plugins-in-claude) and [skills/plugins across Cowork surfaces](https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile). Bundling the guide reduces setup but does not synchronize learning evidence or establish automatic skill activation.
+
+OpenAI currently [does not support adding an MCP server to an existing skills-only plugin](https://developers.openai.com/plugins/deploy/submission). A future connected version may require a separate plugin identity and migration; recheck this before choosing the service rollout.
 
 ## Recommended next experiment
 
