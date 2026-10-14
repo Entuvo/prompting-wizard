@@ -407,6 +407,8 @@ def main(argv=None):
     import argparse
     import datetime
     import os
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))  # sibling modules load under `python3 -I` too
     import history_hosts
 
     parser = argparse.ArgumentParser(description='Learn from past work history. See references/history.md.')

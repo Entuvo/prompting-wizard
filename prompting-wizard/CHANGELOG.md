@@ -1,5 +1,11 @@
 # Prompting Wizard release notes
 
+## 1.4.1 — 2026-10-14
+
+- `pw history` now always ends a scan with the scoring disclosure and asks for a second consent, even when the learner has already asked to stop before scoring.
+- `history.py` runs under `python3 -I` (isolated mode).
+- Added `tools/e2e_hosts.py`, an end-to-end runner for Claude Code, Codex, and Claude/ChatGPT app simulations through their APIs.
+
 ## 1.4.0 — 2026-10-14
 
 - Added `pw history` for Claude Code and Codex. It is an explicit, one-shot read of your recent sessions through each host's documented SDK, with two consents: one before reading and one before scoring. It finds the prompts that cost you turns and turns them into an aggregate baseline, a casebook of your own prompts with single-edit rewrites, and lesson suggestions.

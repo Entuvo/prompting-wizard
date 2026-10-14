@@ -293,6 +293,16 @@ class RuntimeTests(unittest.TestCase):
         code, out = self.cli('cases', '--run', 'r1')
         self.assertEqual((code, out['ok']), (1, False))
 
+    def test_cli_runs_in_python_isolated_mode(self):
+        import subprocess
+        export = Path(self.tmp.name) / 'c.json'
+        export.write_text('[]')
+        script = Path(history.__file__)
+        proc = subprocess.run([sys.executable, '-I', str(script), 'scan', '--root', str(self.root), '--host', 'claude',
+                               '--file', str(export)], capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertEqual(self.json.loads(proc.stdout)['counts']['episodes'], 0)
+
     def test_unknown_gap_key_is_rejected(self):
         self.assertIn('gap agent_tool', history.validate_score(score_row(0, gap='agent_tool')))
 

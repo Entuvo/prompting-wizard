@@ -39,6 +39,7 @@ jobs:
           python3 tools/test_native_guide.py
           python3 tools/test_learning_evaluation.py
           python3 tools/test_history.py
+          python3 tools/test_e2e_hosts.py
       - name: Native teaching plugin packages
         run: |
           python3 tools/build_teaching_plugins.py --check

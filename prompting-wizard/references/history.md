@@ -35,7 +35,7 @@ Otherwise show these numbers from the result:
 - `estimated_scoring_tokens`;
 - `coverage_note`.
 
-Say that scoring sends the sampled prompts and replies through the current provider, and uses the learner's quota. Ask for a second explicit yes. Without it, stop. Offer `delete --run RUN`.
+Always end the scan step this way, even when the learner has already asked you to stop before scoring: say that scoring sends the sampled prompts and replies through the current provider and uses the learner's quota, then ask for a second explicit yes. Without it, stop. Offer `delete --run RUN`.
 
 ## 3. Score
 

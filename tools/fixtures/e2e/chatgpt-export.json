@@ -1,0 +1,203 @@
+[
+ {
+  "conversation_id": "c1",
+  "title": "Launch email",
+  "create_time": 1759999700.0,
+  "update_time": 1759999760.0,
+  "mapping": {
+   "root": {
+    "id": "root",
+    "parent": null,
+    "children": [
+     "sys"
+    ],
+    "message": null
+   },
+   "sys": {
+    "id": "sys",
+    "parent": "root",
+    "children": [
+     "u1"
+    ],
+    "message": {
+     "id": "sys",
+     "author": {
+      "role": "system"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "You are ChatGPT"
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": true
+     }
+    }
+   },
+   "u1": {
+    "id": "u1",
+    "parent": "sys",
+    "children": [
+     "a1"
+    ],
+    "message": {
+     "id": "u1",
+     "author": {
+      "role": "user"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "Write a launch email for the beta"
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   },
+   "a1": {
+    "id": "a1",
+    "parent": "u1",
+    "children": [
+     "u2old",
+     "u2"
+    ],
+    "message": {
+     "id": "a1",
+     "author": {
+      "role": "assistant"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "Subject: Big news! ..."
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   },
+   "u2old": {
+    "id": "u2old",
+    "parent": "a1",
+    "children": [
+     "a2old"
+    ],
+    "message": {
+     "id": "u2old",
+     "author": {
+      "role": "user"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "make it better"
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   },
+   "a2old": {
+    "id": "a2old",
+    "parent": "u2old",
+    "children": [],
+    "message": {
+     "id": "a2old",
+     "author": {
+      "role": "assistant"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "Subject: Even bigger news!"
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   },
+   "u2": {
+    "id": "u2",
+    "parent": "a1",
+    "children": [
+     "t1"
+    ],
+    "message": {
+     "id": "u2",
+     "author": {
+      "role": "user"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "shorter, for existing customers only, no hype",
+       {
+        "asset_pointer": "file-1"
+       }
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   },
+   "t1": {
+    "id": "t1",
+    "parent": "u2",
+    "children": [
+     "a3"
+    ],
+    "message": {
+     "id": "t1",
+     "author": {
+      "role": "assistant"
+     },
+     "recipient": "python",
+     "content": {
+      "content_type": "code",
+      "parts": [
+       "print(1)"
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   },
+   "a3": {
+    "id": "a3",
+    "parent": "t1",
+    "children": [],
+    "message": {
+     "id": "a3",
+     "author": {
+      "role": "assistant"
+     },
+     "recipient": "all",
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "Hi \u2014 the beta opens Monday."
+      ]
+     },
+     "metadata": {
+      "is_visually_hidden_from_conversation": false
+     }
+    }
+   }
+  },
+  "current_node": "a3"
+ }
+]
