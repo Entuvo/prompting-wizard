@@ -26,7 +26,15 @@ class HarnessTests(unittest.TestCase):
                      {'type': 'tool_use', 'name': 'Read', 'input': {'file_path': 'x'}}]}},
                  {'type': 'result', 'result': 'Found 2 prompts.'}]
         r = e.parse_claude_stream('\n'.join(map(json.dumps, lines)) + '\nnot json')
-        self.assertEqual((r['text'], r['commands']), ('Found 2 prompts.', ['python3 scripts/history.py scan']))
+        self.assertEqual((r['text'], r['commands']), ('Found 2 prompts.', ['python3 scripts/history.py scan', 'Read x']))
+
+    def test_claude_stream_records_file_access(self):
+        lines = [{'type': 'assistant', 'message': {'content': [
+            {'type': 'tool_use', 'name': 'Read', 'input': {'file_path': '/w/chatgpt-export.json'}}]}},
+                 {'type': 'result', 'result': 'I cannot review that.'}]
+        r = e.parse_claude_stream('\n'.join(map(json.dumps, lines)))
+        got = e.rule_checks({'no_access': 'chatgpt-export.json'}, r, self.work)
+        self.assertFalse(got[0]['pass'])  # reading the wrong export fails even if the reply declines
 
     def test_codex_stream_text_and_commands(self):
         lines = [{'type': 'item.completed', 'item': {'type': 'command_execution', 'command': 'ls'}},

@@ -415,6 +415,7 @@ class ExportTests(unittest.TestCase):
                                  '--days', '36500'])
         out = self.json.loads(buf.getvalue())
         self.assertEqual((code, out['counts']['human_prompts'], out['batches']), (0, 2, 1))
+        self.assertEqual(out['ask'], 'Score these 2 prompts now? (yes/no)')
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             code = history.main(['scan', '--root', str(root), '--host', 'chatgpt'])

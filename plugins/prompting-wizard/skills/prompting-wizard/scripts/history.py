@@ -455,6 +455,7 @@ def main(argv=None):
             batches = write_batches(sample, episodes, run / 'batches')
             out.update(run=run.name, host=args.host, days=args.days, counts=counts, batches=len(batches),
                        estimated_scoring_tokens=len(sample) * TOKENS_PER_EPISODE,
+                       ask=f'Score these {len(sample)} prompts now? (yes/no)',
                        coverage_note={
                            'claude-code': 'Claude Code returns each session\'s current conversation; earlier branches '
                                           'of compacted or rewound sessions are not available.',

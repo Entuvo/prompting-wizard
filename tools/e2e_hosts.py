@@ -98,8 +98,14 @@ def parse_claude_stream(stdout, error=''):
             continue
         if event.get('type') == 'assistant':
             for block in (event.get('message') or {}).get('content') or []:
-                if block.get('type') == 'tool_use' and block.get('name') == 'Bash':
-                    commands.append((block.get('input') or {}).get('command', ''))
+                if block.get('type') != 'tool_use':
+                    continue
+                args = block.get('input') or {}
+                if block.get('name') == 'Bash':
+                    commands.append(args.get('command', ''))
+                else:  # Read, Grep, Glob: file access is evidence too
+                    commands.append(f"{block.get('name')} {args.get('file_path') or args.get('path') or ''} "
+                                    f"{args.get('pattern') or ''}".strip())
         elif event.get('type') == 'result':
             text = event.get('result') or ''
     return {'text': text, 'commands': commands, 'raw': stdout, 'error': error.strip()[-500:]}
@@ -132,10 +138,16 @@ def parse_codex_stream(stdout, error=''):
     return {'text': text, 'commands': commands, 'raw': stdout, 'error': (error or '').strip()[-500:]}
 
 
-def everyday_instructions():
+APP_IDENTITY = {'claude-api': 'You are Claude, running in the Claude app (an Anthropic host).',
+                'openai-api': 'You are ChatGPT, running in the ChatGPT app (an OpenAI host).'}
+
+
+def everyday_instructions(host=None):
+    """The app's own system prompt tells the model which product it is; the API alone does not."""
     skill = (EVERYDAY / 'skills' / 'learn' / 'SKILL.md').read_text(encoding='utf-8')
     guide = (EVERYDAY / 'skills' / 'learn' / 'references' / 'guide.md').read_text(encoding='utf-8')
-    return f'{skill}\n\n---\nBundled guide (references/guide.md):\n\n{guide}'
+    identity = APP_IDENTITY.get(host, '')
+    return f'{identity}\n\n{skill}\n\n---\nBundled guide (references/guide.md):\n\n{guide}'.lstrip()
 
 
 def post_json(url, headers, body):
@@ -157,7 +169,7 @@ def run_claude_api(scenario, work, post=post_json):
                  **({'anthropic-workspace-id': os.environ['ANTHROPIC_WORKSPACE_ID']}
                     if os.environ.get('ANTHROPIC_WORKSPACE_ID') else {})},
                 {'model': os.environ.get('E2E_CLAUDE_MODEL', 'claude-opus-5-5'), 'max_tokens': 4000,
-                 'system': everyday_instructions(), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work, 'claude-api')}]})
+                 'system': everyday_instructions('claude-api'), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work, 'claude-api')}]})
     text = ''.join(b.get('text', '') for b in data.get('content') or [] if b.get('type') == 'text')
     return {'text': text, 'commands': [], 'raw': json.dumps(data), 'error': ''}
 
@@ -167,7 +179,7 @@ def run_openai_api(scenario, work, post=post_json):
     if not key:
         return {'skipped': 'OPENAI_API_KEY not set'}
     data = post('https://api.openai.com/v1/responses', {'authorization': f'Bearer {key}'},
-                {'model': os.environ.get('E2E_OPENAI_MODEL', 'gpt-5.4'), 'instructions': everyday_instructions(),
+                {'model': os.environ.get('E2E_OPENAI_MODEL', 'gpt-5.4'), 'instructions': everyday_instructions('openai-api'),
                  'input': prompt_for(scenario, work, 'openai-api')})
     text = data.get('output_text') or ''.join(
         c.get('text', '') for o in data.get('output') or [] for c in o.get('content') or [] if c.get('type') == 'output_text')
@@ -204,6 +216,9 @@ def rule_checks(checks, result, work):
     if 'command' in checks:
         ran = [c for c in commands if re.search(checks['command'], c)]
         out.append((f"runs /{checks['command']}/", bool(ran), '; '.join(ran)[:200]))
+    if 'no_access' in checks:
+        touched = [c for c in commands if checks['no_access'] in c]
+        out.append((f"never touches {checks['no_access']}", not touched, '; '.join(touched)[:200]))
     if 'no_command' in checks:
         ran = [c for c in commands if re.search(checks['no_command'], c)]
         out.append((f"does not run /{checks['no_command']}/", not ran, '; '.join(ran)[:200]))
@@ -273,7 +288,10 @@ def run_one(host, scenario, base, use_judge):
         return {'host': host, 'scenario': scenario['id'], 'status': 'skipped', 'detail': result['skipped'], 'checks': []}
     (work / 'output.md').write_text(result['text'], encoding='utf-8')
     (work / 'raw.jsonl').write_text(result['raw'], encoding='utf-8')
-    checks = rule_checks(scenario.get('checks', {}), result, work)
+    other = exports(host)[1]
+    resolved = {k: (v.replace('{OTHER_EXPORT_FILE}', f'{other}-export.json') if isinstance(v, str) else v)
+                for k, v in scenario.get('checks', {}).items()}
+    checks = rule_checks(resolved, result, work)
     if result['error'] and not result['text']:
         checks.insert(0, {'check': 'host run completed', 'pass': False, 'detail': result['error']})
     elif use_judge and scenario.get('expect'):
