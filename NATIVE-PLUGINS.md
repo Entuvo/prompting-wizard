@@ -4,7 +4,7 @@ The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-
 
 These are buildable pilot packages, not a published directory listing or a verified native-app installation. The user walkthrough still needs to establish installation, activation and manual card transfer on each surface. Existing `prompting-wizard` course packages remain separate.
 
-Maintainers: the [marketplace submission packet](MARKETPLACE-SUBMISSION.md) contains prepared listing fields, data-handling answers, test cases and the remaining owner inputs. Neither directory submission nor publication has occurred.
+Neither directory submission nor publication has occurred.
 
 ## Packages
 
@@ -55,7 +55,7 @@ To learn from past chats, export your data from the app's settings (ChatGPT: Dat
 
 Occasional is the default; frequent or on-request can be chosen. More/less/pause affects this chat. Accepted card preferences travel only when the card is supplied. Installation cannot promise automatic coaching in every ordinary chat. Existing account instructions and the plugin should yield one invitation, not two; coding-host local feedback retains its ownership and opt-in rules.
 
-The package contains no background observer, hosted storage or automatic cross-provider synchronization. See [privacy](PRIVACY.md) and [continuity investigation](CONTINUITY.md).
+The package contains no background observer, hosted storage or automatic cross-provider synchronization. See [privacy](PRIVACY.md).
 
 ## Walkthrough before claiming device compatibility
 

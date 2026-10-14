@@ -23,7 +23,7 @@ Bring a task from your own work. Choose the setup for the app you use:
 
 The **Prompting Wizard — Everyday** plugin bundles the teaching guide, rubrics and empty Learning Card. Use the [ChatGPT and Claude plugin setup](NATIVE-PLUGINS.md) for packages, account/workspace installation routes and the device walkthrough. These are pilot packages; a public listing and native compatibility have not been verified.
 
-Marketplace preparation is documented in the [submission packet](MARKETPLACE-SUBMISSION.md). The plugin has not been submitted to either public directory.
+The plugin has not been submitted to either public directory.
 
 After installation, select the plugin if needed and say: “Teach me through my work; no interview. Keep tips occasional.” Do your normal work first, then choose whether to practise or take a short lesson. Keep your current `LEARNING.md` and attach it in each new chat that needs your learning history; installing the plugin does not synchronize progress or guarantee automatic activation.
 
@@ -103,7 +103,7 @@ With the guide and current card available, the coach proposes a short record aft
 
 In chat apps, when you accept the record, ask for the complete updated `LEARNING.md`, save it yourself, and attach it in your next chat—even when switching between ChatGPT and Claude. Replace an old project upload deliberately. Without the current card, the coach cannot reliably know your learning history. It uses accepted evidence and the current task to suggest a relevant next opportunity.
 
-Nothing synchronizes automatically. Instructions do not watch other chats or connect provider accounts. [Automatic continuity](CONTINUITY.md) is an investigation, not an implemented service.
+Nothing synchronizes automatically. Instructions do not watch other chats or connect provider accounts. Automatic continuity is not implemented.
 
 ## How a course lesson works
 
@@ -134,8 +134,7 @@ Course progress is kept in `PROGRESS.md`, or shared local state when the optiona
 - [Website](https://entuvo.github.io/prompting-wizard/): the full course outline, install options, `pw` commands and updates
 - [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): a short video from each lesson, with its before and after
 - [ChatGPT and Claude plugins](NATIVE-PLUGINS.md): package setup, device walkthrough and portable Learning Cards
-- [Automatic continuity investigation](CONTINUITY.md): documented options and the untested cross-app experiment
 - [Optional automatic coaching in Claude Code/Codex: technical setup](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
-- **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`.
+- **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`. End-to-end checks on real hosts: `python3 tools/e2e_hosts.py` (Claude Code, Codex, and Claude/ChatGPT simulations via API keys; see its docstring).
 
 MIT License · Made by [Entuvo](https://www.entuvo.com), a venture studio that builds AI Native businesses.
