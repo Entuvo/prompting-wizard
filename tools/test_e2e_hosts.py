@@ -26,7 +26,7 @@ class HarnessTests(unittest.TestCase):
                      {'type': 'tool_use', 'name': 'Read', 'input': {'file_path': 'x'}}]}},
                  {'type': 'result', 'result': 'Found 2 prompts.'}]
         r = e.parse_claude_stream('\n'.join(map(json.dumps, lines)) + '\nnot json')
-        self.assertEqual((r['text'], r['commands']), ('Found 2 prompts.', ['python3 scripts/history.py scan', 'Read x']))
+        self.assertEqual((r['text'], r['commands']), ('Found 2 prompts.', ['python3 scripts/history.py scan', 'Read {"file_path": "x"}']))
 
     def test_claude_stream_records_file_access(self):
         lines = [{'type': 'assistant', 'message': {'content': [
@@ -35,6 +35,13 @@ class HarnessTests(unittest.TestCase):
         r = e.parse_claude_stream('\n'.join(map(json.dumps, lines)))
         got = e.rule_checks({'no_access': 'chatgpt-export.json'}, r, self.work)
         self.assertFalse(got[0]['pass'])  # reading the wrong export fails even if the reply declines
+
+    def test_no_access_catches_wildcards_and_glob_arguments(self):
+        for command in ('cat /w/*-export.json', 'Grep {"glob": "*.json", "pattern": "mapping"}',
+                        'ls chatgpt-export.json', 'head /w/chat*'):
+            self.assertTrue(e.touches(command, 'chatgpt-export.json'), command)
+        for command in ('python3 history.py scan --host claude --file /w/claude-export.json', 'ls'):
+            self.assertFalse(e.touches(command, 'chatgpt-export.json'), command)
 
     def test_codex_stream_text_and_commands(self):
         lines = [{'type': 'item.completed', 'item': {'type': 'command_execution', 'command': 'ls'}},

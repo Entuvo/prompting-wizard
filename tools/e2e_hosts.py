@@ -103,9 +103,8 @@ def parse_claude_stream(stdout, error=''):
                 args = block.get('input') or {}
                 if block.get('name') == 'Bash':
                     commands.append(args.get('command', ''))
-                else:  # Read, Grep, Glob: file access is evidence too
-                    commands.append(f"{block.get('name')} {args.get('file_path') or args.get('path') or ''} "
-                                    f"{args.get('pattern') or ''}".strip())
+                else:  # Read, Grep, Glob, ...: every argument is evidence of file access
+                    commands.append(f"{block.get('name')} {json.dumps(args, sort_keys=True)}")
         elif event.get('type') == 'result':
             text = event.get('result') or ''
     return {'text': text, 'commands': commands, 'raw': stdout, 'error': error.strip()[-500:]}
@@ -205,6 +204,18 @@ def extract_card(text):
     raise ValueError('no Learning Card JSON block found')
 
 
+def touches(command, filename):
+    """Conservative: the name appears, or any token (including wildcards and glob arguments) could match it."""
+    import fnmatch
+    if filename in command:
+        return True
+    for token in re.split(r'[\s"\'=,:;()\[\]{}]+', command):
+        name = token.rsplit('/', 1)[-1]
+        if name and any(ch in name for ch in '*?[') and fnmatch.fnmatch(filename, name):
+            return True
+    return False
+
+
 def rule_checks(checks, result, work):
     text, commands = result['text'], result['commands']
     out = []
@@ -217,7 +228,7 @@ def rule_checks(checks, result, work):
         ran = [c for c in commands if re.search(checks['command'], c)]
         out.append((f"runs /{checks['command']}/", bool(ran), '; '.join(ran)[:200]))
     if 'no_access' in checks:
-        touched = [c for c in commands if checks['no_access'] in c]
+        touched = [c for c in commands if touches(c, checks['no_access'])]
         out.append((f"never touches {checks['no_access']}", not touched, '; '.join(touched)[:200]))
     if 'no_command' in checks:
         ran = [c for c in commands if re.search(checks['no_command'], c)]
