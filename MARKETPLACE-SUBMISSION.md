@@ -36,6 +36,16 @@ The listing promises work-first, optional teaching, learner-authored revisions, 
 
 After a successful walkthrough, review the listing, both manifests, plugin README and setup/support pages against the recorded results. Replace pilot/unverified statements only where evidence supports a stable release and identifies the tested surfaces; retain all remaining limits. The owner approves that release wording. Commit and review those changes before merging, then rebuild from the merged commit and repeat affected native cases against the resulting candidate. If the evidence does not support a stable release, keep the release gate closed. The current files intentionally retain pilot wording because these tests have not happened.
 
+## Automated end-to-end runs
+
+`python3 tools/e2e_hosts.py` runs `tools/fixtures/e2e/scenarios.json` on the real hosts:
+
+- **Claude Code** runs headless, with the plugin loaded through `--plugin-dir`.
+- **Codex** runs `codex exec`, with the skills placed in the project's `.agents/skills`.
+- **Claude and ChatGPT app simulations** run through the Anthropic and OpenAI APIs. These need `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` and are skipped without them.
+
+Every run is synthetic and isolated in a temp directory, with coaching hooks disabled. Rule checks (for example, a returned card must validate, there must be no "saved" claims, and the history scan must wait for consent) are combined with a model judge. Results go to `e2e-results/<timestamp>/report.md`, along with the package digests. The API rows test the instructions, not native loading, activation or uploads. The native walkthrough below is still required.
+
 ## Rebuild and freeze the candidate
 
 ```sh
