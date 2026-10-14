@@ -83,6 +83,12 @@ Add a host only with official event documentation, sanitized live callbacks, pai
 
 `record` accepts bounded JSON on stdin. For short paraphrased findings, `record --json JSON` accepts one quoted argument with identical validation. Arguments can appear in process listings and host tool logs; use stdin for sensitive text. Hooks never put captured prompt/result text into shell commands. See the tutor procedure in [coaching.md](prompting-wizard/references/coaching.md).
 
+## Learning from past work history
+
+`pw history` is a one-shot read of past Claude Code or Codex sessions. It is separate from capture: it does not enable collection, does not use hooks, and honors workspace exclusions. The tutor procedure is [references/history.md](prompting-wizard/references/history.md). The runtime is `scripts/history.py` (`scan`, `merge`, `cases` and `delete`, each with `--root ROOT`). Run it with a Python interpreter that has the host SDK installed: `claude-agent-sdk` or `openai-codex`. Runs are kept under `ROOT/history/` for 30 days. See [privacy](PRIVACY.md#learning-from-past-work-history) and the [design](design/history-analysis.md).
+
+Host readers use documented interfaces only. Claude Code's `get_session_messages` returns each session's current conversation, so earlier branches of compacted or rewound sessions are not read. Codex reports no per-turn output tokens. Host retention bounds the window: Claude Code keeps transcripts for `cleanupPeriodDays`, 30 by default.
+
 ## Everyday teaching pilot
 
 Use `pw learn` to learn through work without an assessment, or `pw learning` to inspect a supplied Learning Card. See [native-app pilot](NATIVE-APPS.md). Cards are separate from course progress and the local database; there is no automatic import/export bridge yet. Existing host feedback owns the one optional after-result invitation. Lesson-only, paused, excluded and never-enabled workspaces receive explicit teaching only. Native instructions cannot enable local collection. More/less coaching changes invitations, not hook frequency or quota use.

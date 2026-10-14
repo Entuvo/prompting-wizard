@@ -1,6 +1,6 @@
 # Privacy policy
 
-Last updated: 12 October 2026
+Last updated: 14 October 2026
 
 Prompting Wizard is published by Entuvo. It is a set of files you install into an AI assistant you already use. Entuvo does not operate a Prompting Wizard account system or website backend. The course itself sends Entuvo nothing.
 
@@ -23,6 +23,14 @@ Raw examples and unreviewed findings expire after thirty days. Expired evidence 
 Both local hosts can use the same directory. When a lesson reads examples from another host, those excerpts enter the current provider's conversation and are subject to its policies. After-result coaching adds model inference and quota use; lesson-only collection does not. There is no Prompting Wizard cloud sync, account or telemetry service.
 
 Use the runtime to inspect, exclude, pause or delete managed learning data. Deletion includes associated pending findings and drafts. Host transcripts, terminal/tool histories, process arguments, explicit exports and external backups are separate; the project cannot erase them or promise forensic erasure. Use stdin rather than command arguments for sensitive record text. See [controls and setup](COACHING.md).
+
+## Learning from past work history
+
+`pw history`, available in Claude Code and Codex, runs only when you ask for it, one time. It reads your sessions from the current host through that host's documented SDK, skips workspaces excluded from local coaching, and never parses private transcript files. You confirm twice: once before anything is read, and again before scoring.
+
+Scoring sends a sample of your prompts and the assistant's replies (300 by default) through the AI provider you are already using, under its terms, and uses your quota. Secrets that look like API keys, tokens, long hex strings or email addresses are masked before anything is written or sent. Pattern masking cannot catch everything.
+
+Results are written under `history/` in a local data directory you choose, with owner-only permissions. They include verbatim prompts, the casebook pages and an aggregate baseline. Runs are deleted 30 days after they are written, on the next runtime invocation, or sooner with `delete`. Nothing is added to `PROGRESS.md`, a Learning Card, CLAUDE.md, AGENTS.md or any settings file unless you accept it. A Learning Card entry contains a paraphrase, never an excerpt. Entuvo receives nothing. Your host's own transcripts are governed by that host's retention settings, and this project cannot delete them.
 
 ## What the course may fetch
 

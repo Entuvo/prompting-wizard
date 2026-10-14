@@ -83,6 +83,12 @@ Same-chat retries are exploratory because the earlier answer remains in context.
 
 Tips default to occasional; choose frequent or on-request using the [frequency instructions](NATIVE-APPS.md#start-with-lightweight-coaching). “More”, “less” or “pause coaching” applies to the current chat; change account instructions for later app chats. These preferences do not change coding-host collection settings or hook frequency.
 
+## Learn from your past work
+
+In Claude Code or Codex, `pw history` reads your own recent sessions once and shows where prompts cost you turns. It looks for the follow-up that says "no, I meant…", an interrupted run, or a rule you had to repeat. From those it builds a baseline, a casebook of your own prompts with one-edit rewrites, and lesson suggestions. It asks before reading and again before scoring, because scoring sends the sampled prompts through your assistant and uses your quota.
+
+It reads history only through each host's documented SDK: `pip install claude-agent-sdk` for Claude Code, or `pip install openai-codex` for Codex. It never parses transcript files. Results stay in a local folder you choose and are deleted after 30 days. Nothing is written to your course, Learning Card or config files unless you accept it. ChatGPT and Claude app exports are not supported yet. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
+
 ## Carry learning between chats
 
 With the guide and current card available, the coach proposes a short record after meaningful learning. It distinguishes practice with help from independent use; reading an example does not prove that you learned the skill.
