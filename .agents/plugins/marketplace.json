@@ -23,7 +23,7 @@
         "source": "local",
         "path": "./plugins/prompting-wizard-teacher"
       },
-      "version": "0.1.0",
+      "version": "0.2.0",
       "description": "Everyday teaching pilot with manual Learning Cards; no interview or local runtime.",
       "policy": {
         "installation": "AVAILABLE",

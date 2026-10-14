@@ -85,9 +85,9 @@ Add a host only with official event documentation, sanitized live callbacks, pai
 
 ## Learning from past work history
 
-`pw history` is a one-shot read of past Claude Code or Codex sessions. It is separate from capture: it does not enable collection, does not use hooks, and honors workspace exclusions. The tutor procedure is [references/history.md](prompting-wizard/references/history.md). The runtime is `scripts/history.py` (`scan`, `merge`, `cases` and `delete`, each with `--root ROOT`). Run it with a Python interpreter that has the host SDK installed: `claude-agent-sdk` or `openai-codex`. Runs are kept under `ROOT/history/` for 30 days. See [privacy](PRIVACY.md#learning-from-past-work-history) and the [design](design/history-analysis.md).
+`pw history` is a one-shot read of past Claude Code or Codex sessions, or of a ChatGPT or Claude data export the learner supplies (`--host chatgpt|claude --file EXPORT`). It is separate from capture: it does not enable collection, does not use hooks, and honors workspace exclusions. The tutor procedure is [references/history.md](prompting-wizard/references/history.md). The runtime is `scripts/history.py` (`scan`, `merge`, `cases` and `delete`, each with `--root ROOT`). Run it with a Python interpreter that has the host SDK installed: `claude-agent-sdk` or `openai-codex`. Runs are kept under `ROOT/history/` for 30 days. See [privacy](PRIVACY.md#learning-from-past-work-history) and the [design](design/history-analysis.md).
 
-Host readers use documented interfaces only. Claude Code's `get_session_messages` returns each session's current conversation, so earlier branches of compacted or rewound sessions are not read. Codex reports no per-turn output tokens. Host retention bounds the window: Claude Code keeps transcripts for `cleanupPeriodDays`, 30 by default.
+Host readers use documented interfaces only. Claude Code's `get_session_messages` returns each session's current conversation, so earlier branches of compacted or rewound sessions are not read. Codex and the app exports report no per-turn output tokens. ChatGPT exports keep edited prompts as branches, and those prompts are read with an `edited` hint. Host retention bounds the window: Claude Code keeps transcripts for `cleanupPeriodDays`, 30 by default.
 
 ## Everyday teaching pilot
 

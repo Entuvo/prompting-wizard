@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "prompting-wizard-teacher",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Learn prompting through everyday work, with optional practice and portable Learning Cards. Native-app pilot.",
   "author": {"name": "Entuvo", "url": "https://github.com/Entuvo"},
   "homepage": "https://github.com/Entuvo/prompting-wizard/blob/main/NATIVE-PLUGINS.md",

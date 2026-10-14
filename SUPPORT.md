@@ -15,3 +15,5 @@ For local coaching, include host surface/version, Python version and content-fre
 ## Learning Card pilot
 
 See [native plugins](NATIVE-PLUGINS.md) or the [manual fallback](NATIVE-APPS.md). For plugin issues, include package version and install route; distinguish failure to install, load the skill, read its guide, or carry the card. Native web/desktop/iOS/Android are unverified pilot surfaces. Report the app/surface, date, missing step and a synthetic example; do not attach your personal card. Keep your latest complete card and a backup. With a missing card, the coach cannot reconstruct accepted history or safely claim mastery. A newly exported card does not replace an older project upload.
+
+For `pw history`, include the source (`claude-code`, `codex`, `chatgpt` or `claude`), the SDK version where one is used, and the `error` field from the runtime's JSON output. Do not attach prompts, exports or `ROOT/history` files.

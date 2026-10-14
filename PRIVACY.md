@@ -26,11 +26,20 @@ Use the runtime to inspect, exclude, pause or delete managed learning data. Dele
 
 ## Learning from past work history
 
-`pw history`, available in Claude Code and Codex, runs only when you ask for it, one time. It reads your sessions from the current host through that host's documented SDK, skips workspaces excluded from local coaching, and never parses private transcript files. You confirm twice: once before anything is read, and again before scoring.
+`pw history` runs only when you ask, one time. It reads one of the following:
 
-Scoring sends a sample of your prompts and the assistant's replies (300 by default) through the AI provider you are already using, under its terms, and uses your quota. Secrets that look like API keys, tokens, long hex strings or email addresses are masked before anything is written or sent. Pattern masking cannot catch everything.
+- your Claude Code or Codex sessions, through that host's documented SDK, skipping workspaces excluded from local coaching;
+- a ChatGPT or Claude data export that you downloaded and chose to supply.
 
-Results are written under `history/` in a local data directory you choose, with owner-only permissions. They include verbatim prompts, the casebook pages and an aggregate baseline. Runs are deleted 30 days after they are written, on the next runtime invocation, or sooner with `delete`. Nothing is added to `PROGRESS.md`, a Learning Card, CLAUDE.md, AGENTS.md or any settings file unless you accept it. A Learning Card entry contains a paraphrase, never an excerpt. Entuvo receives nothing. Your host's own transcripts are governed by that host's retention settings, and this project cannot delete them.
+It never parses private transcript files. An export archive is read in memory and never extracted. You confirm twice: once before anything is read, and again before scoring.
+
+Scoring sends a sample of your prompts and the assistant's replies (300 by default) through the AI provider you are already using, under its terms, and uses your quota. If you upload one provider's export into another provider's chat, your history goes to that second provider. Secrets that look like API keys, tokens, long hex strings or email addresses are masked before anything is written or sent. Pattern masking cannot catch everything.
+
+In Claude Code and Codex, results are written under `history/` in a local data directory you choose, with owner-only permissions. They include verbatim prompts, the casebook pages and an aggregate baseline. Runs are deleted 30 days after they are written, on the next runtime invocation, or sooner with `delete`.
+
+In the ChatGPT and Claude apps, nothing is stored by Prompting Wizard. Findings appear in the reply, and the uploaded file stays in that chat under the provider's retention.
+
+Nothing is added to `PROGRESS.md`, a Learning Card, CLAUDE.md, AGENTS.md or any settings file unless you accept it. A Learning Card entry contains a paraphrase, never an excerpt. Entuvo receives nothing. Host transcripts and provider exports are governed by their own retention, and this project cannot delete them.
 
 ## What the course may fetch
 

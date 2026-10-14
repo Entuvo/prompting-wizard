@@ -85,9 +85,17 @@ Tips default to occasional; choose frequent or on-request using the [frequency i
 
 ## Learn from your past work
 
-In Claude Code or Codex, `pw history` reads your own recent sessions once and shows where prompts cost you turns. It looks for the follow-up that says "no, I meant…", an interrupted run, or a rule you had to repeat. From those it builds a baseline, a casebook of your own prompts with one-edit rewrites, and lesson suggestions. It asks before reading and again before scoring, because scoring sends the sampled prompts through your assistant and uses your quota.
+`pw history` reads your recent work once and shows where your prompts cost you turns. It looks for the follow-up that says "no, I meant…", an interrupted run, a prompt you edited, or a rule you had to repeat. It turns those into a baseline, a casebook of your own prompts with one-edit rewrites, and lesson suggestions. It asks before reading and again before scoring, because scoring sends the sampled prompts through your assistant and uses your quota.
 
-It reads history only through each host's documented SDK: `pip install claude-agent-sdk` for Claude Code, or `pip install openai-codex` for Codex. It never parses transcript files. Results stay in a local folder you choose and are deleted after 30 days. Nothing is written to your course, Learning Card or config files unless you accept it. ChatGPT and Claude app exports are not supported yet. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
+| Source | How it is read |
+|---|---|
+| Claude Code sessions | Claude Agent SDK (`pip install claude-agent-sdk`) |
+| Codex sessions | Codex SDK (`pip install openai-codex`) |
+| ChatGPT or Claude app data export | the `.zip` or `conversations.json` you download from the app's settings; no SDK needed |
+
+In Claude Code or Codex, results stay in a local folder you choose and are deleted after 30 days. Transcript files are never parsed. Nothing is written to your course, Learning Card or config files unless you accept it.
+
+Inside ChatGPT or Claude, the Everyday plugin can review an export you upload, up to 30 recent conversations. It reports your top gaps and three of your own cases in the chat, and proposes card records for you to accept. It cannot store a casebook. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
 
 ## Carry learning between chats
 
