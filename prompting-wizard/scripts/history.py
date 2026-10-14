@@ -36,6 +36,7 @@ SECRETS = [
     (re.compile(r'[\w.+-]+@[\w-]+\.[\w.-]+'), '[EMAIL]'),
 ]
 PROMPT_CAP, REPLAY_WINDOW_MS, TEMPLATE_SESSIONS, TEMPLATE_CHARS = 6000, 5 * 60 * 1000, 5, 150
+MACHINE_WRAPPER = re.compile(r'^<[a-z][\w-]*(\s[^>]*)?>')  # e.g. <scheduled-task name=...>: generated, not typed
 TEMP_ROOTS = ('/tmp/', '/private/tmp/', '/var/folders/', '/private/var/folders/', tempfile.gettempdir().rstrip('/') + '/')
 
 
@@ -103,14 +104,17 @@ def session_episodes(session):
             if c[0] == 'noise':
                 continue
             current = {'msg_id': msg.get('id'), 'host': session['host'], 'session': session['session_id'],
+                       'forked_from': session.get('forked_from'),
                        'created_at': session.get('created_at') or 0, 'workspace': session.get('cwd') or '',
                        'command': c[2], 'prompt': mask(c[1][:PROMPT_CAP]), 'prompt_chars': len(c[1]),
                        'has_image': image, 'replies': [], 'tool_calls': 0, 'out_tokens': 0, 'interrupted': False}
             episodes.append(current)
         elif msg['role'] == 'assistant' and current:
-            if msg.get('msg_id') not in seen or msg.get('msg_id') is None:
+            if msg.get('out_tokens') is None:  # host does not report output tokens
+                current['out_tokens'] = None
+            elif current['out_tokens'] is not None and (msg.get('msg_id') is None or msg['msg_id'] not in seen):
                 seen.add(msg.get('msg_id'))
-                current['out_tokens'] += msg.get('out_tokens') or 0
+                current['out_tokens'] += msg['out_tokens']
             content = msg['content'] if isinstance(msg['content'], list) else [{'type': 'text', 'text': msg['content']}]
             for block in content:
                 if isinstance(block, dict) and block.get('type') == 'tool_use':
@@ -127,8 +131,8 @@ def session_episodes(session):
 
 
 def drop_replays(episodes):
-    """Resumed or forked sessions replay earlier prompts: same message id, or same text in a session
-    started within five minutes, or a zero-output copy of text already kept."""
+    """Resumed or forked sessions replay earlier prompts: same message id, same text in the session it was
+    forked from, same text in a session started within five minutes, or an empty copy of text already kept."""
     kept, ids, by_text = [], set(), collections.defaultdict(list)
     for ep in sorted(episodes, key=lambda e: (e['created_at'], e['session'], e['turn'])):
         mid = ep['msg_id']
@@ -136,8 +140,10 @@ def drop_replays(episodes):
             continue
         ids.add(mid)
         earlier = by_text[ep['prompt'].strip()]
-        if ep['source'] == 'human' and earlier and (ep['out_tokens'] == 0 and ep['tool_calls'] == 0 or any(
-                e['session'] != ep['session'] and abs(e['created_at'] - ep['created_at']) < REPLAY_WINDOW_MS
+        empty = not ep['out_tokens'] and not ep['tool_calls'] and not ep['reply_first']
+        if ep['source'] == 'human' and earlier and (empty or any(
+                e['session'] != ep['session'] and (e['session'] == ep['forked_from'] or
+                                                   abs(e['created_at'] - ep['created_at']) < REPLAY_WINDOW_MS)
                 for e in earlier)):
             continue
         earlier.append(ep)
@@ -155,6 +161,7 @@ def mark_source(episodes):
     for ep in episodes:
         automated = (ep['prompt_chars'] >= TEMPLATE_CHARS and len(sessions[ep['prompt'][:80]]) >= TEMPLATE_SESSIONS
                      or (ep['workspace'] + '/').startswith(TEMP_ROOTS)
+                     or MACHINE_WRAPPER.match(ep['prompt'])
                      or ep['prompt'].strip().lower().rstrip('.!') in HEALTH_CHECKS)
         ep['source'] = 'automated' if automated else 'human'
     return episodes
@@ -165,7 +172,7 @@ def build(sessions, cap=300):
     episodes = drop_replays(mark_source([ep for s in sessions for ep in session_episodes(s)]))
     for n, ep in enumerate(episodes):
         ep['id'] = n
-        del ep['msg_id']
+        del ep['msg_id'], ep['forked_from']
     human = [e for e in episodes if e['source'] == 'human' and e['kind'] == 'prompt']
     sample = sorted(human, key=lambda e: (e['created_at'], e['turn']))[-cap:] if cap else human
     counts = dict(sessions=len({e['session'] for e in episodes}), episodes=len(episodes), human_prompts=len(human),

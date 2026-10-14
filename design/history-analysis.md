@@ -122,7 +122,7 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 ## Changes by file (planned)
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
-- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers (Claude Code done; Codex next).
+- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex.
 - `prompting-wizard/references/history-scoring.md` and `history-casebook.md`: specs the host model follows.
 - `prompting-wizard/references/commands.md`: `history` routing; `wizard.py`: `history` and `delete --history` controls.
 - `SKILL.md` / `assessment.md`: optional history baseline line, and case substitution into lessons.

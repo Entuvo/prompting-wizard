@@ -142,5 +142,87 @@ class HistoryTests(unittest.TestCase):
             builtins.__import__ = real
 
 
+
+SEC = NOW // 1000
+
+
+def item(kind, iid, **kw):
+    return {'type': kind, 'id': iid, **kw}
+
+
+def ask(iid, text, image=False):
+    content = [{'type': 'text', 'text': text}] + ([{'type': 'localImage', 'path': 'x.png'}] if image else [])
+    return item('userMessage', iid, content=content)
+
+
+class FakeCodex:
+    """Stands in for the Codex SDK client: thread_list(...) pages and thread_read(id, include_turns)."""
+    def __init__(self, threads):
+        self.threads, self.calls = threads, []
+
+    def thread_list(self, archived, cursor, limit, source_kinds):
+        self.calls.append(source_kinds)
+        rows = [t['meta'] for t in self.threads if t['meta'].get('archived', False) == archived]
+        start = int(cursor or 0)
+        nxt = str(start + 2) if start + 2 < len(rows) else None
+        return {'data': rows[start:start + 2], 'next_cursor': nxt}
+
+    def thread_read(self, thread_id, include_turns):
+        assert include_turns
+        t = next(t for t in self.threads if t['meta']['id'] == thread_id)
+        return {'thread': {'turns': t['turns']}}
+
+
+def thread(tid, cwd, created_s, turns, **meta):
+    return {'meta': {'id': tid, 'cwd': cwd, 'created_at': created_s, 'updated_at': created_s, **meta},
+            'turns': turns}
+
+
+def codex_fixture():
+    main = [{'id': 't1', 'items': [ask('i1', 'Draft the release notes for v2 from the changelog'),
+                                   item('commandExecution', 'c1', command='cat CHANGELOG.md'),
+                                   item('agentMessage', 'r1', text='Release notes: ...')]},
+            {'id': 't2', 'items': [ask('i2', "that's not what I asked, only user-facing changes", image=True),
+                                   item('commandExecution', 'c2', command='git log')], 'status': 'interrupted'},
+            {'id': 't3', 'items': [ask('i7', '<scheduled-task name="nightly">run the report</scheduled-task>'),
+                                   item('agentMessage', 'r7', text='ok')]}]
+    return FakeCodex([
+        thread('main', '/srv/ana/app', SEC - 600, main),
+        thread('fork', '/srv/ana/app', SEC - 60, main, forked_from_id='main'),
+        thread('archived', '/srv/ana/app', SEC - 3600, [{'id': 't', 'items': [
+            ask('i3', 'Rename the config flag everywhere'), item('agentMessage', 'r3', text='Done.')]}], archived=True),
+        thread('scratch', '/srv/ana/app', SEC - 30, [{'id': 't', 'items': [ask('i4', 'tmp')]}], ephemeral=True),
+        thread('old', '/srv/ana/app', SEC - 200 * 86400, [{'id': 't', 'items': [ask('i5', 'ancient')]}]),
+        thread('secret', '/srv/ana/private', SEC - 10, [{'id': 't', 'items': [ask('i6', 'excluded')]}]),
+    ])
+
+
+class CodexTests(unittest.TestCase):
+    def setUp(self):
+        self.fake = codex_fixture()
+        excluded = lambda cwd: cwd.startswith('/srv/ana/private')
+        self.sessions = list(history_hosts.codex_sessions(days=90, now_ms=NOW, excluded=excluded, client=self.fake))
+        self.sample, self.episodes, _ = history.build(self.sessions)
+
+    def test_reads_interactive_threads_in_window_across_pages_and_archive(self):
+        self.assertEqual({s['session_id'] for s in self.sessions}, {'main', 'fork', 'archived'})
+        self.assertTrue(all(kinds == history_hosts.CODEX_SOURCES for kinds in self.fake.calls))
+        self.assertEqual(self.sessions[0]['created_at'], (SEC - 600) * 1000)
+
+    def test_episodes_tools_and_correction(self):
+        first = next(e for e in self.episodes if e['prompt'].startswith('Draft the release notes'))
+        self.assertEqual((first['tool_calls'], first['out_tokens'], first['outcome_hint']), (1, None, 'corrected'))
+        second = next(e for e in self.episodes if e['prompt'].startswith("that's not"))
+        self.assertTrue(second['has_image'])
+        self.assertEqual(second['outcome_hint'], 'interrupted')
+
+    def test_machine_wrapped_prompts_are_automated(self):
+        task = next(e for e in self.episodes if e['prompt'].startswith('<scheduled-task'))
+        self.assertEqual(task['source'], 'automated')
+
+    def test_fork_does_not_duplicate_prompts(self):
+        self.assertEqual(sum(e['prompt'].startswith('Draft the release notes') for e in self.episodes), 1)
+
+
 if __name__ == '__main__':
     unittest.main()
