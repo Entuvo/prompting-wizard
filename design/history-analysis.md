@@ -122,7 +122,7 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 ## Changes by file (planned)
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
-- `prompting-wizard/scripts/history_adapters/{claude_code,codex}.py`: SDK-backed readers.
+- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers (Claude Code done; Codex next).
 - `prompting-wizard/references/history-scoring.md` and `history-casebook.md`: specs the host model follows.
 - `prompting-wizard/references/commands.md`: `history` routing; `wizard.py`: `history` and `delete --history` controls.
 - `SKILL.md` / `assessment.md`: optional history baseline line, and case substitution into lessons.
@@ -145,6 +145,12 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 4. Scoring spec plus the `pw history` command and consent flow.
 5. Outputs wired into the course baseline, lesson cases and card candidates.
 6. Codex adapter. Then privacy and docs updates, then release notes.
+
+## Coverage finding (14 October 2026)
+
+`get_session_messages` returns the session's current conversation chain, not every message ever written. On the pilot history, the SDK path found 761 of the pilot's 992 distinct hand-typed prompts. All 305 missing prompts came from 5 long sessions with compaction or heavy rewinding; one session's file holds 16,616 user records and the SDK returns 410 messages. 15 of the pilot's 51 strongest teaching cases were in those lost branches. Abandoned branches are often where a prompt went wrong, so this loss is not neutral.
+
+The rule stands: documented interfaces only. v1 reports coverage honestly ("read the current conversation of N sessions; earlier branches of compacted or rewound sessions are not available") and does not fall back to parsing files. Revisit if the SDK adds a full-history option.
 
 ## Resolved defaults (maintainer, 14 October 2026)
 
