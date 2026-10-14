@@ -10,7 +10,7 @@ Read `rubrics.md` (in this skill) once before scoring, and score each prompt as 
 - `PROMPT`: what the learner typed.
 - `REPLY`: the assistant's response.
 - `NEXT USER PROMPT`: the learner's reaction. This is the strongest evidence of what the prompt lacked.
-- `hint`: a pattern-matched guess. Override it freely.
+- `hint`: a pattern-matched guess. Override it freely. `hint=edited` means the learner rewrote this prompt in place, as chat apps keep the old version, and `NEXT USER PROMPT` is the rewritten version. What the rewrite added is the gap, and the outcome is usually `redirected` or `corrected`.
 - `out_tok=?`: the host does not report output tokens.
 
 Judge in context. A short steer that is complete given `PREV ASSISTANT` (for example "commit and push" or "Q1 a") is a good prompt. Do not penalise brevity that worked.

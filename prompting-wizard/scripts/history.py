@@ -79,6 +79,8 @@ def kind_of(text):
 
 
 def outcome_hint(episode, next_prompt):
+    if episode.get('edited'):
+        return 'edited'  # the learner rewrote this prompt in place (chat apps keep the old version as a branch)
     if episode['interrupted']:
         return 'interrupted'
     if next_prompt is None:
@@ -108,7 +110,8 @@ def session_episodes(session):
                        'forked_from': session.get('forked_from'),
                        'created_at': session.get('created_at') or 0, 'workspace': session.get('cwd') or '',
                        'command': c[2], 'prompt': mask(c[1][:PROMPT_CAP]), 'prompt_chars': len(c[1]),
-                       'has_image': image, 'replies': [], 'tool_calls': 0, 'out_tokens': 0, 'interrupted': False}
+                       'has_image': image, 'replies': [], 'tool_calls': 0, 'out_tokens': 0, 'interrupted': False,
+                       'edited': bool(msg.get('edited'))}
             episodes.append(current)
         elif msg['role'] == 'assistant' and current:
             if msg.get('out_tokens') is None:  # host does not report output tokens
@@ -174,6 +177,8 @@ def build(sessions, cap=300):
     for n, ep in enumerate(episodes):
         ep['id'] = n
         del ep['msg_id'], ep['forked_from']
+        if not ep['edited']:
+            del ep['edited']
     human = [e for e in episodes if e['source'] == 'human' and e['kind'] == 'prompt']
     sample = sorted(human, key=lambda e: (e['created_at'], e['turn']))[-cap:] if cap else human
     counts = dict(sessions=len({e['session'] for e in episodes}), episodes=len(episodes), human_prompts=len(human),
@@ -410,7 +415,8 @@ def main(argv=None):
         cmd = sub.add_parser(name)
         cmd.add_argument('--root', required=True, type=Path)
         if name == 'scan':
-            cmd.add_argument('--host', required=True, choices=['claude-code', 'codex'])
+            cmd.add_argument('--host', required=True, choices=['claude-code', 'codex', 'chatgpt', 'claude'])
+            cmd.add_argument('--file', type=Path, help='ChatGPT or Claude data export (.zip or conversations.json)')
             cmd.add_argument('--days', type=int, default=90)
             cmd.add_argument('--cap', type=int, default=300)
         if name in ('merge', 'cases'):
@@ -429,8 +435,15 @@ def main(argv=None):
     out = {'purged': purge(history_root)}
     try:
         if args.command == 'scan':
-            reader = history_hosts.claude_code_sessions if args.host == 'claude-code' else history_hosts.codex_sessions
-            sessions = list(reader(days=args.days, excluded=_excluder(root)))
+            if args.host in ('chatgpt', 'claude'):
+                if not args.file:
+                    raise ValueError(f'--file is required for {args.host} exports')
+                reader = history_hosts.chatgpt_export_sessions if args.host == 'chatgpt' else \
+                    history_hosts.claude_export_sessions
+                sessions = reader(args.file, days=args.days)
+            else:
+                reader = history_hosts.claude_code_sessions if args.host == 'claude-code' else history_hosts.codex_sessions
+                sessions = list(reader(days=args.days, excluded=_excluder(root)))
             sample, episodes, counts = build(sessions, cap=args.cap)
             run = history_root / f"{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%SZ}-{args.host}"
             (run / 'batches').mkdir(parents=True)
@@ -440,9 +453,13 @@ def main(argv=None):
             batches = write_batches(sample, episodes, run / 'batches')
             out.update(run=run.name, host=args.host, days=args.days, counts=counts, batches=len(batches),
                        estimated_scoring_tokens=len(sample) * TOKENS_PER_EPISODE,
-                       coverage_note=('Claude Code returns each session\'s current conversation; earlier branches of '
-                                      'compacted or rewound sessions are not available.' if args.host == 'claude-code'
-                                      else 'Codex does not report per-turn output tokens.'))
+                       coverage_note={
+                           'claude-code': 'Claude Code returns each session\'s current conversation; earlier branches '
+                                          'of compacted or rewound sessions are not available.',
+                           'codex': 'Codex does not report per-turn output tokens.',
+                           'chatgpt': 'Read from your export: the current branch of each conversation, plus prompts '
+                                      'you edited. Tool use is approximate and output tokens are not reported.',
+                           'claude': 'Read from your export as recorded. Output tokens are not reported.'}[args.host])
         elif args.command == 'merge':
             run = history_root / args.run
             rows, problems = merge_scores(run)

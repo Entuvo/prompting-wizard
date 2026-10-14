@@ -308,5 +308,108 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(code, 1)
 
 
+
+def gpt_node(nid, parent, children, role=None, text='', ctype='text', hidden=False, parts=None, recipient='all'):
+    message = None if role is None else {
+        'id': nid, 'author': {'role': role}, 'recipient': recipient,
+        'content': {'content_type': ctype, 'parts': parts if parts is not None else [text]},
+        'metadata': {'is_visually_hidden_from_conversation': hidden}}
+    return {'id': nid, 'parent': parent, 'children': children, 'message': message}
+
+
+def chatgpt_export():
+    m = {
+        'root': gpt_node('root', None, ['sys']),
+        'sys': gpt_node('sys', 'root', ['u1'], 'system', 'You are ChatGPT', hidden=True),
+        'u1': gpt_node('u1', 'sys', ['a1'], 'user', 'Write a launch email for the beta'),
+        'a1': gpt_node('a1', 'u1', ['u2old', 'u2'], 'assistant', 'Subject: Big news! ...'),
+        'u2old': gpt_node('u2old', 'a1', ['a2old'], 'user', 'make it better'),
+        'a2old': gpt_node('a2old', 'u2old', [], 'assistant', 'Subject: Even bigger news!'),
+        'u2': gpt_node('u2', 'a1', ['t1'], 'user', 'shorter, for existing customers only, no hype',
+                       parts=['shorter, for existing customers only, no hype', {'asset_pointer': 'file-1'}]),
+        't1': gpt_node('t1', 'u2', ['a3'], 'assistant', 'print(1)', ctype='code', recipient='python'),
+        'a3': gpt_node('a3', 't1', [], 'assistant', 'Hi — the beta opens Monday.'),
+    }
+    return [{'conversation_id': 'c1', 'title': 'Launch email', 'create_time': (NOW - 5 * MIN) / 1000,
+             'update_time': (NOW - 4 * MIN) / 1000, 'mapping': m, 'current_node': 'a3'},
+            {'conversation_id': 'old', 'create_time': 1, 'update_time': 1,
+             'mapping': {'r': gpt_node('r', None, [])}, 'current_node': 'r'}]
+
+
+def claude_export():
+    return [{'uuid': 'k1', 'name': 'Board memo', 'created_at': '2025-10-09T08:00:00Z', 'updated_at': '2025-10-09T08:10:00Z',
+             'chat_messages': [
+                 {'uuid': 'h1', 'sender': 'human', 'text': 'Summarise the board deck', 'files': [{'file_name': 'deck.png'}],
+                  'content': [{'type': 'text', 'text': 'Summarise the board deck'}]},
+                 {'uuid': 'b1', 'sender': 'assistant', 'text': 'Here are 12 points...',
+                  'content': [{'type': 'tool_use', 'name': 'web_search'}, {'type': 'text', 'text': 'Here are 12 points...'}]},
+                 {'uuid': 'h2', 'sender': 'human', 'text': 'too long, 3 bullets for the CFO', 'content': []},
+             ]}]
+
+
+class ExportTests(unittest.TestCase):
+    def setUp(self):
+        import json, tempfile, zipfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+        self.gpt = self.dir / 'chatgpt.zip'
+        with zipfile.ZipFile(self.gpt, 'w') as z:
+            z.writestr('chat.html', '<html></html>')
+            z.writestr('conversations.json', json.dumps(chatgpt_export()))
+        self.claude = self.dir / 'conversations.json'
+        self.claude.write_text(json.dumps(claude_export()))
+        self.json = json
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_chatgpt_branch_edits_tools_and_window(self):
+        sessions = history_hosts.chatgpt_export_sessions(self.gpt, days=90, now_ms=NOW)
+        self.assertEqual([s['session_id'] for s in sessions], ['c1'])
+        _, eps, _ = history.build(sessions)
+        prompts = [e['prompt'] for e in eps]
+        self.assertEqual(prompts, ['Write a launch email for the beta', 'make it better',
+                                   'shorter, for existing customers only, no hype'])
+        edited = eps[1]
+        self.assertEqual((edited['outcome_hint'], edited['next_prompt'][:7], edited['reply_first'][:8]),
+                         ('edited', 'shorter', 'Subject:'))
+        self.assertEqual((eps[2]['tool_calls'], eps[2]['has_image']), (1, True))
+        self.assertNotIn('You are ChatGPT', ' '.join(prompts))
+
+    def test_claude_export(self):
+        sessions = history_hosts.claude_export_sessions(self.claude, days=90, now_ms=NOW)
+        _, eps, _ = history.build(sessions)
+        first = eps[0]
+        self.assertEqual((first['host'], first['tool_calls'], first['has_image']), ('claude', 1, True))
+        self.assertEqual(first['outcome_hint'], 'corrected')  # "too long, ..."
+        self.assertEqual(eps[1]['prompt'], 'too long, 3 bullets for the CFO')
+
+    def test_wrong_format_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, 'ChatGPT'):
+            history_hosts.chatgpt_export_sessions(self.claude)
+        with self.assertRaisesRegex(ValueError, 'Claude'):
+            history_hosts.claude_export_sessions(self.gpt)
+        empty = self.dir / 'empty.zip'
+        import zipfile
+        with zipfile.ZipFile(empty, 'w') as z:
+            z.writestr('notes.txt', 'x')
+        with self.assertRaisesRegex(ValueError, 'No conversations.json'):
+            history_hosts.load_export(empty)
+
+    def test_cli_scan_from_export(self):
+        import contextlib, io
+        root = self.dir / 'data'
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = history.main(['scan', '--root', str(root), '--host', 'claude', '--file', str(self.claude),
+                                 '--days', '36500'])
+        out = self.json.loads(buf.getvalue())
+        self.assertEqual((code, out['counts']['human_prompts'], out['batches']), (0, 2, 1))
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = history.main(['scan', '--root', str(root), '--host', 'chatgpt'])
+        self.assertEqual((code, self.json.loads(buf.getvalue())['ok']), (1, False))
+
+
 if __name__ == '__main__':
     unittest.main()
