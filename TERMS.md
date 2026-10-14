@@ -1,6 +1,6 @@
 # Terms of use
 
-Last updated: 18 August 2026
+Last updated: 15 October 2026
 
 Prompting Wizard is software published by Entuvo under the [MIT License](LICENSE).
 
@@ -14,13 +14,15 @@ The software is provided "as is", without warranty of any kind. Entuvo is not li
 
 Practice prompts run for real in your assistant. Start the course in a directory you are willing to let that assistant inspect.
 
+`pw history` and the Everyday plugin's export review read history you choose to supply: your own sessions, or a data export you download and upload. You are responsible for having the right to use that material. It is processed by the AI provider you are using, under that provider's terms. Learning Cards and history runs are yours to keep or delete; see [privacy](PRIVACY.md).
+
 ## Updates
 
-Managed installs update through Claude Code, Codex, or the skills CLI. Other copies may offer a newer version after you confirm. Updates replace course files only. They do not replace `PROGRESS.md`.
+Managed installs update through Claude Code, Codex, or the skills CLI. Other copies may offer a newer version after you confirm. Updates replace course files only. They do not replace `PROGRESS.md`, your Learning Card, or your history runs.
 
 ## Directory listings
 
-If you install Prompting Wizard from a host directory, that host's terms also apply.
+If you install Prompting Wizard from a host directory or plugin catalog, including ChatGPT or Claude, that host's terms also apply.
 
 ## Contact
 
