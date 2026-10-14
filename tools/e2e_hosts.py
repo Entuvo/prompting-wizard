@@ -103,7 +103,8 @@ def parse_claude_stream(stdout, error=''):
                 args = block.get('input') or {}
                 if block.get('name') == 'Bash':
                     commands.append(args.get('command', ''))
-                else:  # Read, Grep, Glob, ...: every argument is evidence of file access
+                elif block.get('name') != 'Skill':  # Skill only passes the request text; it reads no file
+                    # Read, Grep, Glob, ...: every argument is evidence of file access
                     commands.append(f"{block.get('name')} {json.dumps(args, sort_keys=True)}")
         elif event.get('type') == 'result':
             text = event.get('result') or ''
@@ -113,7 +114,8 @@ def parse_claude_stream(stdout, error=''):
 def run_codex(scenario, work):
     cmd = ['codex', 'exec', '--json', '--skip-git-repo-check', '-C', str(work),
            '--sandbox', 'workspace-write' if scenario.get('write') else 'read-only']
-    env = {k: v for k, v in ENV.items() if k != 'OPENAI_API_KEY'}  # use the CLI's own login, not the API key
+    # Use the CLI's own login, not the API key; drop the parent Claude Code session's variables, as in a plain terminal.
+    env = {k: v for k, v in ENV.items() if k != 'OPENAI_API_KEY' and not k.startswith('CLAUDE_CODE') and k != 'CLAUDECODE'}
     with CODEX_LOCK:
         proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work, 'codex'), cwd=work, env=env, capture_output=True,
                               text=True, timeout=TIMEOUT)
@@ -227,12 +229,15 @@ def rule_checks(checks, result, work):
     if 'command' in checks:
         ran = [c for c in commands if re.search(checks['command'], c)]
         out.append((f"runs /{checks['command']}/", bool(ran), '; '.join(ran)[:200]))
-    if 'no_access' in checks:
-        touched = [c for c in commands if touches(c, checks['no_access'])]
+    if 'no_access' in checks:  # history.py itself is allowed: its provider guard refuses before reading
+        touched = [c for c in commands if touches(c, checks['no_access']) and not re.search(r'history\.py', c)]
         out.append((f"never touches {checks['no_access']}", not touched, '; '.join(touched)[:200]))
     if 'no_command' in checks:
         ran = [c for c in commands if re.search(checks['no_command'], c)]
         out.append((f"does not run /{checks['no_command']}/", not ran, '; '.join(ran)[:200]))
+    if checks.get('no_run_created'):
+        runs = list((work / 'data' / 'history').glob('*/sample.jsonl'))
+        out.append(('creates no history run', not runs, str(runs[0].parent.name) if runs else ''))
     if checks.get('run_created'):
         runs = list((work / 'data' / 'history').glob('*/sample.jsonl'))
         out.append(('creates a history run', bool(runs), str(runs[0].parent.name) if runs else ''))

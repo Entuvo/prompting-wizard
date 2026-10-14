@@ -36,6 +36,20 @@ class HarnessTests(unittest.TestCase):
         got = e.rule_checks({'no_access': 'chatgpt-export.json'}, r, self.work)
         self.assertFalse(got[0]['pass'])  # reading the wrong export fails even if the reply declines
 
+    def test_runtime_refusal_is_not_access_but_a_run_would_fail(self):
+        result = {'text': 'refused', 'commands': ['python3 history.py scan --host claude --file /w/claude-export.json']}
+        got = {c['check']: c['pass'] for c in e.rule_checks({'no_access': 'claude-export.json', 'no_run_created': True},
+                                                             result, self.work)}
+        self.assertTrue(all(got.values()))
+        (self.work / 'data' / 'history' / 'r1').mkdir(parents=True)
+        (self.work / 'data' / 'history' / 'r1' / 'sample.jsonl').write_text('')
+        self.assertFalse(e.rule_checks({'no_run_created': True}, result, self.work)[0]['pass'])
+
+    def test_skill_invocation_is_not_file_access(self):
+        lines = [{'type': 'assistant', 'message': {'content': [
+            {'type': 'tool_use', 'name': 'Skill', 'input': {'args': 'history --file /w/chatgpt-export.json'}}]}}]
+        self.assertEqual(e.parse_claude_stream('\n'.join(map(json.dumps, lines)))['commands'], [])
+
     def test_no_access_catches_wildcards_and_glob_arguments(self):
         for command in ('cat /w/*-export.json', 'Grep {"glob": "*.json", "pattern": "mapping"}',
                         'ls chatgpt-export.json', 'head /w/chat*'):

@@ -80,6 +80,21 @@ def read(**kw):
     return list(history_hosts.claude_code_sessions(days=90, now_ms=NOW, excluded=excluded, sdk=fixture(), **kw))
 
 
+HOST_VARS = ('CODEX_THREAD_ID', 'CODEX_SESSION_ID', 'CLAUDE_CODE_SESSION_ID', 'CLAUDECODE')
+
+
+def setUpModule():
+    """Tests must not depend on which coding host runs them (history.provider_guard reads these)."""
+    import os
+    global SAVED_HOST_VARS
+    SAVED_HOST_VARS = {k: os.environ.pop(k) for k in HOST_VARS if k in os.environ}
+
+
+def tearDownModule():
+    import os
+    os.environ.update(SAVED_HOST_VARS)
+
+
 class HistoryTests(unittest.TestCase):
     def setUp(self):
         self.sample, self.episodes, self.counts = history.build(read())
@@ -294,14 +309,41 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual((code, out['ok']), (1, False))
 
     def test_cli_runs_in_python_isolated_mode(self):
-        import subprocess
+        import os, subprocess
         export = Path(self.tmp.name) / 'c.json'
         export.write_text('[]')
         script = Path(history.__file__)
+        env = {k: v for k, v in os.environ.items() if not k.startswith(('CODEX_', 'CLAUDE_CODE')) and k != 'CLAUDECODE'}
         proc = subprocess.run([sys.executable, '-I', str(script), 'scan', '--root', str(self.root), '--host', 'claude',
-                               '--file', str(export)], capture_output=True, text=True)
+                               '--file', str(export)], capture_output=True, text=True, env=env)
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertEqual(self.json.loads(proc.stdout)['counts']['episodes'], 0)
+
+    def test_provider_guard(self):
+        codex, claude = {'CODEX_THREAD_ID': 't'}, {'CLAUDE_CODE_SESSION_ID': 's'}
+        self.assertIsNone(history.provider_guard('chatgpt', codex))
+        self.assertIsNone(history.provider_guard('codex', codex))
+        self.assertIn('Codex reviews only ChatGPT', history.provider_guard('claude', codex))
+        self.assertIn('Claude Code', history.provider_guard('claude-code', codex))
+        self.assertIsNone(history.provider_guard('claude', claude))
+        self.assertIn('Claude Code reviews only Claude', history.provider_guard('chatgpt', claude))
+        self.assertIsNone(history.provider_guard('chatgpt', {}))  # unknown host: the procedure decides
+        self.assertEqual(history.current_provider(codex | claude), 'chatgpt')  # Codex launched from Claude Code
+
+    def test_scan_refuses_other_providers_export(self):
+        import os
+        export = Path(self.tmp.name) / 'c.json'
+        export.write_text('[]')
+        old = dict(os.environ)
+        try:
+            os.environ.pop('CLAUDE_CODE_SESSION_ID', None); os.environ.pop('CLAUDECODE', None)
+            os.environ['CODEX_THREAD_ID'] = 't'
+            code, out = self.cli('scan', '--host', 'claude', '--file', str(export))
+            self.assertEqual((code, out['ok']), (1, False))
+            self.assertIn('Codex reviews only ChatGPT', out['error'])
+            self.assertFalse(any((self.root / 'history').glob('*-claude')))
+        finally:
+            os.environ.clear(); os.environ.update(old)
 
     def test_unknown_gap_key_is_rejected(self):
         self.assertIn('gap agent_tool', history.validate_score(score_row(0, gap='agent_tool')))

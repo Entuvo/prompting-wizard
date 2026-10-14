@@ -2,7 +2,7 @@
 
 ## 1.4.3 — 2026-10-14
 
-- Each provider's history is reviewed only by that provider's hosts. Claude Code and the Claude app review only Claude exports, and Codex and ChatGPT review only ChatGPT exports; another provider's export is declined without review. In the apps, an upload still reaches that app's provider, so upload only that app's own export. Coding hosts confirm an export's source before running anything, and the scan output carries the exact consent question. Everyday plugin 0.2.2.
+- Each provider's history is reviewed only by that provider's hosts. Claude Code and the Claude app review only Claude exports, and Codex and ChatGPT review only ChatGPT exports; another provider's export is declined without review. In the apps, an upload still reaches that app's provider, so upload only that app's own export. Coding hosts confirm an export's source before running anything, and `history.py` refuses another provider's history under Codex or Claude Code. The scan output also carries the exact consent question. Everyday plugin 0.2.2.
 
 ## 1.4.2 — 2026-10-14
 

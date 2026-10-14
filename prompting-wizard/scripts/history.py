@@ -390,6 +390,29 @@ def purge(history_root, now=None):
     return removed
 
 
+SOURCE_PROVIDER = {'claude-code': 'claude', 'claude': 'claude', 'codex': 'chatgpt', 'chatgpt': 'chatgpt'}
+HOST_NAME = {'claude': 'Claude Code', 'chatgpt': 'Codex'}
+
+
+def current_provider(env):
+    """Provider of the coding host running this script, from the variables each host sets; None if unknown.
+    Codex wins when both are present: it is the innermost host when launched from a Claude Code terminal."""
+    if env.get('CODEX_THREAD_ID') or env.get('CODEX_SESSION_ID'):
+        return 'chatgpt'
+    if env.get('CLAUDE_CODE_SESSION_ID') or env.get('CLAUDECODE'):
+        return 'claude'
+    return None
+
+
+def provider_guard(source, env):
+    """Each provider's history is scored only by that provider's host. -> error message or None."""
+    here, wanted = current_provider(env), SOURCE_PROVIDER[source]
+    if here and here != wanted:
+        return (f'{HOST_NAME[here]} reviews only {"Claude" if here == "claude" else "ChatGPT"} history; '
+                f'review this {"Claude" if wanted == "claude" else "ChatGPT"} history in {HOST_NAME[wanted]} instead.')
+    return None
+
+
 def _excluder(root):
     """Honor coaching exclusions when a learner profile exists in ROOT."""
     if not (root / 'learner.sqlite3').exists():
@@ -437,6 +460,9 @@ def main(argv=None):
     out = {'purged': purge(history_root)}
     try:
         if args.command == 'scan':
+            refusal = provider_guard(args.host, os.environ)
+            if refusal:
+                raise ValueError(refusal)
             if args.host in ('chatgpt', 'claude'):
                 if not args.file:
                     raise ValueError(f'--file is required for {args.host} exports')
