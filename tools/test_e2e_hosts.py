@@ -83,6 +83,16 @@ class HarnessTests(unittest.TestCase):
             e.os.environ.clear()
             e.os.environ.update(env)
 
+    def test_each_host_gets_its_own_providers_export(self):
+        scenario = {'prompt': '{EXPORT_NAME} at {EXPORT}, other {OTHER_NAME} --host {EXPORT_HOST}', 'attach': 'own-export'}
+        claude = e.prompt_for(scenario, self.work, 'claude-code')
+        self.assertIn('Claude at', claude)
+        self.assertIn('claude-export.json, other ChatGPT --host claude', claude)
+        self.assertIn('chat_messages', claude)  # attached Claude export
+        codex = e.prompt_for(scenario | {'attach': 'other-export'}, self.work, 'codex')
+        self.assertIn('ChatGPT at', codex)
+        self.assertIn('chat_messages', codex)  # the other provider's export, for a decline scenario
+
     def test_scenarios_are_well_formed(self):
         scenarios = json.loads((e.FIXTURES / 'scenarios.json').read_text())
         self.assertEqual(len({s['id'] for s in scenarios}), len(scenarios))

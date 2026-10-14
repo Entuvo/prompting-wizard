@@ -34,24 +34,41 @@ import threading
 CODEX_LOCK = threading.Lock()  # one Codex process at a time: parallel runs can race on refreshing the login
 
 
-def attachment(name):
+PROVIDER = {'claude-code': 'claude', 'claude-api': 'claude', 'codex': 'chatgpt', 'openai-api': 'chatgpt'}
+LABEL = {'claude': 'Claude', 'chatgpt': 'ChatGPT'}
+
+
+def exports(host):
+    """-> (own provider, other provider) for a host: each provider's history stays with that provider."""
+    own = PROVIDER[host]
+    return own, 'chatgpt' if own == 'claude' else 'claude'
+
+
+def attachment(name, host=None):
+    if name in ('own-export', 'other-export'):
+        provider = exports(host)[0 if name == 'own-export' else 1]
+        text = (FIXTURES / f'{provider}-export.json').read_text(encoding='utf-8')
+        return f'\n\nAttached file conversations.json:\n```json\n{text}\n```'
     if name == 'empty-card':
         text = (EVERYDAY / 'skills' / 'learn' / 'references' / 'empty-card.md').read_text(encoding='utf-8')
         return f'\n\nAttached file LEARNING.md:\n{text}'
-    if name == 'chatgpt-export':
-        text = (FIXTURES / 'chatgpt-export.json').read_text(encoding='utf-8')
-        return f'\n\nAttached file conversations.json:\n```json\n{text}\n```'
     return ''
 
 
-def prompt_for(scenario, work):
-    text = scenario['prompt'].replace('{EXPORT}', str(work / 'claude-export.json')).replace('{ROOT}', str(work / 'data'))
-    return text + attachment(scenario.get('attach', ''))
+def prompt_for(scenario, work, host):
+    own, other = exports(host)
+    text = scenario['prompt']
+    for key, value in {'{EXPORT}': str(work / f'{own}-export.json'), '{OTHER_EXPORT}': str(work / f'{other}-export.json'),
+                       '{EXPORT_HOST}': own, '{OTHER_HOST}': other, '{EXPORT_NAME}': LABEL[own],
+                       '{OTHER_NAME}': LABEL[other], '{ROOT}': str(work / 'data')}.items():
+        text = text.replace(key, value)
+    return text + attachment(scenario.get('attach', ''), host)
 
 
 def prepare(work, scenario):
     work.mkdir(parents=True)
-    shutil.copy(FIXTURES / 'claude-export.json', work / 'claude-export.json')
+    for provider in LABEL:
+        shutil.copy(FIXTURES / f'{provider}-export.json', work / f'{provider}-export.json')
     skills = work / '.agents' / 'skills'  # Codex discovers project skills here
     source = COURSE if scenario['plugin'] == 'course' else EVERYDAY
     shutil.copytree(source / 'skills', skills)
@@ -67,7 +84,7 @@ def run_claude_code(scenario, work):
            '--add-dir', str(plugin), '--tools', *tools]  # installed plugins can read their own files
     if scenario.get('write'):
         cmd += ['--allowedTools', 'Bash(python3:*)', '--add-dir', str(work)]
-    proc = subprocess.run(cmd, input=prompt_for(scenario, work), cwd=work, env=ENV, capture_output=True,
+    proc = subprocess.run(cmd, input=prompt_for(scenario, work, 'claude-code'), cwd=work, env=ENV, capture_output=True,
                           text=True, timeout=TIMEOUT)
     return parse_claude_stream(proc.stdout, proc.stderr if proc.returncode else '')
 
@@ -93,7 +110,7 @@ def run_codex(scenario, work):
            '--sandbox', 'workspace-write' if scenario.get('write') else 'read-only']
     env = {k: v for k, v in ENV.items() if k != 'OPENAI_API_KEY'}  # use the CLI's own login, not the API key
     with CODEX_LOCK:
-        proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work), cwd=work, env=env, capture_output=True,
+        proc = subprocess.run(cmd + ['-'], input=prompt_for(scenario, work, 'codex'), cwd=work, env=env, capture_output=True,
                               text=True, timeout=TIMEOUT)
     return parse_codex_stream(proc.stdout, proc.stderr if proc.returncode else '')
 
@@ -140,7 +157,7 @@ def run_claude_api(scenario, work, post=post_json):
                  **({'anthropic-workspace-id': os.environ['ANTHROPIC_WORKSPACE_ID']}
                     if os.environ.get('ANTHROPIC_WORKSPACE_ID') else {})},
                 {'model': os.environ.get('E2E_CLAUDE_MODEL', 'claude-opus-5-5'), 'max_tokens': 4000,
-                 'system': everyday_instructions(), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work)}]})
+                 'system': everyday_instructions(), 'messages': [{'role': 'user', 'content': prompt_for(scenario, work, 'claude-api')}]})
     text = ''.join(b.get('text', '') for b in data.get('content') or [] if b.get('type') == 'text')
     return {'text': text, 'commands': [], 'raw': json.dumps(data), 'error': ''}
 
@@ -151,7 +168,7 @@ def run_openai_api(scenario, work, post=post_json):
         return {'skipped': 'OPENAI_API_KEY not set'}
     data = post('https://api.openai.com/v1/responses', {'authorization': f'Bearer {key}'},
                 {'model': os.environ.get('E2E_OPENAI_MODEL', 'gpt-5.4'), 'instructions': everyday_instructions(),
-                 'input': prompt_for(scenario, work)})
+                 'input': prompt_for(scenario, work, 'openai-api')})
     text = data.get('output_text') or ''.join(
         c.get('text', '') for o in data.get('output') or [] for c in o.get('content') or [] if c.get('type') == 'output_text')
     return {'text': text, 'commands': [], 'raw': json.dumps(data), 'error': ''}

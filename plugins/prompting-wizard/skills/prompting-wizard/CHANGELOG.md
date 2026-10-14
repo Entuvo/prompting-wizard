@@ -1,5 +1,9 @@
 # Prompting Wizard release notes
 
+## 1.4.3 — 2026-10-14
+
+- Each provider's history stays with that provider. Claude Code and the Claude app review only Claude exports, and Codex and ChatGPT review only ChatGPT exports. Another provider's export is declined, not read. Everyday plugin 0.2.2.
+
 ## 1.4.2 — 2026-10-14
 
 - `pw history` now ends a scan with a direct yes/no question before scoring, instead of only describing the consent.

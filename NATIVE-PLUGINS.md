@@ -1,6 +1,6 @@
 # Prompting Wizard — Everyday plugins
 
-The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-wizard-teacher`, version 0.2.1) for ChatGPT and Claude. It bundles the teaching skill, guide, rubrics and empty Learning Card. Learn through your work without an interview; choose Practice, Example, Lesson or Later after a useful teaching opportunity.
+The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-wizard-teacher`, version 0.2.2) for ChatGPT and Claude. It bundles the teaching skill, guide, rubrics and empty Learning Card. Learn through your work without an interview; choose Practice, Example, Lesson or Later after a useful teaching opportunity.
 
 These are buildable pilot packages, not a published directory listing or a verified native-app installation. The user walkthrough still needs to establish installation, activation and manual card transfer on each surface. Existing `prompting-wizard` course packages remain separate.
 
@@ -51,7 +51,7 @@ The plugin supplies the guide, so successful loading removes the need to attach 
 
 After meaningful practice, the coach proposes a learning record. Accept only an accurate description. Ask for the complete updated card, save it yourself and carry it to the next chat or provider. Replace an old project upload deliberately. An exported artifact is not proof of a durable save or account sync. Keep the previous file if validation or preservation is uncertain. Reading an example or following a hint does not establish independent skill.
 
-To learn from past chats, export your data from the app's settings (ChatGPT: Data controls → Export data; Claude: Settings → Privacy → Export data) and upload `conversations.json` or a few conversations. Then ask the coach to review them. It reads up to 30 recent conversations and says how much it covered. It reports your most common gaps, with up to three of your own cases, and proposes card records that you accept or reject. Nothing is stored beyond that chat. Uploading one provider's export into the other provider's chat sends your history to that provider.
+To learn from past chats, export your data from the same app's settings (ChatGPT: Data controls → Export data; Claude: Settings → Privacy → Export data) and upload `conversations.json` or a few conversations to that app. Each app reviews only its own history and declines the other provider's export. Then ask the coach to review them. It reads up to 30 recent conversations and says how much it covered. It reports your most common gaps, with up to three of your own cases, and proposes card records that you accept or reject. Nothing is stored beyond that chat.
 
 Occasional is the default; frequent or on-request can be chosen. More/less/pause affects this chat. Accepted card preferences travel only when the card is supplied. Installation cannot promise automatic coaching in every ordinary chat. Existing account instructions and the plugin should yield one invitation, not two; coding-host local feedback retains its ownership and opt-in rules.
 

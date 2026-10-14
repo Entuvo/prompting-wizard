@@ -95,7 +95,7 @@ Tips default to occasional; choose frequent or on-request using the [frequency i
 
 In Claude Code or Codex, results stay in a local folder you choose and are deleted after 30 days. Transcript files are never parsed. Nothing is written to your course, Learning Card or config files unless you accept it.
 
-Inside ChatGPT or Claude, the Everyday plugin can review an export you upload, up to 30 recent conversations. It reports your top gaps and three of your own cases in the chat, and proposes card records for you to accept. It cannot store a casebook. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
+Each provider's history stays with that provider: Claude Code and Claude review Claude exports, and Codex and ChatGPT review ChatGPT exports. Inside ChatGPT or Claude, the Everyday plugin can review that app's own export when you upload it, up to 30 recent conversations. It reports your top gaps and three of your own cases in the chat, and proposes card records for you to accept. It cannot store a casebook. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
 
 ## Carry learning between chats
 
