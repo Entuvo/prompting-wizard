@@ -224,5 +224,70 @@ class CodexTests(unittest.TestCase):
         self.assertEqual(sum(e['prompt'].startswith('Draft the release notes') for e in self.episodes), 1)
 
 
+
+def score_row(i, role='opener', outcome='corrected', gap='preposition'):
+    row = {'id': i, 'task_type': 'plan', 'role': role, 'outcome': outcome,
+           'gaps': [{'key': gap, 'score': 2, 'evidence': 'scope came next turn'}] if outcome != 'clean' else [],
+           'missing_info': None, 'teach': 3 if outcome != 'clean' else 0, 'exemplar': outcome == 'clean', 'note': ''}
+    if role == 'opener':
+        row['levers'] = dict.fromkeys(history.LEVERS, None) | {'noun': 2, 'adjective': 1}
+    return row
+
+
+class RuntimeTests(unittest.TestCase):
+    def setUp(self):
+        import json, os, tempfile
+        self.json, self.os = json, os
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name) / 'data'
+        self.run = self.root / 'history' / 'r1'
+        (self.run / 'scores').mkdir(parents=True)
+        history.write_jsonl(self.run / 'sample.jsonl', [{'id': 0, 'prompt': 'a'}, {'id': 1, 'prompt': 'b'}])
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def cli(self, *args):
+        import contextlib, io
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            code = history.main([args[0], '--root', str(self.root), *args[1:]])
+        return code, self.json.loads(buf.getvalue())
+
+    def test_merge_reports_baseline_without_prompt_text(self):
+        history.write_jsonl(self.run / 'scores' / '01.jsonl', [score_row(0), score_row(1, 'steer', 'clean')])
+        code, out = self.cli('merge', '--run', 'r1')
+        self.assertEqual((code, out['ok']), (0, True))
+        b = out['baseline']
+        self.assertEqual((b['prompts'], b['costly_rate'], b['by_role']['opener']['costly_rate']), (2, 0.5, 1.0))
+        self.assertEqual(b['levers']['adjective'], {'mean': 1.0, 'n': 1})
+        self.assertEqual(b['costly_gaps'], {'preposition': 1})
+        self.assertNotIn('"prompt"', (self.run / 'baseline.json').read_text())
+
+    def test_merge_rejects_missing_duplicate_and_invalid_rows(self):
+        bad = score_row(1, 'steer') | {'levers': {'noun': 9}}
+        history.write_jsonl(self.run / 'scores' / '01.jsonl', [score_row(0), score_row(0), bad, {'id': 7}])
+        code, out = self.cli('merge', '--run', 'r1')
+        self.assertEqual((code, out['ok']), (0, False))
+        text = ' '.join(out['problems'])
+        for expected in ('duplicate id', 'levers only for openers', 'unknown id', 'id 1 not scored'):
+            self.assertIn(expected, text)
+        self.assertFalse((self.run / 'scored.jsonl').exists())
+
+    def test_unknown_gap_key_is_rejected(self):
+        self.assertIn('gap agent_tool', history.validate_score(score_row(0, gap='agent_tool')))
+
+    def test_delete_and_retention(self):
+        old = self.root / 'history' / 'r0'
+        old.mkdir()
+        self.os.utime(old, (0, 0))
+        code, out = self.cli('delete', '--run', 'r1')
+        self.assertEqual(out['purged'], ['r0'])
+        self.assertEqual(out['deleted'], ['r1'])
+        self.assertEqual(list((self.root / 'history').iterdir()), [])
+        code, out = self.cli('delete', '--run', '../../etc')
+        self.assertEqual(code, 1)
+
+
 if __name__ == '__main__':
     unittest.main()

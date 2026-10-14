@@ -4,6 +4,7 @@ EXTRA_FILES = (
     'scripts/learning.py','references/learning-policy.md','references/learning-card.md',
     'references/learning-catalog.json','references/native-instructions.txt',
     'scripts/store.py','scripts/wizard.py','scripts/history.py','scripts/history_hosts.py','references/coaching.md','references/commands.md',
+    'references/history.md','references/history-scoring.md',
     'references/model-guidance/manifest.json',
     'references/model-guidance/claude-long-context.md',
     'references/model-guidance/astra-task-boundaries.md',

@@ -123,8 +123,8 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
 - `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex.
-- `prompting-wizard/references/history-scoring.md` and `history-casebook.md`: specs the host model follows.
-- `prompting-wizard/references/commands.md`: `history` routing; `wizard.py`: `history` and `delete --history` controls.
+- `prompting-wizard/references/history.md` (tutor procedure) and `history-scoring.md` (scorer spec); `history-casebook.md` next.
+- `prompting-wizard/references/commands.md`: `history` routing. `history.py` owns its own `scan`/`merge`/`delete` CLI, so `wizard.py` never imports a host SDK.
 - `SKILL.md` / `assessment.md`: optional history baseline line, and case substitution into lessons.
 - `PRIVACY.md`, `COACHING.md`, `CHANGELOG.md`: the new one-shot read, retention, and what reaches the provider.
 - `tools/test_history.py` plus `tools/fixtures/history/`: synthetic sessions only.
@@ -151,6 +151,8 @@ The Day 0 baseline line is never edited. A history baseline is a separate, label
 `get_session_messages` returns the session's current conversation chain, not every message ever written. On the pilot history, the SDK path found 761 of the pilot's 992 distinct hand-typed prompts. All 305 missing prompts came from 5 long sessions with compaction or heavy rewinding; one session's file holds 16,616 user records and the SDK returns 410 messages. 15 of the pilot's 51 strongest teaching cases were in those lost branches. Abandoned branches are often where a prompt went wrong, so this loss is not neutral.
 
 The rule stands: documented interfaces only. v1 reports coverage honestly ("read the current conversation of N sessions; earlier branches of compacted or rewound sessions are not available") and does not fall back to parsing files. Revisit if the SDK adds a full-history option.
+
+Host retention also bounds the window. Claude Code deletes transcripts after `cleanupPeriodDays` (30 by default); on the pilot machine nearly every listed session was under 30 days old. A 90-day request returns what the host still keeps, and the report says so.
 
 ## Resolved defaults (maintainer, 14 October 2026)
 
