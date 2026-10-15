@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 # Importable whether run as a script, via discovery rooted at tools/, or from
@@ -179,6 +180,26 @@ def write_codex_distribution(repo_root, version="1.0.0"):
         shutil.copy2(listing_logo, plugin / "assets" / "logo.png")
 
 
+class UpdateCheckTests(unittest.TestCase):
+    """SKILL.md's update check must verify every shipped file (complete mode requires it)."""
+
+    def run_check(self, text):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = Path(tmp) / "prompting-wizard"
+            build_clean_skill(skill, days=range(1, 31))
+            (skill / "SKILL.md").write_text(text, encoding="utf-8")
+            with mock.patch.object(validate, "SKILL", skill):
+                return [e for e in validate.check(require_all_days=True) if "update check" in e]
+
+    def test_missing_sentence_and_omissions_are_reported(self):
+        self.assertTrue(self.run_check("# SKILL.md\n"))
+        partial = "After either path completes, verify `AGENTS.md` are present"
+        errors = self.run_check(partial)
+        self.assertIn("SKILL.md: update check does not verify SKILL.md", errors)
+        self.assertIn("SKILL.md: update check does not verify scripts/history.py", errors)
+        self.assertIn("SKILL.md: update check does not verify all thirty day files", errors)
+
+
 def build_clean_skill(root, days=(1,)):
     """Create the smallest skill tree that check() accepts."""
     (root / "days").mkdir(parents=True, exist_ok=True)
@@ -187,6 +208,11 @@ def build_clean_skill(root, days=(1,)):
     (root.parent / "packaging").mkdir(parents=True, exist_ok=True)
     for name in validate.TOP_FILES:
         (root / name).write_text(f"# {name}\n\nplaceholder\n", encoding="utf-8")
+    listed = ", ".join(f"`{n}`" for n in validate.TOP_FILES + validate.EXTRA_FILES)
+    (root / "SKILL.md").write_text(
+        "# SKILL.md\n\nAfter either path completes, verify " + listed
+        + ", all thirty day files are present and that the installed version equals the offered version.\n",
+        encoding="utf-8")
     (root / "VERSION.md").write_text(render_version(), encoding="utf-8")
     (root / "CHANGELOG.md").write_text(render_changelog(), encoding="utf-8")
     (root / "assessment.md").write_text(render_assessment(), encoding="utf-8")

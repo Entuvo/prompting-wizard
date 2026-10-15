@@ -500,11 +500,15 @@ def check(require_all_days=False):
     # The update check in SKILL.md must verify every shipped file, not just the original list.
     skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8") if (SKILL / "SKILL.md").is_file() else ""
     update_check = re.search(r"After either path completes, verify (.*?) are present", skill_text, re.S)
+    if require_all_days and skill_text and not update_check:
+        errors.append("SKILL.md: update check sentence ('After either path completes, verify ... are present') missing")
     if update_check:
         listed = set(re.findall(r"`([^`]+)`", update_check.group(1)))
-        for name in EXTRA_FILES:
+        for name in TOP_FILES + EXTRA_FILES:
             if name not in listed:
                 errors.append(f"SKILL.md: update check does not verify {name}")
+        if "all thirty day files" not in update_check.group(1):
+            errors.append("SKILL.md: update check does not verify all thirty day files")
 
     skill_path = SKILL / "SKILL.md"
     text = load(skill_path, "SKILL.md") if skill_path.is_file() else None
