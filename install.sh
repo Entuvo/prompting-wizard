@@ -127,6 +127,9 @@ if [ "$install_codex" = yes ]; then
     [ "$codex_target" != "$skill_source_real" ] || fail "install target is the canonical source"
     confirm_replacement "$codex_target" "Codex skill"
     codex_replace=$replacement_allowed
+    codex_pw_target="$codex_root/pw"
+    confirm_replacement "$codex_pw_target" "Codex pw shortcut"
+    codex_pw_replace=$replacement_allowed
 fi
 
 claude_target=
@@ -138,6 +141,9 @@ if [ "$install_claude" = yes ]; then
     [ "$claude_target" != "$skill_source_real" ] || fail "install target is the canonical source"
     confirm_replacement "$claude_target" "Claude Code skill"
     claude_replace=$replacement_allowed
+    claude_pw_target="$claude_root/pw"
+    confirm_replacement "$claude_pw_target" "Claude Code pw shortcut"
+    claude_pw_replace=$replacement_allowed
 fi
 
 if [ "$install_codex" = yes ] && [ "$install_claude" = yes ] && \
@@ -166,6 +172,27 @@ for name in names:
     shutil.copy2(src, dst)
 
 PY
+}
+
+copy_shortcut() {
+    python3 - "$1" "$2" <<'PY'
+import shutil
+import sys
+from pathlib import Path
+
+repo, destination = Path(sys.argv[1]), Path(sys.argv[2])
+source = repo / 'pw' / 'SKILL.md'
+if source.is_symlink() or source.parent.is_symlink():
+    raise ValueError('Shortcut source contains a symlink')
+shutil.copy2(source, destination / 'SKILL.md')
+PY
+}
+
+verify_shortcut_tree() {
+    [ -f "$1/SKILL.md" ] && grep -q '^name: pw$' "$1/SKILL.md" || {
+        echo "Error: installed pw shortcut is missing or invalid" >&2
+        return 1
+    }
 }
 
 rename_exact() {
@@ -250,6 +277,19 @@ verify_install_tree() {
             return 1
         }
     done
+    python3 - "$repo_root_real" "$verify_tree" <<'PY' || return 1
+import sys
+from pathlib import Path
+
+repo, tree = map(Path, sys.argv[1:])
+sys.path.insert(0, str(repo / 'tools'))
+from course_files import COURSE_FILES
+
+missing = [name for name in COURSE_FILES if not (tree / name).is_file()]
+if missing:
+    print('Error: installed skill is missing ' + ', '.join(missing[:5]), file=sys.stderr)
+    sys.exit(1)
+PY
     verify_day=1
     while [ "$verify_day" -le 30 ]; do
         verify_name=$(printf '%02d' "$verify_day")
@@ -287,6 +327,7 @@ install_one() (
     install_root=$3
     install_target=$4
     install_replace=$5
+    install_kind=${6:-course}
     stage_path=
     backup_path=
     prior_moved=no
@@ -413,8 +454,13 @@ install_one() (
         *) echo "Error: mktemp returned an unsafe staging path" >&2; exit 1 ;;
     esac
     stage_identity=$(directory_identity "$stage_path")
-    copy_skill "$skill_source_real" "$stage_path" "$install_host"
-    verify_install_tree "$stage_path" "$install_host"
+    if [ "$install_kind" = shortcut ]; then
+        copy_shortcut "$repo_root_real" "$stage_path"
+        verify_shortcut_tree "$stage_path"
+    else
+        copy_skill "$skill_source_real" "$stage_path" "$install_host"
+        verify_install_tree "$stage_path" "$install_host"
+    fi
 
     if path_exists "$install_target"; then
         if [ "$install_replace" != yes ]; then
@@ -434,7 +480,11 @@ install_one() (
     installed_moved=yes
     rename_exact "$stage_path" "$install_target"
     stage_path=
-    verify_install_tree "$install_target" "$install_host"
+    if [ "$install_kind" = shortcut ]; then
+        verify_shortcut_tree "$install_target"
+    else
+        verify_install_tree "$install_target" "$install_host"
+    fi
 
     # Verification is the commit point. From here onward the new target must
     # survive interruption. Preserve the prior installation: a stage or backup
@@ -451,9 +501,11 @@ install_one() (
 
 if [ "$install_codex" = yes ]; then
     install_one codex "Codex skill" "$codex_root" "$codex_target" "$codex_replace"
+    install_one codex "Codex pw shortcut" "$codex_root" "$codex_pw_target" "$codex_pw_replace" shortcut
 fi
 if [ "$install_claude" = yes ]; then
     install_one claude "Claude Code skill" "$claude_root" "$claude_target" "$claude_replace"
+    install_one claude "Claude Code pw shortcut" "$claude_root" "$claude_pw_target" "$claude_pw_replace" shortcut
 fi
 
 echo "Open a new chat in the installed agent and say: Start Prompting Wizard."

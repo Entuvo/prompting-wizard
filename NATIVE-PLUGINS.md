@@ -1,6 +1,6 @@
 # Prompting Wizard — Everyday plugins
 
-The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-wizard-teacher`, version 0.2.2) for ChatGPT and Claude. It bundles the teaching skill, guide, rubrics and empty Learning Card. Learn through your work without an interview; choose Practice, Example, Lesson or Later after a useful teaching opportunity.
+The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-wizard-teacher`, version 0.2.3) for ChatGPT and Claude. It bundles the teaching skill, guide, rubrics and empty Learning Card. Learn through your work without an interview; choose Practice, Example, Lesson or Later after a useful teaching opportunity.
 
 These are buildable pilot packages, not a published directory listing or a verified native-app installation. The user walkthrough still needs to establish installation, activation and manual card transfer on each surface. Existing `prompting-wizard` course packages remain separate.
 

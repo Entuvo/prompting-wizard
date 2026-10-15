@@ -132,7 +132,7 @@ Course progress is kept in `PROGRESS.md`, or shared local state when the optiona
 ## More
 
 - [Website](https://entuvo.github.io/prompting-wizard/): the full course outline, install options, `pw` commands and updates
-- [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): a short video from each lesson, with its before and after
+- [Lessons](https://entuvo.github.io/prompting-wizard/lessons/): short videos from 18 of the 30 lessons, each with its before and after
 - [ChatGPT and Claude plugins](NATIVE-PLUGINS.md): package setup, device walkthrough and portable Learning Cards
 - [Optional automatic coaching in Claude Code/Codex: technical setup](COACHING.md) · [Privacy](PRIVACY.md) · [Terms](TERMS.md) · [Support](SUPPORT.md)
 - **Contributing:** lessons live in `prompting-wizard/days/`, rubrics in `prompting-wizard/rubrics.md`. Run `python3 tools/validate.py --complete`, `python3 tools/check_site.py` and the `tools/test_*.py` suites before a pull request. Enable the repo hooks once per clone: `git config core.hooksPath tools/hooks`. End-to-end checks on real hosts: `python3 tools/e2e_hosts.py` (Claude Code, Codex, and Claude/ChatGPT simulations via API keys; see its docstring).

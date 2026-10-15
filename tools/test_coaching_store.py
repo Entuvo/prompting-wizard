@@ -183,6 +183,25 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(target.read_text(),updated)
         self.assertEqual(target.read_text().split('- Day 0')[1].splitlines()[0], original.split('- Day 0')[1].splitlines()[0])
 
+    def test_history_line_can_join_a_lesson_commit(self):
+        original=('# Progress\nlevel: working\ncurrent_day: 1\n## Levers\n'
+                  'noun: 3 verb: 3 adjective: 3 adverb: 3 pronoun: 3 preposition: 3 conjunction: 3 determiner: 3 numeral: 3 interjection: 3 particle: 3\n'
+                  '## Tasks\n- Reports\n- Emails\n- Reviews\n## Log\n'
+                  '- Day 0 — assessment — baseline noun 3, verb 3, adjective 3, adverb 3, pronoun 3, preposition 3, conjunction 3, determiner 3, numeral 3, interjection 3, particle 3\n')
+        source=Path(self.temp.name)/'progress.md';source.write_text(original)
+        self.store.import_progress(source)
+        history='- History — 2026-10-15 — claude-code 300 prompts — levers noun 3, verb 3, adjective 2, adverb 1, preposition 3, pronoun 4, conjunction -, determiner 3, numeral -, interjection -, particle - — casebook /x/casebook\n'
+        bumped=original.replace('current_day: 1','current_day: 2')
+        item=self.observation();self.store.add_observation(item)
+        with self.assertRaises(ValueError):  # a History line alone is not a lesson
+            self.store.commit_lesson(self.lesson([item['id']],progress_text=bumped+history),0)
+        with self.assertRaises(ValueError):  # still exactly one lesson line
+            self.store.commit_lesson(self.lesson([item['id']],progress_text=bumped+history+'- Day 1 — noun — rubric 4\n- Day 1 — noun — rubric 5\n'),0)
+        updated=bumped+history+'- Day 1 — noun — rubric 4\n'
+        self.store.commit_lesson(self.lesson([item['id']],progress_text=updated),0)
+        target=Path(self.temp.name)/'export.md';self.store.export_progress(target)
+        self.assertEqual(target.read_text(),updated)
+
     def test_rebuilt_completed_progress_roundtrips_without_invented_baseline(self):
         source=Path(self.temp.name)/'rebuilt.md'
         text=('# Progress\nlevel: advanced\ncurrent_day: 31\n## Levers\n'

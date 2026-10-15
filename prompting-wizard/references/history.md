@@ -85,6 +85,7 @@ This writes one dossier per costly gap (up to four), plus `exemplars`. Write eac
 
   - Each `X` is that lever's mean, rounded to a whole number, or `-` where its `n` is below 5.
   - This line is informational. Never edit the Day 0 line or `## Levers`, never skip the assessment, and never change `current_day`.
+  - With local coaching's shared progress, don't write the working `PROGRESS.md` directly: an export would overwrite it. Keep the line and add it to the next lesson's commit, which accepts `- History — …` lines beside that lesson's line. Tell the learner it will be recorded with their next lesson.
   - Suggest starting with the lessons named in the `cases` output for the two costliest gaps. Change the day only if the learner asks.
 - **Learning Card** (only with a supplied or current `LEARNING.md`): propose at most one event per costly gap, and no more than three. Each event uses:
   - `activity: natural-use`, `assistance: none`, `outcome: not-yet`, `comparison: none`;

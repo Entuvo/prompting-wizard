@@ -1,6 +1,6 @@
 {
   "name": "prompting-wizard",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "A 30-lesson practical prompting course plus everyday learning and a review of your past work, using your real tasks.",
   "author": {"name": "Entuvo", "url": "https://github.com/Entuvo"},
   "homepage": "https://github.com/Entuvo/prompting-wizard",
@@ -11,7 +11,7 @@
   "interface": {
     "displayName": "Prompting Wizard",
     "shortDescription": "A 30-lesson prompting course",
-    "longDescription": "Learn reliable prompting in self-paced lessons built around your real work. One assessment, then one lever per lesson. Progress stays in a local PROGRESS.md file. Run pw history to see where prompts in your past Claude Code, Codex, ChatGPT or Claude work cost you turns.",
+    "longDescription": "Learn reliable prompting in self-paced lessons built around your real work. One assessment, then one lever per lesson. Progress stays in a local PROGRESS.md file. Run pw history to see where prompts in your past work with the same provider cost you turns.",
     "developerName": "Entuvo",
     "category": "Productivity",
     "capabilities": [],
@@ -21,7 +21,7 @@
     "termsOfServiceURL": "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md",
     "logo": "./assets/logo.png",
     "composerIcon": "./assets/logo.png",
-    "brandColor": "#C45C26",
+    "brandColor": "#C2582B",
     "defaultPrompt": [
       "Start Prompting Wizard.",
       "Continue my Prompting Wizard course."

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "prompting-wizard-teacher",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Learn prompting through everyday work, with optional practice and portable Learning Cards. Native-app pilot.",
   "author": {"name": "Entuvo", "url": "https://github.com/Entuvo"},
   "homepage": "https://github.com/Entuvo/prompting-wizard/blob/main/NATIVE-PLUGINS.md",
@@ -23,7 +23,7 @@
         "termsOfServiceURL": "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md",
         "logo": "./assets/logo.png",
         "composerIcon": "./assets/logo.png",
-        "brandColor": "#C45C26",
+        "brandColor": "#C2582B",
         "defaultPrompt": [
           "Use Prompting Wizard to teach me through my work; no interview.",
           "Use Prompting Wizard to review my attached Learning Card."

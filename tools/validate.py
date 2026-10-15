@@ -497,6 +497,15 @@ def check(require_all_days=False):
         if not (SKILL / name).is_file():
             errors.append(f"{name}: missing")
 
+    # The update check in SKILL.md must verify every shipped file, not just the original list.
+    skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8") if (SKILL / "SKILL.md").is_file() else ""
+    update_check = re.search(r"After either path completes, verify (.*?) are present", skill_text, re.S)
+    if update_check:
+        listed = set(re.findall(r"`([^`]+)`", update_check.group(1)))
+        for name in EXTRA_FILES:
+            if name not in listed:
+                errors.append(f"SKILL.md: update check does not verify {name}")
+
     skill_path = SKILL / "SKILL.md"
     text = load(skill_path, "SKILL.md") if skill_path.is_file() else None
     if text is not None:

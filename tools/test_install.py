@@ -6,6 +6,7 @@ import os
 import pty
 import select
 import shutil
+import re
 import subprocess
 import sys
 import tempfile
@@ -138,6 +139,7 @@ class InstallerTests(unittest.TestCase):
         (repo / "tools").mkdir()
         shutil.copy2(ROOT / "tools/validate.py", repo / "tools/validate.py")
         shutil.copy2(ROOT / "tools/course_files.py", repo / "tools/course_files.py")
+        shutil.copytree(ROOT / "pw", repo / "pw")
         skill = repo / "prompting-wizard"
         (skill / "learner.sqlite3").write_bytes(b"private")
         (skill / "hooks.json").write_text("{}")
@@ -180,6 +182,9 @@ class InstallerTests(unittest.TestCase):
         )
         self.assertFalse((target / ".claude-plugin").exists())
         self.assertFalse((self.home / ".claude/skills/prompting-wizard").exists())
+        shortcut = self.home / ".agents/skills/pw/SKILL.md"
+        self.assertEqual(shortcut.read_bytes(), (ROOT / "pw/SKILL.md").read_bytes())
+        self.assertTrue((target / "references/commands.md").is_file())  # the shortcut's companion guide
         self.assertIn(str(target), result.stdout)
         self.assertIn(
             "Open a new chat in the installed agent and say: "
@@ -196,6 +201,7 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((target / "SKILL.md").is_file())
         self.assertTrue((target / ".claude-plugin/plugin.json").is_file())
+        self.assertTrue((self.home / ".claude/skills/pw/SKILL.md").is_file())
         self.assertFalse((self.home / ".agents/skills/prompting-wizard").exists())
 
     def test_detects_both_clients_and_installs_both_host_layouts(self):
@@ -386,6 +392,20 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(len(backups), 1)
         self.assertEqual((backups[0] / "original/old").read_text(), "old")
         self.assertIn(str(backups[0].resolve()), result.stderr)
+
+    def test_install_check_covers_every_shipped_file(self):
+        self.stub("codex")
+        result = self.run_install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        target = self.home / ".agents/skills/prompting-wizard"
+        (target / "scripts/history.py").unlink()
+        verify = subprocess.run(
+            ["sh", "-c", 'repo_root_real="$1"; . /dev/stdin; verify_install_tree "$2" codex', "sh", str(ROOT), str(target)],
+            input=re.search(r"(?ms)^verify_install_tree\(\) \{.*?^\}\n", (ROOT / "install.sh").read_text()).group(0)
+            + "path_exists() { [ -e \"$1\" ] || [ -L \"$1\" ]; }\n",
+            capture_output=True, text=True)
+        self.assertNotEqual(verify.returncode, 0)
+        self.assertIn("scripts/history.py", verify.stderr)
 
     def test_validation_failure_mutates_nothing(self):
         broken = self.copy_repo_without("prompting-wizard/days/30.md")
