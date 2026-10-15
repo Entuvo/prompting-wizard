@@ -32,7 +32,7 @@
 <button class="video hero-video" type="button" data-video="_a40fI-F5HM" data-video-tall="s2WarFaRY2Q" aria-label="Play the Prompting Wizard video (loads from YouTube)">
 <picture><source media="(max-width: 640px)" srcset="assets/video-poster.jpg"><img src="assets/video-poster-landscape.jpg" alt="" width="1280" height="720"></picture><span class="play" aria-hidden="true"></span>
 </button>
-<p class="more-video">Watch <a href="lessons/">a short video from each lesson</a>, or <a href="https://www.youtube.com/playlist?list=PLHG7b8_3xqp0">the episode series</a> on YouTube.</p>
+<p class="more-video">Watch <a href="lessons/">short videos from 18 of the lessons</a>, or <a href="https://www.youtube.com/playlist?list=PLHG7b8_3xqp0">the episode series</a> on YouTube.</p>
 </header>
 <main>
 <section><div class="wrap">
@@ -83,18 +83,20 @@
 </ul>
 <p>Choose everyday learning with <code>pw learn</code>, or the structured course with an initial assessment. Ordinary ChatGPT and Claude users can try the <a href="https://github.com/Entuvo/prompting-wizard/blob/main/NATIVE-PLUGINS.md">teaching plugin pilot</a>: manual transfer between chats; native app compatibility remains unverified.</p>
 <div class="later"><p><strong>Not at your computer?</strong> Copy the link and open it there when you're ready.</p><button class="btn" type="button" data-copy="startlink">Copy the link</button><span id="startlink" hidden>https://entuvo.github.io/prompting-wizard/#start</span></div>
-<p>Paste this into Claude Code or Codex. It installs Prompting Wizard as a plugin and starts the course.</p>
+<p>Paste this into Claude Code or Codex. It loads Prompting Wizard and offers everyday learning, the structured course, or later.</p>
 <div class="code"><button class="copy" type="button" data-copy="prompt">Copy</button><pre id="prompt">Install or load Prompting Wizard from:
 
 https://github.com/Entuvo/prompting-wizard/tree/main/prompting-wizard
 
-First determine which AI environment you are running in and which capabilities it actually provides. Use its native skill, plugin, marketplace, repository, or filesystem installation method when available.
+This setup is for Claude Code or Codex. First determine which of those hosts you are running in and which capabilities it actually provides. Use its native skill, plugin, marketplace, repository, or filesystem installation method when available.
 
 If persistent installation is unavailable but you can read GitHub, load Prompting Wizard for this chat by reading AGENTS.md and then SKILL.md from that repository path. Follow those instructions directly.
 
 Do not overwrite an existing installation without asking me. Never claim the skill is installed unless the host confirms it. Do not stop after explaining installation or creating a package. Once Prompting Wizard is available, offer everyday learning without an interview, the structured course, or later. Honor my choice.
 
-If this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
+For everyday learning, accept my current LEARNING.md if supplied. After I accept a learning record, return the complete updated card for me to retain unless a durable file write succeeds. Never claim it is saved or synced without that write.
+
+For the structured course, if this environment cannot preserve files between chats, accept an attached PROGRESS.md and return the complete updated PROGRESS.md after every state change.
 
 If you can neither install the skill nor read its files from GitHub, state exactly which capability is missing. Do not fabricate a successful installation.</pre></div>
 <div class="callout"><p>Your practice prompts run for real, and may have the same file and network access as your AI session. Start in a folder you are comfortable letting an AI inspect, not a repository with important uncommitted work.</p></div>
@@ -109,7 +111,7 @@ If you can neither install the skill nor read its files from GitHub, state exact
 <div class="code"><button class="copy" type="button" data-copy="sk">Copy</button><pre id="sk">npx skills add Entuvo/prompting-wizard</pre></div></details>
 <details><summary><code>pw</code> commands</summary>
 <p>help, learn, learning, start, continue, progress, history, feedback on, feedback off, pause, resume, examples, forget, model.</p>
-<p><code>pw learn</code> starts everyday learning without an interview; <code>pw learning</code> shows Learning Card progress. <code>pw progress</code> shows course progress. <code>pw history</code> reviews your recent Claude Code or Codex sessions, or a ChatGPT or Claude data export, and shows where prompts cost you turns, with your consent before reading and before scoring.</p></details>
+<p><code>pw learn</code> starts everyday learning without an interview; <code>pw learning</code> shows Learning Card progress. <code>pw progress</code> shows course progress. <code>pw history</code> reviews your recent sessions or your data export from the same provider (Claude Code: Claude; Codex: ChatGPT), and shows where prompts cost you turns, with your consent before reading and before scoring.</p></details>
 <details><summary>Updates</summary>
 <p>Managed installs update through Claude Code, Codex or the skills CLI.</p></details>
 </div></section>

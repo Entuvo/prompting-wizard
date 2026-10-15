@@ -39,7 +39,7 @@ class TeachingPluginTests(unittest.TestCase):
                 payloads.append({n: z.read(n) for n in names if n.startswith('skills/')})
                 manifest = json.loads(z.read('plugin.json' if 'chatgpt' in path.name else '.claude-plugin/plugin.json'))
                 self.assertEqual(manifest['name'], 'prompting-wizard-teacher')
-                self.assertEqual(manifest['version'], '0.2.2')
+                self.assertEqual(manifest['version'], '0.2.3')
                 self.assertIn('LICENSE', names)
                 self.assertIn('README.md', names)
                 self.assertEqual(z.read('README.md'),

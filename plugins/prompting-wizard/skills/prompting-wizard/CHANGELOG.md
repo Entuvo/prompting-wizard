@@ -1,5 +1,12 @@
 # Prompting Wizard release notes
 
+## 1.4.4 — 2026-10-15
+
+- Fixed: a `History` log line no longer breaks lesson commits with local coaching's shared progress. A lesson commit may now include `- History — …` lines beside its one lesson line.
+- Fixed: `install.sh` installs the `pw` shortcut skill next to the course, so `/pw` and `$pw` work after a standalone install. The install check, and the update check in `SKILL.md`, now verify every shipped file under `references/` and `scripts/`.
+- Website: lesson 22's comparison now shows the system-prompt split; lessons 8, 24 and 26 highlight every change; the lesson-video count is accurate (18 of 30); lesson footers name all four hosts; the one-paste setup prompt matches the README.
+- Copy: `pw history` descriptions state the same-provider rule; lesson 29 and the lesson loop drop calendar and minute wording; history scoring documents why two catalog skills are not gap keys; manifests use the site's brand colour. Everyday plugin 0.2.3.
+
 ## 1.4.3 — 2026-10-14
 
 - Each provider's history is reviewed only by that provider's hosts. Claude Code and the Claude app review only Claude exports, and Codex and ChatGPT review only ChatGPT exports; another provider's export is declined without review. In the apps, an upload still reaches that app's provider, so upload only that app's own export. Coding hosts confirm an export's source before running anything, and `history.py` refuses another provider's history under Codex or Claude Code. The scan output also carries the exact consent question. Everyday plugin 0.2.2.

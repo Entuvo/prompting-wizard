@@ -48,6 +48,7 @@ Write one JSON object per line, one line for every episode in the batch. Use no 
 - `gaps`: 0–3 entries, only where a missing property plausibly caused the cost. Use an empty list for clean prompts. `score` is that key's rubric score, 1–5. Keys are the skill ids in `references/learning-catalog.json`:
   - Lever keys: `noun`, `verb`, `adjective`, `adverb`, `preposition`, `pronoun`, `conjunction`, `determiner`, `numeral`, `interjection`, `particle`.
   - Technique keys: `role-framing`, `few-shot-examples`, `output-schemas`, `task-decomposition`, `reasoning-scaffolds`, `negative-constraints`, `context-ordering`, `system-prompts`, `agent-and-tool-prompting`, `self-critique-loops`, `writing-evals`, `token-economy`, `failure-diagnosis`.
+  - These are 24 of the catalog's 26 skills. `prompt-library` and `capstone` are excluded on purpose: they describe a collection of prompts or a finished production prompt, not a gap a single past prompt can show.
 
   Common mappings:
 

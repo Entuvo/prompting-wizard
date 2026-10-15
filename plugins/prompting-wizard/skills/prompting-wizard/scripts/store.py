@@ -376,7 +376,10 @@ class Store:
                 new_log=self._progress_log(progress_text)
                 prefix=old_log+'\n' if old_log else ''
                 addition=new_log[len(prefix):] if new_log.startswith(prefix) else ''
-                if len(addition.splitlines())!=1 or not re.match(r'^- Day '+str(old_day)+r'\b',addition):
+                # Exactly one current-lesson line; informational `- History — …` lines (references/history.md)
+                # may be appended in the same commit.
+                lessons=[line for line in addition.splitlines() if not line.startswith('- History — ')]
+                if len(lessons)!=1 or not re.match(r'^- Day '+str(old_day)+r'\b',lessons[0]):
                     raise ValueError('Preserve prior log and append exactly one current lesson')
                 db.execute('UPDATE progress SET current=?',(progress_text.encode(),))
             db.execute('INSERT INTO lessons VALUES (?,?,?,?)',(record['id'],workspaces[0],self.clock(),json.dumps(record)))
