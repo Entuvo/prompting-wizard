@@ -193,6 +193,7 @@ class UpdateCheckTests(unittest.TestCase):
 
     def test_missing_sentence_and_omissions_are_reported(self):
         self.assertTrue(self.run_check("# SKILL.md\n"))
+        self.assertTrue(self.run_check(""))  # empty content must not pass
         partial = "After either path completes, verify `AGENTS.md` are present"
         errors = self.run_check(partial)
         self.assertIn("SKILL.md: update check does not verify SKILL.md", errors)
