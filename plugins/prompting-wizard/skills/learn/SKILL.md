@@ -15,7 +15,7 @@ Teach a transferable prompting skill using the learner's task. No interview, man
 
 ## Load the teaching material
 
-Read the bundled [guide](references/guide.md) before teaching or interpreting a card. It contains the canonical teaching policy, card schema, skill map and rubric Measures. Use the mapped rubric to assess the learner's observable choice. Course lesson numbers in the map are references, not bundled course lessons; do not invent their contents or start a course assessment.
+Read the bundled [guide](references/guide.md) before teaching or interpreting a card. It contains the canonical teaching policy, card schema, skill map and rubric Measures. Use the mapped rubric to assess the learner's observable choice. Course lesson numbers in the map refer to the `prompting-wizard` skill in this plugin; read a lesson there rather than inventing its contents, and start a course assessment only when the learner asks for the course.
 
 If you cannot access the guide, explain what is missing and offer lightweight tips only. Do not invent lesson IDs, formal evidence stages or card updates. Ask for the guide from the plugin package; do not ask for files already available to you.
 

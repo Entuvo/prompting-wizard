@@ -29,7 +29,12 @@ Confirm that the coach can read the bundled guide. If it cannot, use the [manual
 
 ## ChatGPT and Codex installation
 
-**Workspace:** a workspace admin adds the plugin and publishes it with **Plugins → Personal → plugin menu → Publish**, then grants the intended roles access. Members get it on web, desktop and mobile. This is workspace distribution, not public publication. See [workspace publishing](https://developers.openai.com/plugins/build/plugins#publish-a-local-plugin-to-your-workspace).
+**Personal (ChatGPT desktop), then workspace:** a downloaded zip does not appear in ChatGPT by itself. Register it as a local plugin first, following [OpenAI's manual install](https://developers.openai.com/plugins/build/plugins#install-a-local-plugin-manually):
+
+1. Unzip `prompting-wizard-openai.zip` to `~/.codex/plugins/prompting-wizard/`.
+2. Add an entry for it to `~/.agents/plugins/marketplace.json`, with `"source": {"source": "local", "path": "<that folder>"}`.
+3. Restart the ChatGPT desktop app and install **Prompting Wizard** from your local source under **Plugins → Personal**.
+4. To share it, a workspace admin opens the plugin's menu under **Personal**, chooses **Publish**, and grants the intended roles access. Members then get it on web, desktop and mobile. This is workspace distribution, not public publication. See [workspace publishing](https://developers.openai.com/plugins/build/plugins#publish-a-local-plugin-to-your-workspace).
 
 **Codex:** run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**.
 

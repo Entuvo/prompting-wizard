@@ -22,6 +22,9 @@ PLUGIN_REL = Path("plugins") / "prompting-wizard"
 from course_files import COURSE_FILES
 
 PLUGIN_NAME = "prompting-wizard"
+AGENT_PLUGIN_KEYS = {"$schema", "name", "version", "description", "author", "homepage", "repository", "license",
+                     "keywords", "extensions"}  # agent-plugins.org 1.0.0: additionalProperties false
+SHORT_DESCRIPTION_MAX = 30  # OpenAI submission listing metadata
 MANIFESTS = {  # plugin path -> canonical source
     ".claude-plugin/plugin.json": "prompting-wizard/.claude-plugin/plugin.json",
     ".codex-plugin/plugin.json": "packaging/openai-plugin.json",
@@ -39,6 +42,24 @@ def _read(root: Path, rel: str | Path) -> bytes:
 def _readme_words(text: str) -> int:
     text = re.sub(r"(?ms)^ {0,3}(`{3,}|~{3,})[^\n]*\n.*?^ {0,3}\1[ \t]*$", "", text)
     return len(re.sub(r"(?m)^(?: {4}|\t).*$", "", text).split())
+
+
+def frontmatter_errors(text: str, label: str) -> list[str]:
+    """Plain YAML scalars only: an unquoted value containing ': ' or starting with a YAML indicator breaks
+    strict parsers (claude.ai, Codex), so require quotes in those cases."""
+    block = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+    if not block:
+        return [f"{label}: missing YAML frontmatter"]
+    errors = []
+    for line in block.group(1).splitlines():
+        key, sep, value = line.partition(": ")
+        if not sep or not re.fullmatch(r"[a-z][a-z0-9-]*", key):
+            errors.append(f"{label}: unparseable frontmatter line {line[:40]!r}")
+            continue
+        quoted = len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'"
+        if not quoted and (": " in value or " #" in value or value[:1] in "&*!|>%@`[{,\"'"):
+            errors.append(f"{label}: frontmatter value for {key} must be quoted")
+    return errors
 
 
 def plugin_entries(root: Path = ROOT) -> dict[str, bytes]:
@@ -64,7 +85,18 @@ def plugin_entries(root: Path = ROOT) -> dict[str, bytes]:
 
     errors: list[str] = []
     for skill in ("prompting-wizard", "pw", "learn"):
-        check_skill_metadata(data[f"skills/{skill}/SKILL.md"].decode("utf-8"), errors)
+        text = data[f"skills/{skill}/SKILL.md"].decode("utf-8")
+        check_skill_metadata(text, errors)
+        errors += frontmatter_errors(text, f"skills/{skill}/SKILL.md")
+    agent = json.loads(data["plugin.json"])
+    extra = set(agent) - AGENT_PLUGIN_KEYS
+    if extra:
+        errors.append(f"plugin.json: fields not allowed by the Agent Plugins schema: {sorted(extra)}")
+    interfaces = (agent.get("extensions", {}).get("com.openai", {}).get("interface", {}),
+                  json.loads(data[".codex-plugin/plugin.json"]).get("interface", {}))
+    for interface in interfaces:
+        if len(interface.get("shortDescription", "")) > SHORT_DESCRIPTION_MAX:
+            errors.append(f"OpenAI shortDescription exceeds {SHORT_DESCRIPTION_MAX} characters")
     if errors:
         raise ValueError("; ".join(errors))
     versions = {json.loads(data[m]).get("version") for m in MANIFESTS}
@@ -76,11 +108,17 @@ def plugin_entries(root: Path = ROOT) -> dict[str, bytes]:
     return data
 
 
+def _plugin_dir(root: Path) -> Path:
+    """The plugin destination; refuse if it, or any directory between it and the repo root, is a symlink."""
+    for i in range(1, len(PLUGIN_REL.parts) + 1):
+        if (root / Path(*PLUGIN_REL.parts[:i])).is_symlink():
+            raise ValueError(f"{Path(*PLUGIN_REL.parts[:i])} must not be a symlink")
+    return root / PLUGIN_REL
+
+
 def sync(root: Path = ROOT) -> Path:
     data = plugin_entries(root)
-    plugin = root / PLUGIN_REL
-    if plugin.is_symlink():
-        raise ValueError("Plugin directory must not be a symlink")
+    plugin = _plugin_dir(root)
     for path in sorted(plugin.rglob("*"), reverse=True) if plugin.exists() else []:
         rel = path.relative_to(plugin).as_posix()
         if path.is_symlink() or (path.is_file() and rel not in data):
@@ -98,7 +136,10 @@ def sync(root: Path = ROOT) -> Path:
 
 def check(root: Path = ROOT) -> list[str]:
     data = plugin_entries(root)
-    plugin = root / PLUGIN_REL
+    try:
+        plugin = _plugin_dir(root)
+    except ValueError as exc:
+        return [str(exc)]
     problems = []
     for rel, content in data.items():
         path = plugin / rel

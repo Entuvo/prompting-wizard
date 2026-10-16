@@ -121,6 +121,39 @@ class PackageReleaseTests(unittest.TestCase):
         self.assertEqual(sync_codex_plugin.check(self.root), [])
         self.assertFalse((plugin / "stray.txt").exists())
 
+    def test_unquoted_colon_in_frontmatter_is_rejected(self):
+        skill = self.root / "pw" / "SKILL.md"
+        skill.write_text(skill.read_text().replace('description: "', 'description: ', 1).replace('model guidance."', 'model guidance.', 1))
+        with self.assertRaisesRegex(ValueError, "must be quoted"):
+            self.build()
+
+    def test_portable_manifest_rejects_fields_outside_the_schema(self):
+        manifest = self.root / "packaging" / "plugin.json"
+        data = json.loads(manifest.read_text())
+        data["skills"] = "./skills/"
+        manifest.write_text(json.dumps(data))
+        with self.assertRaisesRegex(ValueError, "Agent Plugins schema"):
+            self.build()
+
+    def test_openai_subtitle_fits_the_listing_limit(self):
+        manifest = self.root / "packaging" / "openai-plugin.json"
+        data = json.loads(manifest.read_text())
+        data["interface"]["shortDescription"] = "x" * 31
+        manifest.write_text(json.dumps(data))
+        with self.assertRaisesRegex(ValueError, "shortDescription"):
+            self.build()
+
+    def test_symlinked_destination_is_refused(self):
+        outside = Path(self.tmp.name).parent / (Path(self.tmp.name).name + "-outside")
+        (outside / "prompting-wizard").mkdir(parents=True)
+        (outside / "prompting-wizard" / "keep.txt").write_text("not ours")
+        self.addCleanup(shutil.rmtree, outside, True)
+        (self.root / "plugins").symlink_to(outside)
+        with self.assertRaisesRegex(ValueError, "must not be a symlink"):
+            sync_codex_plugin.sync(self.root)
+        self.assertTrue((outside / "prompting-wizard" / "keep.txt").exists())
+        self.assertIn("must not be a symlink", " ".join(sync_codex_plugin.check(self.root)))
+
     def test_skill_descriptions_fit_claude_ai_uploads(self):
         (self.root / "pw" / "SKILL.md").write_text(
             (self.root / "pw" / "SKILL.md").read_text().replace("description: ", "description: " + "x" * 200, 1))

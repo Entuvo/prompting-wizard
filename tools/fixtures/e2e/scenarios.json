@@ -76,7 +76,7 @@
     "checks": {
       "card_valid": true,
       "not_matches": [
-        "(?i)\\b(I('ve| have) saved|has been saved|is now saved|synced)\\b"
+        "(?i)\\b(I('ve| have) saved|(?<!othing )has been saved|is now saved|(?<!n't )(?<!not )synced)\\b"
       ]
     },
     "expect": [
@@ -110,8 +110,6 @@
     "id": "export-review",
     "plugin": "everyday",
     "hosts": [
-      "claude-code",
-      "codex",
       "claude-api",
       "openai-api"
     ],

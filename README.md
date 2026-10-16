@@ -23,7 +23,7 @@ Prompting Wizard is one plugin. Download the file for your app from the [latest 
 |---|---|---|
 | Claude (web, desktop, Cowork) | `prompting-wizard-claude.zip` | **Customize → Plugins → upload** (paid plans). It also syncs to Claude Code when you sign in with the same account. |
 | Claude Code | `prompting-wizard-claude.zip`, or none | Upload in Claude as above, or run `/plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**. |
-| ChatGPT | `prompting-wizard-openai.zip` | A workspace admin publishes it to the workspace (**Plugins → Personal → Publish**). The public ChatGPT plugin directory listing is pending review. |
+| ChatGPT | `prompting-wizard-openai.zip` | Register it as a local plugin in the ChatGPT desktop app, then a workspace admin can publish it to the workspace; steps in [plugin setup](NATIVE-PLUGINS.md#chatgpt-and-codex-installation). It has not been submitted to the public ChatGPT plugin directory yet. |
 | Codex | `prompting-wizard-openai.zip`, or none | Run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**. |
 
 Then start a new chat and say: “Use Prompting Wizard to teach me through my work; no interview.” For structured lessons, say “Start the Prompting Wizard course.” Details, device notes and the walkthrough are in [plugin setup](NATIVE-PLUGINS.md). Everyday coaching in the ChatGPT and Claude apps is a pilot: native behaviour on each device is still being verified.
