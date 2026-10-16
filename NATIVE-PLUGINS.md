@@ -1,6 +1,6 @@
 # Prompting Wizard plugin setup
 
-Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.0), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
+Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.1), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
 
 Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each surface passes the same walkthrough. No directory listing is published yet.
 

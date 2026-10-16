@@ -1,4 +1,4 @@
 # Prompting Wizard version
 
-version: 1.5.0
+version: 1.5.1
 release-notes: https://github.com/Entuvo/prompting-wizard/blob/main/prompting-wizard/CHANGELOG.md
