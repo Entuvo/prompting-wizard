@@ -1,8 +1,8 @@
 # Prompting Wizard plugin setup
 
-Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.0), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
+Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.1), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
 
-Everyday coaching in the ChatGPT and Claude apps is a pilot. The walkthrough below still needs to establish installation, activation and manual card transfer on each surface. Neither directory submission nor publication has occurred.
+Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each surface passes the same walkthrough. No directory listing is published yet.
 
 ## Downloads
 
@@ -66,6 +66,14 @@ Use disposable chats and synthetic material. Record provider, account plan, app 
 6. Start an ordinary new chat without mentioning Wizard. Record whether it activates. A pass after explicit selection does not establish automatic activation.
 
 Local package tests and model simulations do not establish these native results or human learning effectiveness.
+
+### Walkthrough record
+
+| Provider and surface | Plan | App version | Date | 1 Install | 2 Work first | 3 Practice | 4 Card to other app | 5 Bad card | 6 Ordinary new chat |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Claude, web | Max | web | 2026-10-16 | pass | pass | pass | pass | pass | started on its own |
+
+Surfaces not listed have not been through the walkthrough.
 
 ## Maintainers
 

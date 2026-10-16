@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "prompting-wizard",
   "displayName": "Prompting Wizard",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Learn prompting through your everyday work: practice, short lessons and Learning Cards, an optional 30-lesson course, and a review of your past chats.",
   "author": {
     "name": "Entuvo",
@@ -17,5 +17,10 @@
     "course",
     "learning",
     "productivity"
-  ]
+  ],
+  "icon": "./assets/logo.png",
+  "documentationUrl": "https://entuvo.github.io/prompting-wizard/",
+  "supportUrl": "https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md",
+  "privacyPolicyUrl": "https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md",
+  "termsOfServiceUrl": "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md"
 }

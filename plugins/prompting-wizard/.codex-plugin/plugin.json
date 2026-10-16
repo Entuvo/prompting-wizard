@@ -1,6 +1,6 @@
 {
   "name": "prompting-wizard",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Learn prompting through your everyday work: practice, short lessons and Learning Cards, an optional 30-lesson course, and a review of your past chats.",
   "author": {
     "name": "Entuvo",
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Prompting Wizard",
     "shortDescription": "Learn prompting in your work",
-    "longDescription": "Finish your work, then choose practice, an example or a short lesson, and keep accepted evidence in a portable Learning Card. Take the optional 30-lesson course, or review your past chats with the same provider to see where prompts cost you turns. In ChatGPT and Claude the everyday coaching is a pilot; local course storage and pw history need Claude Code or Codex.",
+    "longDescription": "Finish your work, then choose practice, an example or a short lesson, and keep accepted evidence in a portable Learning Card. Take the optional 30-lesson course, or review your past chats with the same provider to see where prompts cost you turns. In ChatGPT the everyday coaching is a pilot; local course storage and pw history need Claude Code or Codex.",
     "developerName": "Entuvo",
     "category": "Productivity",
     "capabilities": [],

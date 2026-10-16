@@ -1,5 +1,11 @@
 # Prompting Wizard release notes
 
+## 1.5.1 — 2026-10-16
+
+- **Claude on the web passed the device walkthrough** (Max plan, 2026-10-16): install, work first, practice, card carried to another app, honest handling of a bad card, and it started on its own in an ordinary new chat. The record is in `NATIVE-PLUGINS.md`. ChatGPT and the Claude desktop and phone apps stay a pilot until each passes the same walkthrough.
+- The Claude manifest carries the directory listing fields: icon, documentation, support, privacy and terms links.
+- Website: leads with everyday coaching; past-work review and the Learning Card have their own sections; the course is marked optional.
+
 ## 1.5.0 — 2026-10-16
 
 - **One plugin.** The course, the `pw` shortcut and everyday learning (formerly the separate "Prompting Wizard — Everyday" plugin) now ship as one plugin, `prompting-wizard`. Releases attach two downloads: `prompting-wizard-claude.zip` (Claude app, Cowork, Claude Code) and `prompting-wizard-openai.zip` (ChatGPT and Codex), each with its manifest at the archive root. The old course zips, the standalone skill zip and the separate `prompting-wizard-teacher` plugin are retired. If you installed it, remove it and install `prompting-wizard`.
