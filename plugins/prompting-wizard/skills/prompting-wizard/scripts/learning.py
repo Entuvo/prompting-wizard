@@ -250,7 +250,7 @@ def select_next(card: dict, relevant_skills: list, task_family: str,
         elif stage in ('introduced', 'practised-with-help', 'practised-assistance-unknown'):
             rank, activity, reason = 2, 'independent-practice', 'Try a new task without help; prior evidence does not yet show independent performance.'
         elif last and (today - datetime.date.fromisoformat(last)).days >= 7:
-            rank, activity, reason = 3, 'revisit', 'Revisit a relevant skill after at least seven days; this interval is a pilot heuristic.'
+            rank, activity, reason = 3, 'revisit', 'Revisit a relevant skill after at least seven days; this interval is a provisional heuristic.'
         elif stage == 'unknown':
             rank, activity, reason = 4, 'introduction', 'This task offers a relevant skill with no sufficient learning evidence yet.'
         elif stage == 'demonstrated-independently' and task_family not in {

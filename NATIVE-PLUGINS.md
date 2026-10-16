@@ -2,7 +2,7 @@
 
 Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.2), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
 
-Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each surface passes the same walkthrough. It is not listed in any public directory. OpenAI's plugin directory rejected the 1.5.1 submission on 16 October 2026 (see [OpenAI directory review](#openai-directory-review)).
+Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). ChatGPT and the Claude desktop and phone apps have not been through it yet. It is not listed in any public directory. OpenAI's plugin directory rejected the 1.5.1 submission on 16 October 2026 (see [OpenAI directory review](#openai-directory-review)).
 
 ## Downloads
 
@@ -38,7 +38,7 @@ Confirm that the coach can read the bundled guide. If it cannot, use the [manual
 
 **Codex:** run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**.
 
-**Public:** the publisher uploads `prompting-wizard-openai.zip` through the [OpenAI plugin submission portal](https://developers.openai.com/plugins/deploy/submission); one listing covers ChatGPT and Codex. It is not listed: see [OpenAI directory review](#openai-directory-review). OpenAI's guidelines also exclude trial plugins, so the pilot label has to be resolved by the walkthrough first.
+**Public:** the publisher uploads `prompting-wizard-openai.zip` through the [OpenAI plugin submission portal](https://developers.openai.com/plugins/deploy/submission); one listing covers ChatGPT and Codex. It is not listed: see [OpenAI directory review](#openai-directory-review). OpenAI's guidelines also exclude trial plugins, so the ChatGPT walkthrough is still to be done before resubmission.
 
 Once installed, start a new chat, select the plugin with `@` if necessary, and use the start request above.
 

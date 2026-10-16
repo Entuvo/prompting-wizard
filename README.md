@@ -26,7 +26,7 @@ Prompting Wizard is one plugin. Download the file for your app from the [latest 
 | ChatGPT | `prompting-wizard-openai.zip` | Register it as a local plugin in the ChatGPT desktop app, then a workspace admin can publish it to the workspace; steps in [plugin setup](NATIVE-PLUGINS.md#chatgpt-and-codex-installation). It is not in OpenAI's public plugin directory: the 1.5.1 submission was rejected on 2026-10-16, and skills-only plugins are not currently accepted. This download leaves out the update check and local session history (app exports still work). |
 | Codex | none | Run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard** for every feature, including `pw history` on your Codex sessions. |
 
-Then start a new chat and say: “Use Prompting Wizard to teach me through my work; no interview.” For structured lessons, say “Start the Prompting Wizard course.” Details, device notes and the walkthrough are in [plugin setup](NATIVE-PLUGINS.md). Everyday coaching has passed the device walkthrough in Claude on the web. In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each passes the same walkthrough.
+Then start a new chat and say: “Use Prompting Wizard to teach me through my work; no interview.” For structured lessons, say “Start the Prompting Wizard course.” Details, device notes and the walkthrough are in [plugin setup](NATIVE-PLUGINS.md). Everyday coaching has passed the device walkthrough in Claude on the web.
 
 Keep your current `LEARNING.md` and attach it in each new chat that needs your learning history; the plugin does not synchronize progress. If plugins are unavailable to your account, use the [one-time instructions and manual guide setup](NATIVE-APPS.md).
 
