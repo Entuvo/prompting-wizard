@@ -50,6 +50,54 @@ def write_zip(path: Path, entries: list[tuple[str, bytes]]) -> Path:
     return path
 
 
+# The OpenAI directory build installs nothing from outside the package: no update check that fetches and
+# replaces skill files, and no session-history readers that need extra packages. The repository marketplace
+# and the Claude download keep both. Each change is exact text; drift raises instead of shipping silently.
+OPENAI_OMIT = frozenset({"skills/prompting-wizard/scripts/history_hosts.py"})
+OPENAI_UPDATES = """## Updates
+
+Updates come only through the plugin manager of the app where this plugin is installed. Never fetch, download or replace skill files, and never check a remote location for a newer version.
+
+If `course_version` is absent or differs from the installed `version` in this skill's `VERSION.md`, write the installed version; this is a state change, so apply step 6's durable write or stateless artifact-or-complete-fenced-file delivery rule. When the learner asks to check for or install an update, tell them to update Prompting Wizard through their app's plugin settings, then continue the lesson.
+
+"""
+OPENAI_EDITS = {
+    "skills/prompting-wizard/SKILL.md": (
+        ("Run the update check below before continuing when `current_day` is 30 or below, or whenever the learner "
+         "explicitly asks to check or update.",
+         "Apply `## Updates` below before continuing."),
+        (re.compile(r"^## Update check\n.*?(?=^## )", re.M | re.S), OPENAI_UPDATES),
+    ),
+    "skills/prompting-wizard/references/history.md": (
+        ("- Claude Code: needs `pip install claude-agent-sdk`.\n- Codex: needs `pip install openai-codex`.\n",
+         "- Local Claude Code and Codex session history is not in this build; app data exports work.\n"),
+    ),
+}
+OPENAI_FORBIDDEN = ("raw.githubusercontent", "pip install", "curl ", "git clone", "npx ")
+
+
+def openai_entries(data: dict[str, bytes]) -> list[tuple[str, bytes]]:
+    entries = []
+    for name, content in data.items():
+        if name in OPENAI_OMIT:
+            continue
+        for old, new in OPENAI_EDITS.get(name, ()):
+            text = content.decode("utf-8")
+            if isinstance(old, re.Pattern):
+                text, count = old.subn(lambda _: new, text)
+            else:
+                count = text.count(old)
+                text = text.replace(old, new)
+            if count != 1:
+                raise ValueError(f"{name}: expected one match for OpenAI edit, found {count}: {str(old)[:60]}")
+            content = text.encode("utf-8")
+        found = [s for s in OPENAI_FORBIDDEN if s.encode() in content]
+        if found:
+            raise ValueError(f"{name}: OpenAI build must not contain {', '.join(found)}")
+        entries.append((name, content))
+    return entries
+
+
 def relative_entries(skill: Path, prefix: str) -> list[tuple[str, bytes]]:
     return [
         (f"{prefix}/{path.relative_to(skill).as_posix()}", path.read_bytes())
@@ -96,7 +144,7 @@ def build_all(
     claude_zip = write_zip(dist / "prompting-wizard-claude.zip",
                            [(n, c) for n, c in data.items() if n not in openai_only])
     openai_zip = write_zip(dist / "prompting-wizard-openai.zip",
-                           [(n, c) for n, c in data.items() if n not in claude_only])
+                           openai_entries({n: c for n, c in data.items() if n not in claude_only}))
     return claude_zip, openai_zip
 
 

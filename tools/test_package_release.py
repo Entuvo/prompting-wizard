@@ -154,6 +154,29 @@ class PackageReleaseTests(unittest.TestCase):
         self.assertTrue((outside / "prompting-wizard" / "keep.txt").exists())
         self.assertIn("must not be a symlink", " ".join(sync_codex_plugin.check(self.root)))
 
+    def test_openai_build_installs_nothing_from_outside_the_package(self):
+        claude, openai = self.build()
+        hosts = "skills/prompting-wizard/scripts/history_hosts.py"
+        self.assertNotIn(hosts, self.names(openai))
+        self.assertIn("skills/prompting-wizard/scripts/history_exports.py", self.names(openai))
+        with zipfile.ZipFile(openai) as archive:
+            for name in archive.namelist():
+                content = archive.read(name)
+                for forbidden in (b"raw.githubusercontent", b"pip install", b"curl ", b"git clone", b"npx "):
+                    self.assertNotIn(forbidden, content, f"{name}: {forbidden!r}")
+        skill = self.read(openai, "skills/prompting-wizard/SKILL.md").decode()
+        self.assertNotIn("## Update check", skill)
+        self.assertIn("Never fetch, download or replace skill files", skill)
+        self.assertIn(hosts, self.names(claude))
+        self.assertIn(b"## Update check", self.read(claude, "skills/prompting-wizard/SKILL.md"))
+        self.assertIn(b"raw.githubusercontent.com", self.read(claude, "skills/prompting-wizard/SKILL.md"))
+
+    def test_openai_edit_that_no_longer_matches_stops_the_build(self):
+        history = self.root / "prompting-wizard" / "references" / "history.md"
+        history.write_text(history.read_text().replace("needs `pip install openai-codex`", "needs the Codex SDK"))
+        with self.assertRaisesRegex(ValueError, "expected one match for OpenAI edit"):
+            self.build()
+
     def test_skill_descriptions_fit_claude_ai_uploads(self):
         (self.root / "pw" / "SKILL.md").write_text(
             (self.root / "pw" / "SKILL.md").read_text().replace("description: ", "description: " + "x" * 200, 1))
