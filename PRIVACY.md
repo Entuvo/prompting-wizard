@@ -6,13 +6,28 @@ Prompting Wizard is published by Entuvo. It is a set of files you install into a
 
 ## What we collect
 
-We do not collect personal information, lesson answers, prompts, scores, or `PROGRESS.md` contents.
+Entuvo does not collect your lesson answers, prompts, scores, Learning Card, or `PROGRESS.md` contents.
+
+Entuvo handles data about you in only two places, both described below:
+
+- visit counts for the website, through Cloudflare Web Analytics;
+- anything you choose to post in a public GitHub issue.
+
+Your learning data stays with you and with the AI provider whose app or tool you use. That provider decides how long it keeps your chats and uploads. Entuvo cannot see or delete them.
 
 The standalone course uses a local or attached `PROGRESS.md`. Optional local coaching stores learner data in an owner-only SQLite profile directory you choose. Entuvo receives neither file.
 
 ## The website
 
-The website (entuvo.github.io/prompting-wizard) counts visits with Cloudflare Web Analytics. It sets no cookies and does not identify you. Cloudflare records page views, the referring site, and coarse device and country information, so Entuvo can see which pages and which links bring people to the course. The site is hosted by GitHub Pages, which keeps its own server logs under GitHub's policies. Videos load from YouTube only when you press play.
+The website (entuvo.github.io/prompting-wizard) counts visits with Cloudflare Web Analytics.
+
+- What is recorded: each page view, with the page, the referring site, your country, device type, browser, operating system, and page load timings. It sets no cookies and uses no local storage. Cloudflare says it does not fingerprint visitors by IP address or user agent, and does not log query strings.
+- Why: so Entuvo can see which pages people read and which links bring them to the course.
+- Who receives it: Cloudflare, which runs the service under the [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/). Entuvo sees only aggregate counts in Cloudflare's dashboard, never an individual visit.
+- How long it is kept: Cloudflare sets this, not Entuvo. Its [Web Analytics FAQ](https://developers.cloudflare.com/web-analytics/faq/) says it keeps unsampled data for 7 days, then keeps about 10% of it for long-term storage, and the dashboard shows the previous six months.
+- Your controls: the counter is a script from `static.cloudflareinsights.com`. Block it, for example with a content blocker, and your visit is not counted. The site works without it.
+
+The site is hosted by GitHub Pages, which keeps its own server logs under GitHub's policies. Videos load from YouTube only when you press play.
 
 ## Optional local coaching
 
@@ -26,18 +41,32 @@ Use the runtime to inspect, exclude, pause or delete managed learning data. Dele
 
 ## Learning from past work history
 
-`pw history` runs only when you ask, one time. It reads one of the following:
+A review of your past work runs only when you ask, one time. How your data is handled depends on where you run it.
+
+Each provider's history is reviewed only by that provider's hosts: Claude Code and the Claude app review only Claude exports, and Codex and ChatGPT review only ChatGPT exports. Another provider's export is declined without review.
+
+## Past work history in Claude Code and Codex
+
+`pw history` reads one of the following:
 
 - your Claude Code or Codex sessions, through that host's documented SDK, skipping workspaces excluded from local coaching;
 - a ChatGPT or Claude data export that you downloaded and chose to supply.
 
-It never parses private transcript files. An export archive is read in memory and never extracted. You confirm twice: once before anything is read, and again before scoring.
+The `prompting-wizard-openai.zip` download reads exports only.
 
-Scoring sends a sample of your prompts and the assistant's replies (300 by default) through the AI provider you are already using, under its terms, and uses your quota. Each provider's history is reviewed only by that provider's hosts: Claude Code and the Claude app review only Claude exports, and Codex and ChatGPT review only ChatGPT exports. Another provider's export is declined without review. In a coding host, the runtime's shape check runs on your machine and stops before anything reaches the model. In the ChatGPT and Claude apps, though, uploading a file sends it to that app's provider before the plugin can decline it, so upload only that app's own export. Secrets that look like API keys, tokens, long hex strings or email addresses are masked before anything is written or sent. Pattern masking cannot catch everything.
+It never parses private transcript files. An export archive is read in memory and never extracted. You confirm twice: once before anything is read, and again before scoring. The runtime's shape check runs on your machine and stops another provider's export before anything reaches the model.
 
-In Claude Code and Codex, results are written under `history/` in a local data directory you choose, with owner-only permissions. They include verbatim prompts, the casebook pages and an aggregate baseline. Runs are deleted 30 days after they are written, on the next runtime invocation, or sooner with `delete`.
+Scoring sends a sample of your prompts and the assistant's replies (300 by default) through the AI provider you are already using, under its terms, and uses your quota. Secrets that look like API keys, tokens, long hex strings or email addresses are masked before anything is written or sent. Pattern masking cannot catch everything.
 
-In the ChatGPT and Claude apps, nothing is stored by Prompting Wizard. Findings appear in the reply, and the uploaded file stays in that chat under the provider's retention.
+Results are written under `history/` in a local data directory you choose, with owner-only permissions. They include verbatim prompts, the casebook pages and an aggregate baseline. Runs are deleted 30 days after they are written, on the next runtime invocation, or sooner with `delete`.
+
+## Past work history in the ChatGPT and Claude apps
+
+You upload an export to a chat and ask the coach to review it. There is no local runtime here, so the two confirmations and the secret masking above do not apply. The uploaded file goes to that app's provider as it is, with nothing masked, before the coach can check it or decline it. Upload only that app's own export, and remove anything you do not want the provider to see before you upload.
+
+The coach reviews the file in that chat only. Prompting Wizard stores nothing. Findings appear in the reply, and the uploaded file stays in that chat under the provider's retention.
+
+## After any history review
 
 Nothing is added to `PROGRESS.md`, a Learning Card, CLAUDE.md, AGENTS.md or any settings file unless you accept it. A Learning Card entry contains a paraphrase, never an excerpt. Entuvo receives nothing. Host transcripts and provider exports are governed by their own retention, and this project cannot delete them.
 
@@ -55,9 +84,17 @@ GitHub, Claude, OpenAI, the skills CLI, and any other host you use may collect t
 
 Lesson prompts run in your AI assistant, with that assistant's file and network access. Outputs stay in that session unless you save them.
 
-## Contact
+## Support through GitHub Issues
 
-Questions about this policy: open an issue at https://github.com/Entuvo/prompting-wizard/issues
+Support and questions about this policy go through [GitHub Issues](https://github.com/Entuvo/prompting-wizard/issues). There is no email queue.
+
+- What is shared: whatever you write in an issue or comment. It is public: anyone can read it, and it shows your GitHub username and profile.
+- Why: Entuvo reads issues to answer you and to fix the project.
+- Who receives it: GitHub, which hosts issues under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), and anyone who reads the issue.
+- How long it is kept: an issue stays until it is deleted.
+- Your controls: you can edit your issue and edit or delete your own comments. GitHub keeps an edit history that anyone who can read the issue can see. Only the repository's admins can [delete an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/administering-issues/deleting-an-issue), so ask in the issue and Entuvo can delete it.
+
+Use synthetic examples. Never post a Learning Card, `PROGRESS.md`, prompts, transcripts or exports.
 
 ## Portable Learning Cards
 
