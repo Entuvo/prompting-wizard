@@ -1,6 +1,7 @@
 """Learning from past work history: episodes, filtering and outcome hints.
 
-Pure functions over normalized sessions; host access lives in history_hosts.py.
+Pure functions over normalized sessions; export readers live in history_exports.py and local session
+readers in history_hosts.py.
 A session is {'host', 'session_id', 'cwd', 'created_at' (ms), 'messages': [
   {'role': 'user'|'assistant', 'id', 'content': str|list, 'subagent': bool, 'out_tokens': int, 'msg_id'}]}.
 See design/history-analysis.md. Raw excerpts written here are local learner data.
@@ -429,13 +430,29 @@ def _excluder(root):
     return excluded
 
 
+LOCAL_HISTORY_ABSENT = ('Local session history is not in this build. Use an app data export (--host chatgpt or '
+                        '--host claude), or the full install from the project repository.')
+
+
+def _local_sessions(host, days, excluded):
+    try:
+        import history_hosts
+    except ModuleNotFoundError as exc:
+        raise ValueError(LOCAL_HISTORY_ABSENT) from exc
+    reader = history_hosts.claude_code_sessions if host == 'claude-code' else history_hosts.codex_sessions
+    try:
+        return list(reader(days=days, excluded=excluded))
+    except history_hosts.HostUnavailable as exc:
+        raise ValueError(str(exc)) from exc
+
+
 def main(argv=None):
     import argparse
     import datetime
     import os
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parent))  # sibling modules load under `python3 -I` too
-    import history_hosts
+    import history_exports
 
     parser = argparse.ArgumentParser(description='Learn from past work history. See references/history.md.')
     sub = parser.add_subparsers(dest='command', required=True)
@@ -469,12 +486,11 @@ def main(argv=None):
             if args.host in ('chatgpt', 'claude'):
                 if not args.file:
                     raise ValueError(f'--file is required for {args.host} exports')
-                reader = history_hosts.chatgpt_export_sessions if args.host == 'chatgpt' else \
-                    history_hosts.claude_export_sessions
+                reader = history_exports.chatgpt_export_sessions if args.host == 'chatgpt' else \
+                    history_exports.claude_export_sessions
                 sessions = reader(args.file, days=args.days)
             else:
-                reader = history_hosts.claude_code_sessions if args.host == 'claude-code' else history_hosts.codex_sessions
-                sessions = list(reader(days=args.days, excluded=_excluder(root)))
+                sessions = _local_sessions(args.host, args.days, _excluder(root))
             sample, episodes, counts = build(sessions, cap=args.cap)
             run = history_root / f"{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%SZ}-{args.host}"
             (run / 'batches').mkdir(parents=True)
@@ -515,7 +531,7 @@ def main(argv=None):
                     raise ValueError(f'No such history run: {target.name}')
                 shutil.rmtree(target)
             out.update(deleted=[t.name for t in targets])
-    except (history_hosts.HostUnavailable, ValueError, OSError) as exc:
+    except (ValueError, OSError) as exc:
         print(json.dumps({**out, 'ok': False, 'error': str(exc)}))
         return 1
     print(json.dumps(out, ensure_ascii=False))

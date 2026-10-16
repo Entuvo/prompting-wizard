@@ -123,7 +123,8 @@ Each provider's history stays with that provider: scoring sends excerpts through
 ## Changes by file (planned)
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
-- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex, and export readers for ChatGPT and Claude.
+- `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex.
+- `prompting-wizard/scripts/history_exports.py`: standard-library export readers for ChatGPT and Claude.
 - `learn/SKILL.md` (the plugin's `learn` skill): in-app export review. Since 1.5.0 it ships in the one `prompting-wizard` plugin.
 - `prompting-wizard/references/history.md` (tutor procedure) and `history-scoring.md` (scorer spec); `history-casebook.md` (casebook page spec).
 - `prompting-wizard/references/commands.md`: `history` routing. `history.py` owns its own `scan`/`merge`/`delete` CLI, so `wizard.py` never imports a host SDK.
