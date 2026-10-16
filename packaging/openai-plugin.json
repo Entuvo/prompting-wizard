@@ -20,9 +20,9 @@
   "interface": {
     "displayName": "Prompting Wizard",
     "shortDescription": "Learn prompting in your work",
-    "longDescription": "Finish your work, then choose practice, an example or a short lesson, and keep accepted evidence in a portable Learning Card. Take the optional 30-lesson course, or review your past chats with the same provider to see where prompts cost you turns. In ChatGPT the everyday coaching is a pilot; local course storage and pw history need Claude Code or Codex.",
+    "longDescription": "Prompting Wizard helps people who write prompts at work get better at it while doing real tasks. Finish a task, then choose practice, an example or a short lesson built from it, and keep the evidence you accept in a portable Learning Card that you can bring to a new chat. Take the optional 30-lesson course, or supply a data export of your past chats from this app to see where prompts cost you extra turns. Limitations: in a chat app nothing is stored between chats, so attach your Learning Card or course progress file to continue; only exports you choose to supply are reviewed; learning outcomes have not yet been established through testing with learners.",
     "developerName": "Entuvo",
-    "category": "Productivity",
+    "category": "Education & Research",
     "capabilities": [],
     "websiteURL": "https://github.com/Entuvo/prompting-wizard",
     "supportURL": "https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md",
@@ -33,7 +33,8 @@
     "brandColor": "#C2582B",
     "defaultPrompt": [
       "Use Prompting Wizard to teach me through my work; no interview.",
-      "Start the Prompting Wizard course."
+      "Start the Prompting Wizard course.",
+      "Review my past chats with Prompting Wizard."
     ]
   }
 }
