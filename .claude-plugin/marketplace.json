@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Prompting Wizard from Entuvo",
-    "version": "1.5.1"
+    "version": "1.5.2"
   },
   "plugins": [
     {
       "name": "prompting-wizard",
       "source": "./plugins/prompting-wizard",
       "description": "Learn prompting through your everyday work: practice, short lessons and Learning Cards, an optional 30-lesson course, and a review of your past chats.",
-      "version": "1.5.1",
+      "version": "1.5.2",
       "category": "productivity",
       "tags": [
         "prompting",
