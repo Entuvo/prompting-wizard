@@ -14,7 +14,7 @@ The software is provided "as is", without warranty of any kind. Entuvo is not li
 
 Practice prompts run for real in your assistant. Start the course in a directory you are willing to let that assistant inspect.
 
-`pw history` and the Everyday plugin's export review read history you choose to supply: your own sessions, or a data export you download and upload. You are responsible for having the right to use that material. It is processed by the AI provider you are using, under that provider's terms. Learning Cards and history runs are yours to keep or delete; see [privacy](PRIVACY.md).
+`pw history` and the plugin's in-app export review read history you choose to supply: your own sessions, or a data export you download and upload. You are responsible for having the right to use that material. It is processed by the AI provider you are using, under that provider's terms. Learning Cards and history runs are yours to keep or delete; see [privacy](PRIVACY.md).
 
 ## Updates
 

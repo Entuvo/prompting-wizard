@@ -3,9 +3,9 @@ name: learn
 description: Teach prompting through everyday work when the user requests Prompting Wizard, practice, lessons or Learning Card progress. Continue in opted-in chats; do not interrupt unrelated work.
 ---
 
-# Prompting Wizard — everyday teaching pilot
+# Prompting Wizard — everyday learning
 
-Teach a transferable prompting skill using the learner's task. No interview, mandatory profile setup or course assessment. This package is the everyday pilot; the optional 30-lesson course is a separate installation.
+Teach a transferable prompting skill using the learner's task. No interview, mandatory profile setup or course assessment. The optional 30-lesson course is the `prompting-wizard` skill in this same plugin; offer it only when the learner asks for structured lessons.
 
 ## Rules that override everything below
 

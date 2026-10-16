@@ -5,32 +5,21 @@
     "name": "Entuvo"
   },
   "metadata": {
-    "description": "Prompting lessons and everyday teaching from Entuvo",
-    "version": "1.4.4"
+    "description": "Prompting Wizard from Entuvo",
+    "version": "1.5.0"
   },
   "plugins": [
     {
       "name": "prompting-wizard",
       "source": "./plugins/prompting-wizard",
-      "description": "A 30-lesson prompting course plus everyday learning and a review of your past work, using your real tasks.",
-      "version": "1.4.4",
+      "description": "Learn prompting through your everyday work: practice, short lessons and Learning Cards, an optional 30-lesson course, and a review of your past chats.",
+      "version": "1.5.0",
       "category": "productivity",
       "tags": [
         "prompting",
         "education",
-        "course"
-      ]
-    },
-    {
-      "name": "prompting-wizard-teacher",
-      "source": "./plugins/prompting-wizard-teacher",
-      "version": "0.2.3",
-      "description": "Everyday teaching pilot with manual Learning Cards; no interview or local runtime.",
-      "category": "productivity",
-      "tags": [
-        "prompting",
-        "education",
-        "teaching"
+        "course",
+        "learning"
       ]
     }
   ]

@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / 'tools' / 'fixtures' / 'e2e'
 COURSE = ROOT / 'plugins' / 'prompting-wizard'
-EVERYDAY = ROOT / 'plugins' / 'prompting-wizard-teacher'
+EVERYDAY = COURSE  # one plugin carries the course, pw and everyday learning
 HOSTS = ('claude-code', 'codex', 'claude-api', 'openai-api')
 TIMEOUT = 420
 ENV = {**os.environ, 'PROMPTING_WIZARD_EXPERIMENT': '1'}  # installed coaching hooks become no-ops

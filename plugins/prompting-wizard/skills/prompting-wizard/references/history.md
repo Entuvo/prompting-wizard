@@ -11,7 +11,7 @@ Keep each provider's history with that provider, because scoring sends sampled p
 
 Before running anything on an export, confirm with the learner which app it came from. If it is the other provider's, or the learner can't say, decline: say why, and suggest the matching host. Otherwise run the scan with `--host` set to the current host's own provider (`claude` in Claude Code, `chatgpt` in Codex), never the other. The runtime enforces this too: under Codex it refuses Claude sources, and under Claude Code it refuses ChatGPT sources (detected from each host's session variables). If both hosts' variables are set, it refuses everything and asks the learner to run it directly in the right host. It also checks the file's shape on this machine and fails closed on a mismatch before anything reaches the model. Never open, `cat`, `Read`, `Grep` or otherwise load an export file into the conversation; only `history.py` touches it.
 
-Inside the ChatGPT and Claude apps there is no local runtime. The everyday-learning plugin has its own export procedure; follow that instead.
+Inside the ChatGPT and Claude apps there is no local runtime. The plugin's `learn` skill has its own in-app export procedure; follow that instead.
 
 The runtime is `scripts/history.py`, and every command prints one JSON object. `ROOT` is the coaching data root when trusted integration context supplies one. Otherwise ask the learner for an absolute directory outside their projects, such as a `.prompting-wizard` folder in their home directory. It must not be the skill directory or a workspace. Run the Python interpreter that has the host SDK installed.
 

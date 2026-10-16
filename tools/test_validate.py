@@ -237,10 +237,11 @@ def build_clean_skill(root, days=(1,)):
         ),
         encoding="utf-8",
     )
-    (root.parent / "packaging" / "openai-plugin.json").write_text(
-        json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
-        encoding="utf-8",
-    )
+    for manifest in ("openai-plugin.json", "plugin.json"):
+        (root.parent / "packaging" / manifest).write_text(
+            json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
+            encoding="utf-8",
+        )
     write_codex_distribution(root.parent, version="1.0.0")
     for number in days:
         (root / "days" / f"{number:02d}.md").write_text(
@@ -415,6 +416,9 @@ class DistributionMetadataValidatorTests(unittest.TestCase):
         self.plugin_path = skill / ".claude-plugin" / "plugin.json"
         self.marketplace_path = root / ".claude-plugin" / "marketplace.json"
         self.openai_plugin_path = root / "packaging" / "openai-plugin.json"
+        (root / "packaging").mkdir(parents=True, exist_ok=True)
+        (root / "packaging" / "plugin.json").write_text(
+            json.dumps({"name": "prompting-wizard", "version": "1.0.0"}), encoding="utf-8")
         self.plugin_path.write_text(
             json.dumps({"name": "prompting-wizard", "version": "1.0.0"}),
             encoding="utf-8",
