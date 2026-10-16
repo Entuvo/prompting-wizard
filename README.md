@@ -3,7 +3,7 @@
 <p align="center"><b>Learn to prompt through your everyday work in Claude Code, Codex, ChatGPT and Claude. An open source coach that can review your past chats, with an optional 30-lesson course.</b><br>
 <a href="https://entuvo.github.io/prompting-wizard/">Website</a> · <a href="#start">Start</a> · <a href="NATIVE-PLUGINS.md">ChatGPT &amp; Claude plugins</a> · <a href="https://github.com/Entuvo/prompting-wizard/issues">Issues</a></p>
 
-<p align="center"><a href="https://youtube.com/shorts/s2WarFaRY2Q"><img src="docs/assets/video-poster.jpg" alt="Watch the Prompting Wizard video on YouTube" width="220"></a></p>
+<p align="center"><a href="https://youtube.com/shorts/Gebv2vS1mz4"><img src="docs/assets/video-poster.jpg" alt="Watch the Prompting Wizard video on YouTube" width="220"></a></p>
 
 ## The same AI. Clearer direction.
 
