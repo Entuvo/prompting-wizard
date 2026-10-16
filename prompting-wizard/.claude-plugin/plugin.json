@@ -17,5 +17,10 @@
     "course",
     "learning",
     "productivity"
-  ]
+  ],
+  "icon": "./assets/logo.png",
+  "documentationUrl": "https://entuvo.github.io/prompting-wizard/",
+  "supportUrl": "https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md",
+  "privacyPolicyUrl": "https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md",
+  "termsOfServiceUrl": "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md"
 }

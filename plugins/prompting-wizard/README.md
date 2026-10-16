@@ -40,4 +40,4 @@ The plugin reads the current conversation, its bundled teaching references, and 
 
 ## Status and support
 
-Version 1.5.0. Everyday coaching in the ChatGPT and Claude apps is a pilot: native installation, activation and card transfer on web, desktop and phone remain unverified, and human learning effectiveness has not been validated. Report problems through [GitHub Issues](https://github.com/Entuvo/prompting-wizard/issues) using synthetic examples, never personal cards or transcripts. Maintained by Entuvo; MIT License.
+Version 1.5.0. Everyday coaching has passed the device walkthrough in Claude on the web. In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each passes the same walkthrough. Human learning effectiveness has not been validated. Report problems through [GitHub Issues](https://github.com/Entuvo/prompting-wizard/issues) using synthetic examples, never personal cards or transcripts. Maintained by Entuvo; MIT License.
