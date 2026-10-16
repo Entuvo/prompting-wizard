@@ -50,7 +50,7 @@ Entuvo submitted `prompting-wizard-openai.zip` (1.5.1) to OpenAI's plugin direct
 2. The name or description referred to another assistant, model or platform. Fixed in 1.5.2: the OpenAI listing fields name none, and `tools/sync_codex_plugin.py` fails if one does.
 3. The category was not confirmed. Fixed in 1.5.2: `Education & Research`, from OpenAI's accepted list in its [submission errors reference](https://developers.openai.com/plugins/deploy/submission-errors).
 4. The privacy policy failed the automated assessment. Fixed in 1.5.2: privacy, terms and support are static pages at https://entuvo.github.io/prompting-wizard/privacy/, `/terms/` and `/support/`, built from the Markdown files by `tools/build_policy_pages.py`.
-5. A skill could install or load code from an untrusted or mutable source. Fixed in 1.5.2: the OpenAI download leaves out the update check (which fetched `VERSION.md` from GitHub and could replace skill files) and `history_hosts.py` (which needed SDKs installed with pip). `tools/package_release.py` fails if the download contains `raw.githubusercontent`, `pip install`, `curl`, `git clone` or `npx`.
+5. A skill could install or load code from an untrusted or mutable source. Fixed in 1.5.2: the OpenAI download leaves out the update check (which fetched `VERSION.md` from GitHub and could replace skill files) and `history_hosts.py` (which needed SDKs installed with pip). Its history guide, command table, `learn` skill and README describe only the export route. `tools/package_release.py` fails if the download contains `raw.githubusercontent`, `pip install`, `curl`, `git clone`, `npx`, `Update check`, `--host claude-code` or `--host codex`.
 
 Resubmit only once OpenAI accepts skills-only plugins.
 
@@ -102,7 +102,7 @@ python3 tools/package_release.py            # build the two downloads
 python3 tools/build_policy_pages.py         # rebuild docs/privacy, docs/terms, docs/support after editing the Markdown
 ```
 
-The OpenAI download differs from the tree in exact edits listed in `OPENAI_EDITS` and `OPENAI_OMIT` in `tools/package_release.py`. When you change the Update check section of `prompting-wizard/SKILL.md` or the SDK lines of `references/history.md`, the build fails until those edits match again. OpenAI listing text must not name another assistant, model or platform.
+The OpenAI download differs from the tree in exact edits listed in `OPENAI_EDITS` and `OPENAI_OMIT` in `tools/package_release.py`. When you change the Update check section of `prompting-wizard/SKILL.md`, the local-session lines of `references/history.md`, the `history` row of `references/commands.md`, the closing line of `learn/SKILL.md`'s export section, or the past-work lines of `packaging/README.md`, the build fails until those edits match again. OpenAI listing text must not name another assistant, model or platform.
 
 All three manifests share the course version in `prompting-wizard/VERSION.md`. Skill descriptions must stay within claude.ai's 200-character limit, and frontmatter within the Agent Skills fields. Never place learner cards or progress in the plugin tree. Current OpenAI submission rules do not accept plugins with lifecycle hooks or app references; keep the optional coaching hooks a separate install.
 

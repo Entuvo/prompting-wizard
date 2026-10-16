@@ -69,11 +69,52 @@ OPENAI_EDITS = {
         (re.compile(r"^## Update check\n.*?(?=^## )", re.M | re.S), OPENAI_UPDATES),
     ),
     "skills/prompting-wizard/references/history.md": (
-        ("- Claude Code: needs `pip install claude-agent-sdk`.\n- Codex: needs `pip install openai-codex`.\n",
-         "- Local Claude Code and Codex session history is not in this build; app data exports work.\n"),
+        ("- Claude Code: needs `pip install claude-agent-sdk`.\n- Codex: needs `pip install openai-codex`.\n"
+         "- A ChatGPT or Claude app data export (`--host chatgpt|claude --file EXPORT`): no SDK needed. "
+         "The learner requests the export from the app's settings",
+         "- A ChatGPT data export (`--host chatgpt --file EXPORT`). This build reviews exports only; local session "
+         "history comes with the repository marketplace install. The learner requests the export from ChatGPT's settings"),
+        ("Claude Code reviews only Claude exports (`--host claude`), and Codex reviews only ChatGPT exports "
+         "(`--host chatgpt`).",
+         "Codex reviews only ChatGPT exports (`--host chatgpt`)."),
+        ("Otherwise run the scan with `--host` set to the current host's own provider (`claude` in Claude Code, "
+         "`chatgpt` in Codex), never the other. The runtime enforces this too: under Codex it refuses Claude sources, "
+         "and under Claude Code it refuses ChatGPT sources (detected from each host's session variables). If both "
+         "hosts' variables are set, it refuses everything and asks the learner to run it directly in the right host.",
+         "Otherwise run the scan with `--host chatgpt`, never `--host claude`. The runtime enforces this too: under "
+         "Codex it refuses Claude sources."),
+        (" Run the Python interpreter that has the host SDK installed.",
+         " Run `python3`; the export reader needs only the standard library."),
+        ("- that excluded coaching workspaces are skipped. Exports have no workspaces:",
+         "- that exports have no workspaces:"),
+        ("python3 scripts/history.py scan --root ROOT --host claude-code|codex [--days N] [--cap N]\n"
+         "python3 scripts/history.py scan --root ROOT --host chatgpt|claude --file EXPORT",
+         "python3 scripts/history.py scan --root ROOT --host chatgpt --file EXPORT"),
+        ("report `error` (for a missing SDK, that's the install command) and stop.", "report `error` and stop."),
+    ),
+    "skills/prompting-wizard/references/commands.md": (
+        ("Available in Claude Code and Codex only, and each reviews only its own provider's history "
+         "(Claude Code: Claude; Codex: ChatGPT).",
+         "In this build it runs in Codex on a ChatGPT export only; local session history comes with the repository "
+         "marketplace install. In the ChatGPT app, the `learn` skill reviews an uploaded export instead."),
+    ),
+    "skills/learn/SKILL.md": (
+        ("In Claude Code or Codex, the full course offers `pw history` with stored, local results.",
+         "In Codex, the full course offers `pw history` on a ChatGPT export, with stored, local results."),
+    ),
+    "README.md": (
+        ("To review your past work, use `pw history` in Claude Code or Codex, or upload your app's own data export "
+         "in ChatGPT or Claude and ask the coach to review it.",
+         "To review your past work, upload your app's own data export in ChatGPT or Claude and ask the coach to "
+         "review it, or run `pw history` on a ChatGPT export in Codex. This directory build reviews exports only. "
+         "The full local `pw history`, which also reads your past sessions, comes from the "
+         "[repository marketplace install](https://github.com/Entuvo/prompting-wizard)."),
+        ("| Past-work review | upload that app's own export | `pw history`, with stored results |",
+         "| Past-work review | upload that app's own export | `pw history` on an export, with stored results |"),
     ),
 }
-OPENAI_FORBIDDEN = ("raw.githubusercontent", "pip install", "curl ", "git clone", "npx ")
+OPENAI_FORBIDDEN = ("raw.githubusercontent", "pip install", "curl ", "git clone", "npx ", "Update check",
+                    "--host claude-code", "--host codex")
 
 
 def openai_entries(data: dict[str, bytes]) -> list[tuple[str, bytes]]:

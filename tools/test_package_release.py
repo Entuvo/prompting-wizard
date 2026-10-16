@@ -183,6 +183,20 @@ class PackageReleaseTests(unittest.TestCase):
         self.assertIn(b"## Update check", self.read(claude, "skills/prompting-wizard/SKILL.md"))
         self.assertIn(b"raw.githubusercontent.com", self.read(claude, "skills/prompting-wizard/SKILL.md"))
 
+    def test_openai_history_guide_describes_only_the_export_route(self):
+        claude, openai = self.build()
+        guide = "skills/prompting-wizard/references/history.md"
+        shipped = self.read(openai, guide).decode()
+        for local in ("--host claude-code", "--host codex", "SDK"):
+            self.assertNotIn(local, shipped)
+        self.assertIn("--host chatgpt --file EXPORT", shipped)
+        full = self.read(claude, guide).decode()
+        for local in ("--host claude-code|codex", "SDK"):
+            self.assertIn(local, full)
+        readme = self.read(openai, "README.md").decode()
+        self.assertIn("This directory build reviews exports only", readme)
+        self.assertNotIn("This directory build", self.read(claude, "README.md").decode())
+
     def test_openai_edit_that_no_longer_matches_stops_the_build(self):
         history = self.root / "prompting-wizard" / "references" / "history.md"
         history.write_text(history.read_text().replace("needs `pip install openai-codex`", "needs the Codex SDK"))
