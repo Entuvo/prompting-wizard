@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prompting Wizard — learn to direct AI with your own work</title>
-<meta name="description" content="An open source prompting coach for Claude Code, Codex, ChatGPT and Claude. Learn through your own work, review your past chats, or take thirty guided lessons at your own pace.">
+<title>Prompting Wizard — learn to prompt through your everyday work</title>
+<meta name="description" content="An open source prompting coach for Claude Code, Codex, ChatGPT and Claude. Learn through your everyday work, see where your past prompts cost you turns, and take an optional thirty-lesson course.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Prompting Wizard">
-<meta property="og:description" content="An open source prompting coach for Claude Code, Codex, ChatGPT and Claude, built around your own work.">
+<meta property="og:description" content="Prompting Wizard is an open source prompting coach by Entuvo. It teaches through your everyday work in Claude Code, Codex, ChatGPT and Claude.">
 <meta property="og:url" content="https://entuvo.github.io/prompting-wizard/">
 <meta property="og:image" content="https://entuvo.github.io/prompting-wizard/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <!-- ?v= is a hash of each file, so a changed stylesheet is never served from cache. Run python3 tools/check_site.py --fix after editing one. -->
 <link rel="stylesheet" href="tokens.css?v=c545f597">
-<link rel="stylesheet" href="style.css?v=7d9b9294">
+<link rel="stylesheet" href="style.css?v=82fbb4cd">
 </head>
 <body>
 <header class="wrap">
@@ -22,9 +22,9 @@
 <img class="logo logo-dark" src="assets/logo-on-dark.svg" alt="Prompting Wizard" width="336" height="56">
 <div class="hero">
 <div>
-<h1>Learn to direct AI with your own work.</h1>
-<p class="lead">An open source prompting coach for Claude Code, Codex, ChatGPT and Claude. Learn through your everyday work, see where your past prompts cost you turns, or take thirty guided lessons at your own pace.</p>
-<div class="actions"><a class="btn" href="#start">Start the course</a><a href="https://github.com/Entuvo/prompting-wizard">View on GitHub</a></div>
+<h1>Learn to prompt through your everyday work.</h1>
+<p class="lead">An open source coach for Claude Code, Codex, ChatGPT and Claude, with an optional 30-lesson course.</p>
+<div class="actions"><a class="btn" href="#start">Install for your app</a><a href="https://github.com/Entuvo/prompting-wizard">View on GitHub</a></div>
 </div>
 </div>
 <!-- Nothing loads from YouTube until the reader presses play. -->
@@ -44,8 +44,38 @@
 <p>Same AI. The second prompt names the audience, the deliverable, the evidence and the quality bar.</p>
 </div></section>
 <section><div class="wrap">
-<h2>How a lesson works</h2>
-<p>Every lesson follows the same loop, on a task from your own work.</p>
+<h2>Learn from the work you just did.</h2>
+<p>When you finish a task, the coach can offer one small lesson from it. You can stop after any step.</p>
+<ul class="steps">
+<li><h3>Practice</h3>Write your own change and predict its effect, then see what changed.</li>
+<li><h3>Example</h3>See a brief demonstration on your task.</li>
+<li><h3>Lesson</h3>Learn the principle using your task, then practise if you want.</li>
+<li><h3>Later</h3>Continue your work, with no penalty or backlog.</li>
+</ul>
+<p>No improvement is a valid result. A short prompt can be enough.</p>
+</div></section>
+<section><div class="wrap">
+<h2>See where your past prompts cost you turns.</h2>
+<p>On request, it looks back at your recent work for the follow-up that says “no, I meant…”, an interrupted run, a prompt you edited, or a rule you had to repeat.</p>
+<ul class="who">
+<li><strong>A casebook of your own prompts,</strong> each with one edit that would have helped, and lesson suggestions.</li>
+<li><strong>It asks twice:</strong> before reading, and again before scoring.</li>
+<li><strong>Your history stays with its provider.</strong> Claude reviews Claude exports; ChatGPT and Codex review ChatGPT exports.</li>
+<li><strong>In Claude Code or Codex,</strong> results stay in a local folder you choose and expire automatically.</li>
+</ul>
+</div></section>
+<section><div class="wrap">
+<h2>Carry your learning between chats.</h2>
+<p>A Learning Card, <code>LEARNING.md</code>, records what you practised and what you used on your own.</p>
+<ul class="who">
+<li><strong>You keep it.</strong> Save it and attach it in your next chat, in ChatGPT or Claude.</li>
+<li><strong>Nothing syncs on its own.</strong> Without the current card, the coach can't know your learning history.</li>
+<li><strong>Help and independent use stay apart.</strong> Reading an example doesn't count as learning the skill.</li>
+</ul>
+</div></section>
+<section><div class="wrap">
+<h2>The optional course: how a lesson works</h2>
+<p>For a structured path: an assessment, then thirty guided lessons, each built on a task from your own working life. Everyday lessons don't advance the course.</p>
 <ul class="steps">
 <li><h3>Write</h3>Your prompt for a real task.</li>
 <li><h3>Run</h3>It runs exactly as written; it is not quietly improved first.</li>
@@ -78,12 +108,12 @@
 <h3>What you need</h3>
 <ul class="need">
 <li><strong>Claude, ChatGPT, Claude Code or Codex.</strong> Prompting Wizard is one plugin for all four. Plugin uploads in the Claude app need a paid plan; in ChatGPT, a local plugin is shared through a workspace admin.</li>
-<li><strong>A task from your own work.</strong> Your lessons use it, so keep one in mind.</li>
+<li><strong>A task from your own work.</strong> The coach and the lessons use it, so keep one in mind.</li>
 <li><strong>A folder to practise in.</strong> See the note below the prompt.</li>
 </ul>
 <h3>Download for your app</h3>
 <ul class="need">
-<li><strong>Claude (web, desktop, Cowork, Claude Code):</strong> <a href="https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-claude.zip">prompting-wizard-claude.zip</a>. Upload it in <strong>Customize → Plugins</strong>; it syncs to Claude Code on the same account.</li>
+<li><strong>Claude (web, desktop, Cowork, Claude Code):</strong> <a href="https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-claude.zip">prompting-wizard-claude.zip</a>. Upload it in <strong>Customize → Plugins</strong>; it also appears in Claude Code when you sign in with the same login.</li>
 <li><strong>ChatGPT and Codex:</strong> <a href="https://github.com/Entuvo/prompting-wizard/releases/latest/download/prompting-wizard-openai.zip">prompting-wizard-openai.zip</a>. Register it as a local plugin in the ChatGPT desktop app, then a workspace admin can publish it; in Codex you can also add the marketplace below.</li>
 </ul>
 <p>Then say “Use Prompting Wizard to teach me through my work; no interview,” or “Start the Prompting Wizard course.” Everyday coaching in the ChatGPT and Claude apps is a pilot. See <a href="https://github.com/Entuvo/prompting-wizard/blob/main/NATIVE-PLUGINS.md">plugin setup</a>.</p>
