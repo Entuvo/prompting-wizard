@@ -1,8 +1,8 @@
 # Prompting Wizard plugin setup
 
-Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.1), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
+Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.2), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
 
-Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each surface passes the same walkthrough. No directory listing is published yet.
+Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). In ChatGPT, and in the Claude desktop and phone apps, it is a pilot until each surface passes the same walkthrough. It is not listed in any public directory. OpenAI's plugin directory rejected the 1.5.1 submission on 16 October 2026 (see [OpenAI directory review](#openai-directory-review)).
 
 ## Downloads
 
@@ -11,11 +11,11 @@ Each [GitHub Release](https://github.com/Entuvo/prompting-wizard/releases/latest
 | File | For | Manifest |
 | --- | --- | --- |
 | `prompting-wizard-claude.zip` | Claude app, Cowork, Claude Code | `.claude-plugin/plugin.json` |
-| `prompting-wizard-openai.zip` | ChatGPT and Codex | root `plugin.json` (Agent Plugins), plus the legacy `.codex-plugin/plugin.json` for the Codex CLI |
+| `prompting-wizard-openai.zip` | ChatGPT and Codex | root `plugin.json` (Agent Plugins), plus the legacy `.codex-plugin/plugin.json` for the Codex CLI. It leaves out the update check and the local session-history readers. |
 
 Both have their manifest and `skills/` at the archive root and contain no learner history, hooks, MCP servers or credentials. Two manual-setup files are attached too: `prompting-wizard-native-guide.md` and `prompting-wizard-learning-card.md` (see [manual setup](NATIVE-APPS.md)). A release download is not a directory listing. Build them yourself with `python3 tools/package_release.py`.
 
-What runs where: the course's Python scripts (local progress storage and `pw history`) run only in Claude Code or Codex. In the ChatGPT and Claude apps, everyday learning, the in-app export review and the course with an attached `PROGRESS.md` work without them.
+What runs where: the course's Python scripts (local progress storage and `pw history`) run only in Claude Code or Codex. `pw history` on Claude Code or Codex sessions needs the marketplace install or the Claude download; the OpenAI download reads app data exports only. In the ChatGPT and Claude apps, everyday learning, the in-app export review and the course with an attached `PROGRESS.md` work without them.
 
 ## Claude installation
 
@@ -38,9 +38,21 @@ Confirm that the coach can read the bundled guide. If it cannot, use the [manual
 
 **Codex:** run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**.
 
-**Public:** the publisher uploads `prompting-wizard-openai.zip` through the [OpenAI plugin submission portal](https://developers.openai.com/plugins/deploy/submission); one listing covers ChatGPT and Codex. Publish only after approval. OpenAI's guidelines exclude trial plugins, so the pilot label has to be resolved by the walkthrough first.
+**Public:** the publisher uploads `prompting-wizard-openai.zip` through the [OpenAI plugin submission portal](https://developers.openai.com/plugins/deploy/submission); one listing covers ChatGPT and Codex. It is not listed: see [OpenAI directory review](#openai-directory-review). OpenAI's guidelines also exclude trial plugins, so the pilot label has to be resolved by the walkthrough first.
 
 Once installed, start a new chat, select the plugin with `@` if necessary, and use the start request above.
+
+## OpenAI directory review
+
+Entuvo submitted `prompting-wizard-openai.zip` (1.5.1) to OpenAI's plugin directory. It was rejected on 16 October 2026 with five findings:
+
+1. Skills-only plugins are not currently accepted. Unresolved: the plugin has no app or MCP server.
+2. The name or description referred to another assistant, model or platform. Fixed in 1.5.2: the OpenAI listing fields name none, and `tools/sync_codex_plugin.py` fails if one does.
+3. The category was not confirmed. Fixed in 1.5.2: `Education & Research`, from OpenAI's accepted list in its [submission errors reference](https://developers.openai.com/plugins/deploy/submission-errors).
+4. The privacy policy failed the automated assessment. Fixed in 1.5.2: privacy, terms and support are static pages at https://entuvo.github.io/prompting-wizard/privacy/, `/terms/` and `/support/`, built from the Markdown files by `tools/build_policy_pages.py`.
+5. A skill could install or load code from an untrusted or mutable source. Fixed in 1.5.2: the OpenAI download leaves out the update check (which fetched `VERSION.md` from GitHub and could replace skill files) and `history_hosts.py` (which needed SDKs installed with pip). `tools/package_release.py` fails if the download contains `raw.githubusercontent`, `pip install`, `curl`, `git clone` or `npx`.
+
+Resubmit only once OpenAI accepts skills-only plugins.
 
 ## Keep teaching and continuity separate
 
@@ -87,7 +99,10 @@ The plugin tree `plugins/prompting-wizard/` is generated; never hand-edit it. It
 python3 tools/sync_codex_plugin.py          # regenerate the tree
 python3 tools/sync_codex_plugin.py --check  # CI: stale, missing or unexpected files
 python3 tools/package_release.py            # build the two downloads
+python3 tools/build_policy_pages.py         # rebuild docs/privacy, docs/terms, docs/support after editing the Markdown
 ```
+
+The OpenAI download differs from the tree in exact edits listed in `OPENAI_EDITS` and `OPENAI_OMIT` in `tools/package_release.py`. When you change the Update check section of `prompting-wizard/SKILL.md` or the SDK lines of `references/history.md`, the build fails until those edits match again. OpenAI listing text must not name another assistant, model or platform.
 
 All three manifests share the course version in `prompting-wizard/VERSION.md`. Skill descriptions must stay within claude.ai's 200-character limit, and frontmatter within the Agent Skills fields. Never place learner cards or progress in the plugin tree. Current OpenAI submission rules do not accept plugins with lifecycle hooks or app references; keep the optional coaching hooks a separate install.
 

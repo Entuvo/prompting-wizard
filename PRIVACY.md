@@ -1,6 +1,6 @@
 # Privacy policy
 
-Last updated: 14 October 2026
+Last updated: 16 October 2026
 
 Prompting Wizard is published by Entuvo. It is a set of files you install into an AI assistant you already use. Entuvo does not operate a Prompting Wizard account system or website backend. The course itself sends Entuvo nothing.
 
@@ -44,6 +44,8 @@ Nothing is added to `PROGRESS.md`, a Learning Card, CLAUDE.md, AGENTS.md or any 
 ## What the course may fetch
 
 A locally loaded copy may read the public `VERSION.md` file from this GitHub repository to see whether a newer version exists. Automatic checks happen at most once every seven days. An explicit "check for updates" request, or a missing or unreadable last-check date, can fetch again sooner. That request goes to GitHub, not to an Entuvo server.
+
+The `prompting-wizard-openai.zip` download has no update check and makes no such fetch; it updates only through the app's plugin manager.
 
 Marketplace-managed and skills-CLI installs still apply updates through those hosts. They may also make the same read-only `VERSION.md` fetch when a check is due.
 
