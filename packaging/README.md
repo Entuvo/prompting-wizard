@@ -36,7 +36,7 @@ Each provider's history is reviewed only by that provider's hosts. In the apps, 
 
 ## Data and permissions
 
-The plugin reads the current conversation, its bundled teaching references, and anything you explicitly supply: a Learning Card, `PROGRESS.md` or an export. These can contain personal information and are processed by your AI provider under your account settings and its policies. Entuvo operates no Wizard service and receives nothing. The course's local scripts and `pw history` run only in Claude Code or Codex, on your machine. Optional automatic coaching in those tools is a separate, opt-in setup. See [privacy](https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md) and [terms](https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md).
+The plugin reads the current conversation, its bundled teaching references, and anything you explicitly supply: a Learning Card, `PROGRESS.md` or an export. These can contain personal information and are processed by your AI provider under your account settings and its policies. Entuvo operates no Wizard service and receives nothing. The course's local scripts and `pw history` run only in Claude Code or Codex, on your machine. Optional automatic coaching in those tools is a separate, opt-in setup. See [privacy](https://entuvo.github.io/prompting-wizard/privacy/) and [terms](https://entuvo.github.io/prompting-wizard/terms/).
 
 ## Status and support
 
