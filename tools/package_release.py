@@ -74,75 +74,34 @@ def build_all(
     dist: Path = DIST,
     *,
     validate: bool = True,
-) -> tuple[Path, Path, Path]:
-    skill = root / "prompting-wizard"
+) -> tuple[Path, Path]:
+    """Two downloads from the one plugin: Claude (app, Cowork, Claude Code) and OpenAI (ChatGPT, Codex).
+    Both have the manifest and skills/ at the archive root. The manual-setup guide and empty card are
+    written beside them."""
+    from sync_codex_plugin import MANIFESTS, plugin_entries
+
     if validate:
         validate_source(root)
-    version = course_version(skill)
-
-    claude_manifest_path = skill / ".claude-plugin/plugin.json"
-    claude_manifest = json.loads(claude_manifest_path.read_text(encoding="utf-8"))
-    openai_manifest_path = root / "packaging/openai-plugin.json"
-    openai_manifest = json.loads(openai_manifest_path.read_text(encoding="utf-8"))
-    for label, manifest in (
-        ("Claude plugin", claude_manifest),
-        ("OpenAI plugin", openai_manifest),
-    ):
-        if manifest.get("version") != version:
-            raise ValueError(f"{label} version does not match VERSION.md")
-
-    # Validate every allowlisted source before generating standalone downloads.
-    core_files(skill)
+    version = course_version(root / "prompting-wizard")
+    data = plugin_entries(root)
+    for name in MANIFESTS:
+        if json.loads(data[name]).get("version") != version:
+            raise ValueError(f"{name} version does not match VERSION.md")
+    for stale in ("prompting-wizard-claude-skill.zip", "prompting-wizard-claude-plugin.zip",
+                  "prompting-wizard-openai-plugin.zip", "prompting-wizard-teacher-chatgpt.zip",
+                  "prompting-wizard-teacher-claude.zip"):
+        (dist / stale).unlink(missing_ok=True)
     build_native_guide(root, dist)
-    account_entries = relative_entries(skill, "prompting-wizard")
-    account_zip = write_zip(
-        dist / "prompting-wizard-claude-skill.zip",
-        account_entries,
-    )
-
-    shortcut = root / "pw" / "SKILL.md"
-    if shortcut.is_symlink() or shortcut.parent.is_symlink():
-        raise ValueError("Shortcut source contains a symlink")
-    shortcut_entry = ("prompting-wizard/skills/pw/SKILL.md", shortcut.read_bytes())
-    claude_entries = relative_entries(skill, "prompting-wizard/skills/prompting-wizard")
-    claude_entries.append(shortcut_entry)
-    claude_entries.append((
-        "prompting-wizard/.claude-plugin/plugin.json",
-        claude_manifest_path.read_bytes(),
-    ))
-    claude_zip = write_zip(
-        dist / "prompting-wizard-claude-plugin.zip",
-        claude_entries,
-    )
-
-    openai_entries = relative_entries(
-        skill,
-        "prompting-wizard/skills/prompting-wizard",
-    )
-    openai_entries.append(shortcut_entry)
-    listing_logo = root / "assets" / "listing" / "logo.png"
-    if not listing_logo.is_file():
-        raise ValueError("assets/listing/logo.png is missing")
-    openai_entries.extend((
-        (
-            "prompting-wizard/.codex-plugin/plugin.json",
-            openai_manifest_path.read_bytes(),
-        ),
-        ("prompting-wizard/LICENSE", (root / "LICENSE").read_bytes()),
-        ("prompting-wizard/assets/logo.png", listing_logo.read_bytes()),
-    ))
-    openai_zip = write_zip(
-        dist / "prompting-wizard-openai-plugin.zip",
-        openai_entries,
-    )
-    return account_zip, claude_zip, openai_zip
+    claude_only, openai_only = {".claude-plugin/plugin.json"}, {"plugin.json", ".codex-plugin/plugin.json"}
+    claude_zip = write_zip(dist / "prompting-wizard-claude.zip",
+                           [(n, c) for n, c in data.items() if n not in openai_only])
+    openai_zip = write_zip(dist / "prompting-wizard-openai.zip",
+                           [(n, c) for n, c in data.items() if n not in claude_only])
+    return claude_zip, openai_zip
 
 
 if __name__ == "__main__":
-    from build_teaching_plugins import build as build_teaching_plugins
     for artifact in build_all():
         print(artifact.relative_to(ROOT))
     for name in ("prompting-wizard-native-guide.md", "prompting-wizard-learning-card.md"):
         print((DIST / name).relative_to(ROOT))
-    for artifact in build_teaching_plugins(ROOT, DIST):
-        print(artifact.relative_to(ROOT))

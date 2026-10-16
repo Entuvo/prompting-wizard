@@ -1,49 +1,46 @@
-# Prompting Wizard — Everyday plugins
+# Prompting Wizard plugin setup
 
-The teaching pilot is packaged as **Prompting Wizard — Everyday** (`prompting-wizard-teacher`, version 0.2.3) for ChatGPT and Claude. It bundles the teaching skill, guide, rubrics and empty Learning Card. Learn through your work without an interview; choose Practice, Example, Lesson or Later after a useful teaching opportunity.
+Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.0), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
 
-These are buildable pilot packages, not a published directory listing or a verified native-app installation. The user walkthrough still needs to establish installation, activation and manual card transfer on each surface. Existing `prompting-wizard` course packages remain separate.
+Everyday coaching in the ChatGPT and Claude apps is a pilot. The walkthrough below still needs to establish installation, activation and manual card transfer on each surface. Neither directory submission nor publication has occurred.
 
-Neither directory submission nor publication has occurred.
+## Downloads
 
-## Packages
+Each [GitHub Release](https://github.com/Entuvo/prompting-wizard/releases/latest) attaches two plugin files, built from that release's tag:
 
-Build from a source checkout:
+| File | For | Manifest |
+| --- | --- | --- |
+| `prompting-wizard-claude.zip` | Claude app, Cowork, Claude Code | `.claude-plugin/plugin.json` |
+| `prompting-wizard-openai.zip` | ChatGPT and Codex | root `plugin.json` (Agent Plugins), plus the legacy `.codex-plugin/plugin.json` for the Codex CLI |
 
-```sh
-python3 tools/package_release.py
-```
+Both have their manifest and `skills/` at the archive root and contain no learner history, hooks, MCP servers or credentials. Two manual-setup files are attached too: `prompting-wizard-native-guide.md` and `prompting-wizard-learning-card.md` (see [manual setup](NATIVE-APPS.md)). A release download is not a directory listing. Build them yourself with `python3 tools/package_release.py`.
 
-| Output in `dist/` | Purpose |
-| --- | --- |
-| `prompting-wizard-teacher-chatgpt.zip` | Portable root `plugin.json`, OpenAI presentation metadata and the bundled `learn` skill |
-| `prompting-wizard-teacher-claude.zip` | Claude `.claude-plugin/plugin.json` and the same bundled `learn` skill |
-| `prompting-wizard-native-guide.md` | Fallback guide for manual attachment |
-| `prompting-wizard-learning-card.md` | Empty card; the coach creates a fresh profile ID at first use |
+What runs where: the course's Python scripts (local progress storage and `pw history`) run only in Claude Code or Codex. In the ChatGPT and Claude apps, everyday learning, the in-app export review and the course with an attached `PROGRESS.md` work without them.
 
-Both ZIPs have their manifest and `skills/` directly at the archive root. Neither requires a local Python runtime, hooks, MCP server, API key or a Wizard account. The developer build uses Python; the learner uses the host app. ZIPs contain no learner history. Each [GitHub Release](https://github.com/Entuvo/prompting-wizard/releases/latest) attaches both ZIPs, built from that release's tag. A release download is not a directory listing.
+## Claude installation
 
-## Claude pilot installation
+On a paid plan, open **Customize → Plugins** on the web or desktop and upload `prompting-wizard-claude.zip`. Plugins added there are saved to your account and sync to Cowork and to Claude Code when you sign in with the same account. In Claude Code you can instead run `/plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**. Use an approved marketplace or administrator-provided plugin when workspace policy requires it.
 
-On a supported paid account, open **Customize → Plugins** on the web or desktop and upload `prompting-wizard-teacher-claude.zip`. Alternatively, after this change is merged, add the `Entuvo/prompting-wizard` GitHub marketplace and choose **Prompting Wizard — Everyday**, not the separate course plugin. Use an approved marketplace or administrator-provided plugin when workspace policy requires it.
-
-Start a new conversation. Select the bundled **learn** skill from the skills menu if needed, then say:
+Start a new conversation and say:
 
 > Use Prompting Wizard to teach me through my work; no interview. Keep tips occasional. My task is: [your task].
 
-Confirm that the coach can read the bundled guide. If it cannot, use the [manual setup](NATIVE-APPS.md); do not assume files uploaded successfully are available in the conversation. Account installation does not prove the skill activates in every new chat.
+Confirm that the coach can read the bundled guide. If it cannot, use the [manual setup](NATIVE-APPS.md). Account installation does not prove the skill activates in every new chat. Skills and commands work in Claude chat; hooks and local MCP servers run only in Cowork and Claude Code (this plugin ships neither). See [Claude plugins](https://support.claude.com/en/articles/13837440-use-plugins-in-claude).
 
-Anthropic documents account-installed plugins in web chat and desktop, and skills/plugins on all three Cowork surfaces. Claude's merged Chat/Cowork experience is rolling out, so mobile availability and menus depend on account, plan and app version. See [Claude plugins](https://support.claude.com/en/articles/13837440-use-plugins-in-claude) and [web, desktop and mobile support](https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile). These statements describe platform support, not successful Wizard testing.
+## ChatGPT and Codex installation
 
-## ChatGPT pilot installation and distribution
+**Personal (ChatGPT desktop), then workspace:** a downloaded zip does not appear in ChatGPT by itself. Register it as a local plugin first, following [OpenAI's manual install](https://developers.openai.com/plugins/build/plugins#install-a-local-plugin-manually):
 
-For development, use the repository's marketplace entry pointing to `plugins/prompting-wizard-teacher`. Follow [OpenAI's local plugin setup](https://developers.openai.com/plugins/build/plugins#build-your-own-curated-plugin-list) in the ChatGPT desktop app. Local/repository marketplace availability differs by surface; a local install alone does not distribute the plugin to web or mobile.
+1. Unzip `prompting-wizard-openai.zip` to `~/.codex/plugins/prompting-wizard/`.
+2. Add an entry for it to `~/.agents/plugins/marketplace.json`, with `"source": {"source": "local", "path": "<that folder>"}`.
+3. Restart the ChatGPT desktop app and install **Prompting Wizard** from your local source under **Plugins → Personal**.
+4. To share it, a workspace admin opens the plugin's menu under **Personal**, chooses **Publish**, and grants the intended roles access. Members then get it on web, desktop and mobile. This is workspace distribution, not public publication. See [workspace publishing](https://developers.openai.com/plugins/build/plugins#publish-a-local-plugin-to-your-workspace).
 
-To make the pilot available through an account/workspace, a workspace administrator can use the documented **Personal → plugin menu → Publish** route where supported, then grant the intended roles access. This is workspace distribution, not public publication. Users must be signed into that workspace. Follow [workspace publishing](https://developers.openai.com/plugins/build/plugins#publish-a-local-plugin-to-your-workspace) and verify the plugin appears on each device.
+**Codex:** run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**.
 
-For public distribution, the publisher uploads `prompting-wizard-teacher-chatgpt.zip` through the [OpenAI plugin submission portal](https://developers.openai.com/plugins/deploy/submission), resolves validation findings, completes the required identity/permissions checks and submits for review. Publish only after approval. No submission, workspace publication or approval has been performed by this build. New documentation URLs must be live before submission.
+**Public:** the publisher uploads `prompting-wizard-openai.zip` through the [OpenAI plugin submission portal](https://developers.openai.com/plugins/deploy/submission); one listing covers ChatGPT and Codex. Publish only after approval. OpenAI's guidelines exclude trial plugins, so the pilot label has to be resolved by the walkthrough first.
 
-Once the plugin is available to the account, install it, start a new chat, select it with `@` if necessary, and use the same start request above. [OpenAI documents plugins in Chat and Work on web, desktop and mobile](https://learn.chatgpt.com/docs/plugins); desktop-only components are exceptions. This pilot ships none, but end-to-end compatibility remains untested.
+Once installed, start a new chat, select the plugin with `@` if necessary, and use the start request above.
 
 ## Keep teaching and continuity separate
 
@@ -72,16 +69,18 @@ Local package tests and model simulations do not establish these native results 
 
 ## Maintainers
 
-`plugins/prompting-wizard-teacher/skills/learn/SKILL.md`, its plugin-folder `README.md` and the two manifests are canonical native files. The guide/card, license and logo in that tree are generated from existing sources:
+The plugin tree `plugins/prompting-wizard/` is generated; never hand-edit it. Its canonical sources are:
+
+- `prompting-wizard/` (course skill), `pw/SKILL.md` and `learn/SKILL.md`;
+- `prompting-wizard/.claude-plugin/plugin.json`, `packaging/plugin.json` (Agent Plugins) and `packaging/openai-plugin.json` (legacy Codex);
+- `packaging/README.md` (the plugin's README); the guide and empty card are generated from `prompting-wizard/references/`.
 
 ```sh
-python3 tools/build_teaching_plugins.py --sync
-python3 tools/build_teaching_plugins.py --check
-python3 tools/test_teaching_plugins.py
+python3 tools/sync_codex_plugin.py          # regenerate the tree
+python3 tools/sync_codex_plugin.py --check  # CI: stale, missing or unexpected files
+python3 tools/package_release.py            # build the two downloads
 ```
 
-Edit the shared learning policy and card format in `prompting-wizard/references/`, then regenerate; do not hand-edit generated references. Never place learner cards in a plugin tree. Packaging uses an explicit allowlist; the mirror check rejects unexpected files and symlinks.
+All three manifests share the course version in `prompting-wizard/VERSION.md`. Skill descriptions must stay within claude.ai's 200-character limit, and frontmatter within the Agent Skills fields. Never place learner cards or progress in the plugin tree. Current OpenAI submission rules do not accept plugins with lifecycle hooks or app references; keep the optional coaching hooks a separate install.
 
-The native plugin has its own version, separate from the course. Keep both native manifests and their marketplace versions aligned. Current OpenAI submission guidance does not support adding an MCP server to an existing skills-only plugin. If shared storage is implemented later, plan a separate connected plugin or reassess the then-current migration rules; do not promise a seamless upgrade.
-
-Documentation checked 12 October 2026. No hosted service or account changes are part of this pilot.
+Documentation checked 16 October 2026 (Claude plugins and Claude Code plugin reference; OpenAI Plugins build and submission guides).

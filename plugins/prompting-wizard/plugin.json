@@ -1,0 +1,43 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "prompting-wizard",
+  "version": "1.5.0",
+  "description": "Learn prompting through your everyday work: practice, short lessons and Learning Cards, an optional 30-lesson course, and a review of your past chats.",
+  "author": {
+    "name": "Entuvo",
+    "url": "https://github.com/Entuvo"
+  },
+  "homepage": "https://github.com/Entuvo/prompting-wizard",
+  "repository": "https://github.com/Entuvo/prompting-wizard",
+  "license": "MIT",
+  "keywords": [
+    "prompting",
+    "education",
+    "course",
+    "learning",
+    "productivity"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Prompting Wizard",
+        "shortDescription": "Learn prompting in your work",
+        "longDescription": "Finish your work, then choose practice, an example or a short lesson, and keep accepted evidence in a portable Learning Card. Take the optional 30-lesson course, or review your past chats with the same provider to see where prompts cost you turns. In ChatGPT and Claude the everyday coaching is a pilot; local course storage and pw history need Claude Code or Codex.",
+        "developerName": "Entuvo",
+        "category": "Productivity",
+        "capabilities": [],
+        "websiteURL": "https://github.com/Entuvo/prompting-wizard",
+        "supportURL": "https://github.com/Entuvo/prompting-wizard/blob/main/SUPPORT.md",
+        "privacyPolicyURL": "https://github.com/Entuvo/prompting-wizard/blob/main/PRIVACY.md",
+        "termsOfServiceURL": "https://github.com/Entuvo/prompting-wizard/blob/main/TERMS.md",
+        "logo": "./assets/logo.png",
+        "composerIcon": "./assets/logo.png",
+        "brandColor": "#C2582B",
+        "defaultPrompt": [
+          "Use Prompting Wizard to teach me through my work; no interview.",
+          "Start the Prompting Wizard course."
+        ]
+      }
+    }
+  }
+}

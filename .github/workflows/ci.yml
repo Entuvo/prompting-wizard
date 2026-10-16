@@ -40,8 +40,7 @@ jobs:
           python3 tools/test_learning_evaluation.py
           python3 tools/test_history.py
           python3 tools/test_e2e_hosts.py
-      - name: Native teaching plugin packages
+      - name: Plugin tree and release packages
         run: |
-          python3 tools/build_teaching_plugins.py --check
-          python3 tools/test_teaching_plugins.py
-          python3 tools/build_teaching_plugins.py
+          python3 tools/sync_codex_plugin.py --check
+          python3 tools/package_release.py

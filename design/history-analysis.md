@@ -118,13 +118,13 @@ Each provider's history stays with that provider: scoring sends excerpts through
 | Codex | Codex SDK `thread_list` + app-server `thread/read` | `spawn_agent` or sequential | no per-turn output tokens |
 | ChatGPT export, from Codex | `--host chatgpt --file EXPORT` | as above | current branch plus edited prompts (`edited` hint) |
 | Claude app export, from Claude Code | `--host claude --file EXPORT` | as above | linear conversation as exported |
-| ChatGPT / Claude apps | learner uploads that app's own export to the Everyday plugin | in-chat, up to 30 recent conversations | no local storage: an aggregate, 3 cases and card candidates only |
+| ChatGPT / Claude apps | learner uploads that app's own export; the plugin's `learn` skill reviews it | in-chat, up to 30 recent conversations | no local storage: an aggregate, 3 cases and card candidates only |
 
 ## Changes by file (planned)
 
 - `prompting-wizard/scripts/history.py`: episode builder, filter, heuristics, merge/validate, baseline and casebook rendering (from the pilot's `mine.py`, `score.py`, `build.py`).
 - `prompting-wizard/scripts/history_hosts.py`: SDK-backed readers for Claude Code and Codex, and export readers for ChatGPT and Claude.
-- `plugins/prompting-wizard-teacher/skills/learn/SKILL.md`: in-app export review (plugin 0.2.0).
+- `learn/SKILL.md` (the plugin's `learn` skill): in-app export review. Since 1.5.0 it ships in the one `prompting-wizard` plugin.
 - `prompting-wizard/references/history.md` (tutor procedure) and `history-scoring.md` (scorer spec); `history-casebook.md` (casebook page spec).
 - `prompting-wizard/references/commands.md`: `history` routing. `history.py` owns its own `scan`/`merge`/`delete` CLI, so `wizard.py` never imports a host SDK.
 - `SKILL.md` / `days/30.md`: an informational `- History — …` log line (never a second Day 0 line, since day 30 reads Day 0 as the course-entry baseline), one own-history case after each lesson's Before / After, and a labelled past-work column on day 30.

@@ -220,6 +220,9 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
         errors.append("Claude plugin: version does not match VERSION.md")
     if openai_plugin is not None and openai_plugin.get("version") != version:
         errors.append("OpenAI plugin: version does not match VERSION.md")
+    agent_plugin = read_manifest(ROOT / "packaging" / "plugin.json", "packaging/plugin.json", errors)
+    if agent_plugin is not None and (agent_plugin.get("name"), agent_plugin.get("version")) != ("prompting-wizard", version):
+        errors.append("Agent plugin (packaging/plugin.json): name or version does not match VERSION.md")
 
     if marketplace is not None:
         metadata = marketplace.get("metadata")

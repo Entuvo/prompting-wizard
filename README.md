@@ -17,21 +17,22 @@ Now it knows the audience, the deliverable, the evidence and the quality bar. Pr
 
 ## Start
 
-Bring a task from your own work. Choose the setup for the app you use:
+Prompting Wizard is one plugin. Download the file for your app from the [latest release](https://github.com/Entuvo/prompting-wizard/releases/latest):
 
-### ChatGPT or Claude — teaching pilot
+| Your app | Download | How to install |
+|---|---|---|
+| Claude (web, desktop, Cowork) | `prompting-wizard-claude.zip` | **Customize → Plugins → upload** (paid plans). It also syncs to Claude Code when you sign in with the same account. |
+| Claude Code | `prompting-wizard-claude.zip`, or none | Upload in Claude as above, or run `/plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**. |
+| ChatGPT | `prompting-wizard-openai.zip` | Register it as a local plugin in the ChatGPT desktop app, then a workspace admin can publish it to the workspace; steps in [plugin setup](NATIVE-PLUGINS.md#chatgpt-and-codex-installation). It has not been submitted to the public ChatGPT plugin directory yet. |
+| Codex | `prompting-wizard-openai.zip`, or none | Run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**. |
 
-The **Prompting Wizard — Everyday** plugin bundles the teaching guide, rubrics and empty Learning Card. Use the [ChatGPT and Claude plugin setup](NATIVE-PLUGINS.md) for packages, account/workspace installation routes and the device walkthrough. These are pilot packages; a public listing and native compatibility have not been verified.
+Then start a new chat and say: “Use Prompting Wizard to teach me through my work; no interview.” For structured lessons, say “Start the Prompting Wizard course.” Details, device notes and the walkthrough are in [plugin setup](NATIVE-PLUGINS.md). Everyday coaching in the ChatGPT and Claude apps is a pilot: native behaviour on each device is still being verified.
 
-The plugin has not been submitted to either public directory.
+Keep your current `LEARNING.md` and attach it in each new chat that needs your learning history; the plugin does not synchronize progress. If plugins are unavailable to your account, use the [one-time instructions and manual guide setup](NATIVE-APPS.md).
 
-After installation, select the plugin if needed and say: “Teach me through my work; no interview. Keep tips occasional.” Do your normal work first, then choose whether to practise or take a short lesson. Keep your current `LEARNING.md` and attach it in each new chat that needs your learning history; installing the plugin does not synchronize progress or guarantee automatic activation.
+### Without the plugin: Claude Code or Codex
 
-If plugins are unavailable to your account, use the [one-time instructions and manual guide setup](NATIVE-APPS.md). That fallback starts with lightweight tips; the full teaching flow needs the guide. No coding tool is required for either learner experience. The choices below are text replies, not added app buttons or registered `pw` commands.
-
-### Claude Code or Codex
-
-Use the installed skill for everyday learning or the optional course. Start in a folder you are comfortable letting your coding agent inspect: practice prompts run with the file and network access available to that session.
+If you'd rather not install a plugin, load the course skill directly. Start in a folder you are comfortable letting your coding agent inspect: practice prompts run with the file and network access available to that session.
 
 Paste this into Claude Code or Codex. It loads Prompting Wizard and offers everyday learning, the structured course, or later.
 
@@ -54,8 +55,6 @@ If you can neither install the skill nor read its files from GitHub, state exact
 ```
 
 Prefer commands? See [all install options](https://entuvo.github.io/prompting-wizard/#install).
-
-Everyday learning, Learning Card and `pw history` commands ship in [1.4 and later](https://github.com/Entuvo/prompting-wizard/releases/latest).
 
 After loading, ask “Learn through my work; no interview.” The skill alone provides teaching when you ask; it does not automatically watch later work or add after-task invitations. For explicit commands, use your installation's invocation:
 
@@ -95,7 +94,7 @@ Tips default to occasional; choose frequent or on-request using the [frequency i
 
 In Claude Code or Codex, results stay in a local folder you choose and are deleted after 30 days. Transcript files are never parsed. Nothing is written to your course, Learning Card or config files unless you accept it.
 
-Each provider's history is reviewed only by that provider's hosts: Claude Code and Claude review Claude exports, and Codex and ChatGPT review ChatGPT exports. In the apps, upload only that app's own export: an upload reaches the provider even when the plugin declines it. Inside ChatGPT or Claude, the Everyday plugin can review that app's own export when you upload it, up to 30 recent conversations. It reports your top gaps and three of your own cases in the chat, and proposes card records for you to accept. It cannot store a casebook. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
+Each provider's history is reviewed only by that provider's hosts: Claude Code and Claude review Claude exports, and Codex and ChatGPT review ChatGPT exports. In the apps, upload only that app's own export: an upload reaches the provider even when the plugin declines it. Inside ChatGPT or Claude, the plugin can review that app's own export when you upload it, up to 30 recent conversations. It reports your top gaps and three of your own cases in the chat, and proposes card records for you to accept. It cannot store a casebook. See [design](design/history-analysis.md) and [privacy](PRIVACY.md#learning-from-past-work-history).
 
 ## Carry learning between chats
 

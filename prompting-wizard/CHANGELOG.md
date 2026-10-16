@@ -1,5 +1,12 @@
 # Prompting Wizard release notes
 
+## 1.5.0 — 2026-10-16
+
+- **One plugin.** The course, the `pw` shortcut and everyday learning (formerly the separate "Prompting Wizard — Everyday" plugin) now ship as one plugin, `prompting-wizard`. Releases attach two downloads: `prompting-wizard-claude.zip` (Claude app, Cowork, Claude Code) and `prompting-wizard-openai.zip` (ChatGPT and Codex), each with its manifest at the archive root. The old course zips, the standalone skill zip and the separate `prompting-wizard-teacher` plugin are retired. If you installed it, remove it and install `prompting-wizard`.
+- The OpenAI download carries the portable Agent Plugins `plugin.json` plus the legacy `.codex-plugin/plugin.json` for the Codex CLI. All manifests share one version.
+- The README, website and plugin setup now lead with a single "your app → file → install" table. The manual-setup guide and empty card remain attached for apps without plugins.
+- Skill descriptions fit claude.ai's 200-character limit, since all three skills now upload to the Claude app.
+
 ## 1.4.4 — 2026-10-15
 
 - Fixed: a `History` log line no longer breaks lesson commits with local coaching's shared progress. A lesson commit may now include `- History — …` lines beside its one lesson line.
