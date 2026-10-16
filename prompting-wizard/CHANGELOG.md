@@ -1,5 +1,16 @@
 # Prompting Wizard release notes
 
+## 1.5.2 — 2026-10-16
+
+- **OpenAI directory review.** OpenAI's plugin directory rejected the 1.5.1 submission. Skills-only plugins are not currently accepted, so Prompting Wizard is not listed there. This release fixes the other four findings:
+  - The OpenAI listing text no longer names other assistants or platforms, and the category is now Education & Research.
+  - Privacy, terms and support are static pages on the website (`/privacy/`, `/terms/`, `/support/`), and every manifest links to them.
+  - `prompting-wizard-openai.zip` leaves out the update check and the local session-history readers. It updates only through the app's plugin manager, and `pw history` there reads app data exports. The repository marketplace and `prompting-wizard-claude.zip` keep both.
+  - In `prompting-wizard-openai.zip`, the history guide, the `history` command row, the `learn` skill and the README describe only the export route: no SDK prerequisites and no local-session scan commands. The README says the directory build reviews exports only and that the full local `pw history` comes from the repository marketplace install.
+- **Privacy policy.** The two confirmations and secret masking are scoped to `pw history` in Claude Code and Codex. In the ChatGPT and Claude apps, an uploaded export goes to that app's provider as it is, with nothing masked, and is reviewed in that chat only. Website analytics and GitHub Issues each now state what is recorded, why, who receives it, how long it is kept and your controls; analytics retention cites Cloudflare's own figures.
+- **No more pilot label.** The READMEs, plugin setup, support page, native-app setup, bundled guide, empty card and website no longer call everyday coaching a pilot. It has passed the device walkthrough in Claude on the web; other surfaces have not been through it yet, and the ChatGPT walkthrough comes before any OpenAI resubmission.
+- The ChatGPT and Claude export readers moved to `scripts/history_exports.py`, which uses only the Python standard library. `scripts/history_hosts.py` keeps the Claude Code and Codex SDK readers. If `history_hosts.py` is missing, `pw history` on local sessions explains that and points to app exports.
+
 ## 1.5.1 — 2026-10-16
 
 - **Claude on the web passed the device walkthrough** (Max plan, 2026-10-16): install, work first, practice, card carried to another app, honest handling of a bad card, and it started on its own in an ordinary new chat. The record is in `NATIVE-PLUGINS.md`. ChatGPT and the Claude desktop and phone apps stay a pilot until each passes the same walkthrough.

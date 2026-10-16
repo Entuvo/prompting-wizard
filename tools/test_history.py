@@ -4,6 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'prompting-wizard' / 'scripts'))
 import history
+import history_exports
 import history_hosts
 
 NOW = 1_760_000_000_000
@@ -319,6 +320,19 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertEqual(self.json.loads(proc.stdout)['counts']['episodes'], 0)
 
+    def test_local_history_absent_from_build(self):
+        import os, shutil, subprocess
+        scripts = Path(self.tmp.name) / 'scripts'
+        shutil.copytree(Path(history.__file__).parent, scripts, ignore=shutil.ignore_patterns('__pycache__'))
+        (scripts / 'history_hosts.py').unlink()
+        env = {k: v for k, v in os.environ.items() if not k.startswith(('CODEX_', 'CLAUDE_CODE')) and k != 'CLAUDECODE'}
+        for host in ('claude-code', 'codex'):
+            proc = subprocess.run([sys.executable, '-I', str(scripts / 'history.py'), 'scan', '--root', str(self.root),
+                                   '--host', host], capture_output=True, text=True, env=env)
+            out = self.json.loads(proc.stdout)
+            self.assertEqual((proc.returncode, out['ok']), (1, False), proc.stderr)
+            self.assertIn('Local session history is not in this build', out['error'])
+
     def test_provider_guard(self):
         codex, claude = {'CODEX_THREAD_ID': 't'}, {'CLAUDE_CODE_SESSION_ID': 's'}
         self.assertIsNone(history.provider_guard('chatgpt', codex))
@@ -418,7 +432,7 @@ class ExportTests(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_chatgpt_branch_edits_tools_and_window(self):
-        sessions = history_hosts.chatgpt_export_sessions(self.gpt, days=90, now_ms=NOW)
+        sessions = history_exports.chatgpt_export_sessions(self.gpt, days=90, now_ms=NOW)
         self.assertEqual([s['session_id'] for s in sessions], ['c1'])
         _, eps, _ = history.build(sessions)
         prompts = [e['prompt'] for e in eps]
@@ -431,7 +445,7 @@ class ExportTests(unittest.TestCase):
         self.assertNotIn('You are ChatGPT', ' '.join(prompts))
 
     def test_claude_export(self):
-        sessions = history_hosts.claude_export_sessions(self.claude, days=90, now_ms=NOW)
+        sessions = history_exports.claude_export_sessions(self.claude, days=90, now_ms=NOW)
         _, eps, _ = history.build(sessions)
         first = eps[0]
         self.assertEqual((first['host'], first['tool_calls'], first['has_image']), ('claude', 1, True))
@@ -440,15 +454,15 @@ class ExportTests(unittest.TestCase):
 
     def test_wrong_format_fails_closed(self):
         with self.assertRaisesRegex(ValueError, 'ChatGPT'):
-            history_hosts.chatgpt_export_sessions(self.claude)
+            history_exports.chatgpt_export_sessions(self.claude)
         with self.assertRaisesRegex(ValueError, 'Claude'):
-            history_hosts.claude_export_sessions(self.gpt)
+            history_exports.claude_export_sessions(self.gpt)
         empty = self.dir / 'empty.zip'
         import zipfile
         with zipfile.ZipFile(empty, 'w') as z:
             z.writestr('notes.txt', 'x')
         with self.assertRaisesRegex(ValueError, 'No conversations.json'):
-            history_hosts.load_export(empty)
+            history_exports.load_export(empty)
 
     def test_cli_scan_from_export(self):
         import contextlib, io

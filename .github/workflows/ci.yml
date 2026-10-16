@@ -15,8 +15,11 @@ jobs:
           python-version: "3.12"
       - name: Validate skill and distribution metadata
         run: python3 tools/validate.py --complete
-      - name: Site stylesheet hashes
-        run: python3 tools/check_site.py
+      - name: Site stylesheet hashes and policy pages
+        run: |
+          python3 tools/check_site.py
+          python3 tools/build_policy_pages.py --check
+          python3 tools/test_policy_pages.py
       - name: Validator tests
         run: python3 tools/test_validate.py
       - name: Package tests

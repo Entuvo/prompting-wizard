@@ -76,8 +76,8 @@ Use `configure` for mode, `pause`/`resume`, `exclude`/`include`, `list` to inspe
 
 Pending excerpts and unreviewed findings expire after 30 days. Expired content is unavailable immediately at runtime; physical cleanup occurs on the next invocation. Successful reviewed conversion removes raw examples sooner. Reviewed records and imported course history persist until deletion. Host transcripts, user-requested exports and external backups are separate; deletion makes no forensic-erasure promise. A full queue skips new examples and reports a warning.
 
-## Everyday teaching pilot
+## Everyday teaching
 
-Read `learning-policy.md` and `learning-card.md` for everyday learning. Existing tutor-mode suppression applies to practice, card review and follow-ups; use the existing verified fallback if suppression cannot be established. Explicit teaching and card exports do not enable collection. Cards stay separate from course commits and the shared database in this pilot; never fabricate course progress to satisfy `commit_lesson`.
+Read `learning-policy.md` and `learning-card.md` for everyday learning. Existing tutor-mode suppression applies to practice, card review and follow-ups; use the existing verified fallback if suppression cannot be established. Explicit teaching and card exports do not enable collection. Cards stay separate from course commits and the shared database; never fabricate course progress to satisfy `commit_lesson`.
 
 The host-requested after-result continuation owns the single optional invitation. The normal work response must not add another, even with native account instructions. Lesson-only, paused, excluded and never-enabled workspaces receive no proactive invitations; explicit teaching remains available. Frequency preferences only reduce invitations, not hook calls or quota use. Existing feedback on/off and collection controls keep their meanings.

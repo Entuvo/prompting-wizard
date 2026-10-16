@@ -25,6 +25,12 @@ PLUGIN_NAME = "prompting-wizard"
 AGENT_PLUGIN_KEYS = {"$schema", "name", "version", "description", "author", "homepage", "repository", "license",
                      "keywords", "extensions"}  # agent-plugins.org 1.0.0: additionalProperties false
 SHORT_DESCRIPTION_MAX = 30  # OpenAI submission listing metadata
+OPENAI_CATEGORIES = {"Productivity", "Creativity", "Developer Tools", "Business & Operations", "Data & Analytics",
+                     "Communication", "Education & Research", "Security", "Finance", "Healthcare", "Travel",
+                     "Entertainment", "Other"}  # OpenAI plugin submission errors: plugin_category_unknown
+# OpenAI's directory review rejects listing text that names another assistant, model or platform.
+OTHER_ASSISTANTS = re.compile(r"\b(chatgpt|claude|codex|openai|anthropic|gemini|copilot|gpt[-\w.]*|llama|mistral)\b", re.I)
+LISTING_FIELDS = ("displayName", "shortDescription", "longDescription", "defaultPrompt")
 MANIFESTS = {  # plugin path -> canonical source
     ".claude-plugin/plugin.json": "prompting-wizard/.claude-plugin/plugin.json",
     ".codex-plugin/plugin.json": "packaging/openai-plugin.json",
@@ -94,9 +100,21 @@ def plugin_entries(root: Path = ROOT) -> dict[str, bytes]:
         errors.append(f"plugin.json: fields not allowed by the Agent Plugins schema: {sorted(extra)}")
     interfaces = (agent.get("extensions", {}).get("com.openai", {}).get("interface", {}),
                   json.loads(data[".codex-plugin/plugin.json"]).get("interface", {}))
+    listing = [agent.get("description", ""), json.loads(data[".codex-plugin/plugin.json"]).get("description", "")]
+    for skill in ("prompting-wizard", "pw", "learn"):
+        description = re.search(r"^description: (.*)$", data[f"skills/{skill}/SKILL.md"].decode("utf-8"), re.M)
+        listing.append(description.group(1) if description else "")
     for interface in interfaces:
         if len(interface.get("shortDescription", "")) > SHORT_DESCRIPTION_MAX:
             errors.append(f"OpenAI shortDescription exceeds {SHORT_DESCRIPTION_MAX} characters")
+        if interface.get("category") not in OPENAI_CATEGORIES:
+            errors.append(f"OpenAI category {interface.get('category')!r} is not an accepted category")
+        for field in LISTING_FIELDS:
+            value = interface.get(field, "")
+            listing += value if isinstance(value, list) else [value]
+    for text in listing:
+        if match := OTHER_ASSISTANTS.search(text):
+            errors.append(f"OpenAI listing text names another assistant or platform: {match.group(0)!r}")
     if errors:
         raise ValueError("; ".join(errors))
     versions = {json.loads(data[m]).get("version") for m in MANIFESTS}

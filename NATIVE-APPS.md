@@ -1,6 +1,6 @@
-# Learn through everyday chats — pilot
+# Learn through everyday chats
 
-Finish your normal work, then practise one useful prompting skill. No interview required. The same teaching flow is designed for ChatGPT and Claude. This is an early pilot: native web, desktop, iOS and Android setup has not yet been exercised end to end. Installation in Claude Code/Codex does not install account instructions in either consumer app.
+Finish your normal work, then practise one useful prompting skill. No interview required. The same teaching flow is designed for ChatGPT and Claude. This manual setup has not been exercised end to end on native web, desktop, iOS or Android. Installation in Claude Code/Codex does not install account instructions in either consumer app.
 
 For the bundled teaching plugin, start with [plugin installation and device walkthrough](NATIVE-PLUGINS.md). This page is the instructions-and-attachments fallback when plugins are unavailable.
 
@@ -57,12 +57,12 @@ Example and Lesson offer short explanations, with an optional route back to prac
 
 ## What is tracked
 
-Only accepted learning evidence: the skill, task category, learner action, help received and optional reflection. Stages describe evidence: introduced, practised with help/unknown assistance, demonstrated independently, transferred to another context, retained later. Unseen skills remain unknown. A seven-day revisit is a pilot scheduling rule, not a validated claim about memory. The next suggestion should name its evidence and why it fits your task.
+Only accepted learning evidence: the skill, task category, learner action, help received and optional reflection. Stages describe evidence: introduced, practised with help/unknown assistance, demonstrated independently, transferred to another context, retained later. Unseen skills remain unknown. A seven-day revisit is a provisional scheduling rule, not a validated claim about memory. The next suggestion should name its evidence and why it fits your task.
 
 Mini-lessons never advance the separate 30-lesson course. In installed coding-agent skills, use `pw learn` for everyday teaching, `pw learning` for card progress, and `pw progress` for course progress. These are not registered native ChatGPT/Claude app commands.
 
 ## Limits and automatic continuity
 
-This pilot does not watch other chats, run background capture, or sync accounts. Reviewing past chats requires you to upload an export, and that review is only in the plugin. Local coding-host collection still uses its existing explicit opt-in and controls; these account instructions do not enable it. Exported cards do not synchronize with the local course database yet.
+This setup does not watch other chats, run background capture, or sync accounts. Reviewing past chats requires you to upload an export, and that review is only in the plugin. Local coding-host collection still uses its existing explicit opt-in and controls; these account instructions do not enable it. Exported cards do not synchronize with the local course database yet.
 
-A shared authenticated connector could reduce manual transfer in future; it is not built. No Wizard service, new account or integration is installed by this pilot. Human learning outcomes remain unvalidated.
+A shared authenticated connector could reduce manual transfer in future; it is not built. No Wizard service, new account or integration is installed by this setup. Human learning outcomes remain unvalidated.

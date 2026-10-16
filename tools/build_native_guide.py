@@ -35,7 +35,7 @@ def build(root: Path, destination: Path) -> Path:
     if template['events'] or template['retracted_ids']:
         raise ValueError('Card template must contain no learner evidence')
     version = read('VERSION.md').split('version: ', 1)[1].splitlines()[0]
-    guide = ('# Prompting Wizard: everyday learning pilot\n\nCourse version: ' + version +
+    guide = ('# Prompting Wizard: everyday learning\n\nCourse version: ' + version +
              '\n\nNo interview required. Complete work, practise one useful change, reflect, and retain your card. '
              'This guide supplies rules; it does not install an app or run background tracking. '
              'Native surface compatibility and learning efficacy require separate evaluation.\n\n'
@@ -45,7 +45,7 @@ def build(root: Path, destination: Path) -> Path:
     # Canonical course links, if introduced later, must be resolved deliberately.
     if re.search(r'\]\((?!#|https://)[^)]+\)', guide):
         raise ValueError('Unresolved relative link in native guide')
-    card_text = ('# Learning Card\n\nEmpty pilot template. Ask your coach to replace the synthetic profile UUID '
+    card_text = ('# Learning Card\n\nEmpty template. Ask your coach to replace the synthetic profile UUID '
                  'once at first use; retain it across apps. Keep the latest complete file.\n\n```json\n' +
                  json.dumps(template, indent=2) + '\n```\n')
     destination.mkdir(parents=True, exist_ok=True)

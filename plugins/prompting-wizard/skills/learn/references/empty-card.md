@@ -1,6 +1,6 @@
 # Learning Card
 
-Empty pilot template. Ask your coach to replace the synthetic profile UUID once at first use; retain it across apps. Keep the latest complete file.
+Empty template. Ask your coach to replace the synthetic profile UUID once at first use; retain it across apps. Keep the latest complete file.
 
 ```json
 {
