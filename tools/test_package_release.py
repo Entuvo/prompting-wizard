@@ -154,6 +154,18 @@ class PackageReleaseTests(unittest.TestCase):
         self.assertTrue((outside / "prompting-wizard" / "keep.txt").exists())
         self.assertIn("must not be a symlink", " ".join(sync_codex_plugin.check(self.root)))
 
+    def test_openai_listing_names_no_other_assistant_and_uses_an_accepted_category(self):
+        manifest = self.root / "packaging" / "openai-plugin.json"
+        original = manifest.read_text()
+        for field, value, error in (("longDescription", "Works in ChatGPT and Claude Code.", "names another assistant"),
+                                    ("defaultPrompt", ["Teach me in Codex."], "names another assistant"),
+                                    ("category", "Education", "not an accepted category")):
+            data = json.loads(original)
+            data["interface"][field] = value
+            manifest.write_text(json.dumps(data))
+            with self.assertRaisesRegex(ValueError, error, msg=field):
+                self.build()
+
     def test_openai_build_installs_nothing_from_outside_the_package(self):
         claude, openai = self.build()
         hosts = "skills/prompting-wizard/scripts/history_hosts.py"
