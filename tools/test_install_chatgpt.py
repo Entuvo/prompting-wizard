@@ -111,6 +111,16 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in self.marketplace.parent.iterdir()), ["marketplace.json"])
         self.assertFalse((self.home / ".codex").exists())
 
+    @unittest.skipIf(os.geteuid() == 0, "root ignores directory permissions")
+    def test_unwritable_marketplace_folder_changes_nothing(self):
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.parent.chmod(0o555)
+        self.addCleanup(self.marketplace.parent.chmod, 0o755)
+        result = self.install()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cannot write", result.stderr)
+        self.assertFalse((self.home / ".codex").exists())
+
     def test_checksum_mismatch_is_refused(self):
         bad = self.home / "dl"
         bad.mkdir()

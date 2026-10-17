@@ -207,9 +207,13 @@ main() {
         fi
     fi
 
-    # Check the marketplace before touching anything, so invalid JSON changes nothing.
+    # Check the marketplace before touching the plugin folder, so invalid JSON or an
+    # unwritable folder leaves nothing half installed.
     if [ "$have_python" = yes ]; then
         plan_marketplace install "$marketplace" "$work/marketplace.check" >/dev/null || exit 1
+        probe=$( { mkdir -p "$marketplace_dir" && mktemp "$marketplace_dir/.marketplace.json.XXXXXX"; } 2>/dev/null) ||
+            fail "cannot write to $marketplace_dir; nothing was installed"
+        rm -f "$probe"
     fi
 
     command -v unzip >/dev/null 2>&1 || fail "unzip is required"
