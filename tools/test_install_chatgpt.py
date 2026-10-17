@@ -59,6 +59,9 @@ class ChatGPTInstallerTests(unittest.TestCase):
     def install(self, zip_path=None):
         return self.run_installer("--zip", str(zip_path or self.dist / ZIP))
 
+    def install_with(self, env):
+        return self.run_installer("--zip", str(self.dist / ZIP), env=env)
+
     def entries(self):
         plugins = json.loads(self.marketplace.read_text(encoding="utf-8"))["plugins"]
         return [p for p in plugins if p.get("name") == "prompting-wizard"]
@@ -196,6 +199,28 @@ class ChatGPTInstallerTests(unittest.TestCase):
         env = self.fake_bin(mv='case "$1" in */prompting-wizard) kill -INT $PPID;; esac; exec {real} "$@"')
         self.run_installer("--zip", str(self.dist / ZIP), env=env)
         self.assertTrue((self.target / "plugin.json").is_file())
+
+    def assert_installed_but_not_registered(self, result):
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("not registered yet", result.stderr)
+        self.assertIn("xcode-select --install", result.stderr)
+        self.assertTrue((self.target / "plugin.json").is_file())
+        self.assertFalse(self.marketplace.exists())
+
+    def test_without_python3_prints_the_manual_entry(self):
+        bin_dir = self.home.parent / "nopython"
+        bin_dir.mkdir()
+        for tool in ("awk", "basename", "cat", "chmod", "cp", "cut", "date", "dirname", "find", "grep", "head",
+                     "mkdir", "mktemp", "mv", "rm", "shasum", "sha256sum", "uname", "unzip"):
+            if shutil.which(tool):
+                (bin_dir / tool).symlink_to(shutil.which(tool))
+        self.assert_installed_but_not_registered(self.install_with({"PATH": str(bin_dir)}))
+
+    @unittest.skipUnless(Path("/usr/bin/python3").exists(), "needs /usr/bin/python3")
+    def test_apple_python3_stub_without_developer_tools_is_not_run(self):
+        env = self.fake_bin(uname="echo Darwin", **{"xcode-select": "exit 2"})
+        env["PATH"] = env["PATH"].split(os.pathsep)[0] + os.pathsep + "/usr/bin:/bin"
+        self.assert_installed_but_not_registered(self.install_with(env))
 
     def test_symlink_target_is_refused(self):
         elsewhere = self.home / "elsewhere"

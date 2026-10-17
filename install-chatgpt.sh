@@ -92,7 +92,11 @@ PY
 
 print_manual_entry() {
     cat >&2 <<EOF
-python3 is required to edit $marketplace. Add this entry to its "plugins" list by hand:
+
+Prompting Wizard is installed at $target, but it is not registered yet because no working python3 was found.
+To finish, do one of these:
+- On macOS, install the Xcode Command Line Tools with "xcode-select --install", then run this script again.
+- Add this entry to the "plugins" list in $marketplace by hand:
 
     {
       "name": "prompting-wizard",
@@ -170,11 +174,16 @@ main() {
     rm -rf "$plugins_dir"/.prompting-wizard.stage.*
     rm -f "$marketplace_dir"/.marketplace.json.??????
     have_python=yes
-    command -v python3 >/dev/null 2>&1 || have_python=no
+    python=$(command -v python3 2>/dev/null) || have_python=no
+    # Without the Xcode Command Line Tools, Apple's /usr/bin/python3 is a stub whose first run opens an install dialog.
+    if [ "$have_python" = yes ] && [ "$python" = /usr/bin/python3 ] && [ "$(uname -s)" = Darwin ] &&
+        ! xcode-select -p >/dev/null 2>&1; then
+        have_python=no
+    fi
 
     if [ "$action" = uninstall ]; then
         if [ "$have_python" = no ]; then
-            echo "Remove $target and the prompting-wizard entry from $marketplace by hand." >&2
+            echo "No working python3 was found (on macOS it comes with the Xcode Command Line Tools: xcode-select --install). Remove $target and the prompting-wizard entry from $marketplace by hand." >&2
             exit 1
         fi
         update_marketplace uninstall
