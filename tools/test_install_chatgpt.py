@@ -191,6 +191,12 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(list(self.target.parent.glob(".prompting-wizard.stage.*")), [])
 
+    def test_interrupt_during_swap_leaves_a_plugin_installed(self):
+        self.install()
+        env = self.fake_bin(mv='case "$1" in */prompting-wizard) kill -INT $PPID;; esac; exec {real} "$@"')
+        self.run_installer("--zip", str(self.dist / ZIP), env=env)
+        self.assertTrue((self.target / "plugin.json").is_file())
+
     def test_symlink_target_is_refused(self):
         elsewhere = self.home / "elsewhere"
         elsewhere.mkdir()

@@ -139,6 +139,12 @@ update_marketplace() {
     echo "Updated $marketplace"
 }
 
+exit_on_signals() {
+    trap 'exit 129' 1
+    trap 'exit 130' 2
+    trap 'exit 143' 15
+}
+
 main() {
     zip_path=
     action=install
@@ -184,9 +190,7 @@ main() {
     work=$(mktemp -d)
     stage=
     trap 'rm -rf "$work"; [ -z "$stage" ] || rm -rf "$stage"' 0
-    trap 'exit 129' 1
-    trap 'exit 130' 2
-    trap 'exit 143' 15
+    exit_on_signals
 
     if [ -n "$zip_path" ]; then
         [ -f "$zip_path" ] || fail "zip not found: $zip_path"
@@ -237,6 +241,8 @@ main() {
     [ -z "$(find "$stage" -type l | head -n 1)" ] || fail "$zip_path contains symlinks; refusing to install it"
     chmod -R u+rwX,go=rX "$stage"
 
+    # A signal between the two moves would leave no plugin at all, so hold signals until both are done.
+    trap '' 1 2 15
     moved=no
     if [ -e "$target" ]; then
         rm -rf "$previous"
@@ -244,10 +250,11 @@ main() {
         moved=yes
     fi
     if ! mv "$stage" "$target"; then
-        [ ! -d "$previous" ] || mv "$previous" "$target"
+        [ "$moved" = no ] || mv "$previous" "$target"
         fail "cannot move the plugin into $target; the previous copy was restored"
     fi
     stage=
+    exit_on_signals
     echo "Installed Prompting Wizard $version: $target"
     [ "$moved" = no ] || echo "Previous copy kept at $previous"
 
