@@ -3,6 +3,8 @@
 ## 1.5.3 — 2026-10-17
 
 - **One command for the ChatGPT desktop app.** On macOS or Linux, `install-chatgpt.sh` at the repository root registers Prompting Wizard as a personal local plugin; the command is in the README. Then quit and reopen ChatGPT and install it under Plugins → Personal. The script is pinned to its own release. It uses `prompting-wizard-openai.zip` from your Downloads folder if that file matches the release checksum, and otherwise downloads the zip from that release. It stops on a checksum mismatch. It keeps other marketplace entries, backs up the marketplace file before changing it, and refuses invalid JSON or a symlinked plugin folder. `--zip PATH` installs a zip you already have, and `--uninstall` removes the plugin. The script is not part of either download.
+- **Website link.** Every manifest's homepage and website now point at the Prompting Wizard site, not the GitHub repository; the repository link stays as `repository`.
+- **ChatGPT desktop install checked** on macOS (2026-10-17): the script installed the plugin and it installed under Plugins → Personal. The rest of the walkthrough has not been run on ChatGPT.
 - **Plugin setup** shows the exact marketplace entry from OpenAI's manual install. Its `path` is `./.codex/plugins/prompting-wizard`, relative to your home folder. The manual steps stay as the fallback, and for Windows.
 
 ## 1.5.2 — 2026-10-16

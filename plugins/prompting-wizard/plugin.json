@@ -7,7 +7,7 @@
     "name": "Entuvo",
     "url": "https://github.com/Entuvo"
   },
-  "homepage": "https://github.com/Entuvo/prompting-wizard",
+  "homepage": "https://entuvo.github.io/prompting-wizard/",
   "repository": "https://github.com/Entuvo/prompting-wizard",
   "license": "MIT",
   "keywords": [
@@ -26,7 +26,7 @@
         "developerName": "Entuvo",
         "category": "Education & Research",
         "capabilities": [],
-        "websiteURL": "https://github.com/Entuvo/prompting-wizard",
+        "websiteURL": "https://entuvo.github.io/prompting-wizard/",
         "supportURL": "https://entuvo.github.io/prompting-wizard/support/",
         "privacyPolicyURL": "https://entuvo.github.io/prompting-wizard/privacy/",
         "termsOfServiceURL": "https://entuvo.github.io/prompting-wizard/terms/",

@@ -105,6 +105,7 @@ Local package tests and model simulations do not establish these native results 
 | Provider and surface | Plan | App version | Date | 1 Install | 2 Work first | 3 Practice | 4 Card to other app | 5 Bad card | 6 Ordinary new chat |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Claude, web | Max | web | 2026-10-16 | pass | pass | pass | pass | pass | started on its own |
+| ChatGPT, macOS desktop | — | desktop | 2026-10-17 | pass (`install-chatgpt.sh`, then Plugins → Personal) | not run | not run | not run | not run | not run |
 
 Surfaces not listed have not been through the walkthrough.
 
