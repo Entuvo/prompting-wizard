@@ -48,7 +48,7 @@ verify_checksum() {
 # Exit 3: the existing file is not valid marketplace JSON.
 plan_marketplace() {
     python3 -I - "$@" <<'PY'
-import json, sys
+import json, os, sys
 from pathlib import Path
 
 mode, current, planned = sys.argv[1], Path(sys.argv[2]), Path(sys.argv[3])
@@ -85,6 +85,7 @@ elif raw is None and mode == "uninstall":
     print("unchanged")
 else:
     planned.write_text(text, encoding="utf-8")
+    os.chmod(planned, current.stat().st_mode & 0o7777 if raw is not None else 0o644)
     print("changed")
 PY
 }
@@ -218,6 +219,7 @@ main() {
     grep -q '"name": *"prompting-wizard"' "$stage/plugin.json" 2>/dev/null || \
         fail "$zip_path is not the Prompting Wizard plugin (plugin.json name is not prompting-wizard)"
     [ -z "$(find "$stage" -type l | head -n 1)" ] || fail "$zip_path contains symlinks; refusing to install it"
+    chmod -R u+rwX,go=rX "$stage"
 
     if [ -e "$target" ]; then
         rm -rf "$previous"

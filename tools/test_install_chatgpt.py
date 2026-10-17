@@ -63,6 +63,17 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.assertIn("Plugins, then Personal", result.stdout)
         self.assertEqual(list(self.marketplace.parent.glob("marketplace.json.bak-*")), [])
 
+    def test_installed_files_are_readable_and_marketplace_keeps_its_mode(self):
+        mode = lambda path: path.stat().st_mode & 0o777
+        self.assertEqual(self.install().returncode, 0)
+        self.assertEqual((mode(self.target), mode(self.target / "plugin.json"), mode(self.marketplace)),
+                         (0o755, 0o644, 0o644))
+        self.marketplace.chmod(0o640)
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": []}), encoding="utf-8")
+        self.assertEqual(self.install().returncode, 0)
+        self.assertEqual(len(self.entries()), 1)
+        self.assertEqual(mode(self.marketplace), 0o640)
+
     def test_existing_marketplace_keeps_other_entries_and_fields(self):
         other = {"name": "other", "source": {"source": "local", "path": "./x"}, "custom": [1, "é"]}
         original = {"name": "mine", "interface": {"displayName": "Mine"}, "extra": True,
