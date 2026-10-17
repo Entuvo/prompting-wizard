@@ -169,11 +169,26 @@ class ChatGPTInstallerTests(unittest.TestCase):
     def test_wrong_zip_is_refused(self):
         claude = self.home / "prompting-wizard-claude.zip"
         claude.write_bytes((self.dist / claude.name).read_bytes())
-        result = self.install(claude)
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("not the Prompting Wizard plugin", result.stderr)
+        for env, message in (({"PW_RELEASE_URL": self.dist.as_uri()}, "wrong zip"), ({}, "not the Prompting Wizard plugin")):
+            result = self.run_installer("--zip", str(claude), env=env)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(message, result.stderr)
+            self.assertFalse(self.target.exists())
+
+    def test_zip_without_sums_is_checked_against_the_release(self):
+        lone = self.home / "lone"
+        lone.mkdir()
+        (lone / ZIP).write_bytes((self.dist / "prompting-wizard-claude.zip").read_bytes())
+        result = self.run_installer("--zip", str(lone / ZIP), env={"PW_RELEASE_URL": self.dist.as_uri()})
+        self.assertIn("checksum mismatch", result.stderr)
         self.assertFalse(self.target.exists())
-        self.assertEqual(list(self.target.parent.iterdir()), [])
+        (lone / ZIP).write_bytes((self.dist / ZIP).read_bytes())
+        result = self.run_installer("--zip", str(lone / ZIP), env={"PW_RELEASE_URL": self.dist.as_uri()})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Checksum verified", result.stdout)
+        result = self.run_installer("--zip", str(lone / ZIP))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("without a checksum check", result.stderr)
 
 
 if __name__ == "__main__":

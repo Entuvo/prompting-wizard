@@ -4,6 +4,7 @@
 #   sh install-chatgpt.sh [--zip PATH] [--uninstall]
 # Without --zip it uses ~/Downloads/prompting-wizard-openai.zip when that file matches the pinned
 # release's SHA256SUMS, and otherwise downloads the zip from the pinned release.
+# With --zip it checks the zip against the SHA256SUMS beside it, or else the pinned release's.
 
 set -eu
 
@@ -35,7 +36,11 @@ verify_checksum() {
     expected=$(awk -v name="$zip_name" '$2 == name || $2 == "*" name { print $1; exit }' "$2")
     [ -n "$expected" ] || fail "SHA256SUMS has no line for $zip_name"
     actual=$(sha256_of "$1")
-    [ "$actual" = "$expected" ] || fail "checksum mismatch for $zip_name (expected $expected, got $actual); nothing was installed"
+    if [ "$actual" != "$expected" ]; then
+        given=$(basename -- "$1")
+        [ "$given" = "$zip_name" ] || fail "wrong zip: $given is not $zip_name from the $version release; nothing was installed"
+        fail "checksum mismatch for $zip_name (expected $expected, got $actual); nothing was installed"
+    fi
     echo "Checksum verified: $zip_name"
 }
 
@@ -173,11 +178,16 @@ main() {
     if [ -n "$zip_path" ]; then
         [ -f "$zip_path" ] || fail "zip not found: $zip_path"
         sums="$(dirname -- "$zip_path")/SHA256SUMS"
-        if [ -f "$sums" ]; then
-            verify_checksum "$zip_path" "$sums"
-        else
-            echo "Warning: no SHA256SUMS beside $zip_path; installing it without a checksum check" >&2
+        if [ ! -f "$sums" ]; then
+            sums="$work/SHA256SUMS"
+            if command -v curl >/dev/null 2>&1 && curl -fsSL -o "$sums" "$release_url/SHA256SUMS" </dev/null 2>/dev/null; then
+                echo "Fetched SHA256SUMS for $version from $release_url"
+            else
+                sums=
+                echo "Warning: no SHA256SUMS beside $zip_path and $release_url/SHA256SUMS could not be fetched; installing it without a checksum check" >&2
+            fi
         fi
+        [ -z "$sums" ] || verify_checksum "$zip_path" "$sums"
     else
         command -v curl >/dev/null 2>&1 || fail "curl is required to download the release"
         curl -fsSL -o "$work/SHA256SUMS" "$release_url/SHA256SUMS" </dev/null || fail "download failed: $release_url/SHA256SUMS"
