@@ -29,12 +29,33 @@ Confirm that the coach can read the bundled guide. If it cannot, use the [manual
 
 ## ChatGPT and Codex installation
 
-**Personal (ChatGPT desktop), then workspace:** a downloaded zip does not appear in ChatGPT by itself. Register it as a local plugin first, following [OpenAI's manual install](https://developers.openai.com/plugins/build/plugins#install-a-local-plugin-manually):
+**Personal (ChatGPT desktop), macOS or Linux:** run this in Terminal.
 
-1. Unzip `prompting-wizard-openai.zip` to `~/.codex/plugins/prompting-wizard/`.
-2. Add an entry for it to `~/.agents/plugins/marketplace.json`, with `"source": {"source": "local", "path": "<that folder>"}`.
-3. Restart the ChatGPT desktop app and install **Prompting Wizard** from your local source under **Plugins → Personal**.
-4. To share it, a workspace admin opens the plugin's menu under **Personal**, chooses **Publish**, and grants the intended roles access. Members then get it on web, desktop and mobile. This is workspace distribution, not public publication. See [workspace publishing](https://developers.openai.com/plugins/build/plugins#publish-a-local-plugin-to-your-workspace).
+```sh
+curl -fsSL https://raw.githubusercontent.com/Entuvo/prompting-wizard/v1.5.2/install-chatgpt.sh | sh
+```
+
+The script is pinned to one release. It uses `~/Downloads/prompting-wizard-openai.zip` if that file matches the release checksum, and otherwise downloads the zip from that release. It stops if the checksum does not match. It then copies the plugin to `~/.codex/plugins/prompting-wizard/` and adds one entry to `~/.agents/plugins/marketplace.json`. Other entries in that file stay as they are, and the old file is backed up first. To install a zip you already have, run `sh install-chatgpt.sh --zip PATH`. To remove the plugin, run `sh install-chatgpt.sh --uninstall`. Then quit and reopen the ChatGPT desktop app, open **Plugins → Personal** and install **Prompting Wizard**.
+
+**Manual steps (and Windows):** a downloaded zip does not appear in ChatGPT by itself. ChatGPT has no zip upload for personal plugins. Register the zip as a local plugin, following [OpenAI's manual install](https://developers.openai.com/plugins/build/plugins#install-a-local-plugin-manually):
+
+1. Unzip `prompting-wizard-openai.zip` to `~/.codex/plugins/prompting-wizard/` (on Windows, `%USERPROFILE%\.codex\plugins\prompting-wizard\`).
+2. Add this entry to the `plugins` list in `~/.agents/plugins/marketplace.json`. The path is relative to your home folder and must start with `./`. If the file does not exist, create it with a top-level `"name"` (for example `"personal"`) and a `"plugins"` list.
+
+   ```json
+   {
+     "name": "prompting-wizard",
+     "source": { "source": "local", "path": "./.codex/plugins/prompting-wizard" },
+     "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+     "category": "Productivity"
+   }
+   ```
+
+3. Quit and reopen the ChatGPT desktop app and install **Prompting Wizard** under **Plugins → Personal**.
+
+The app installs a copy into its own cache. After you install a newer zip, install the plugin again in the app.
+
+**Workspace:** to share it, a workspace admin opens the plugin's menu under **Personal**, chooses **Publish**, and grants the intended roles access. Members then get it on web, desktop and mobile. This is workspace distribution, not public publication. See [workspace publishing](https://developers.openai.com/plugins/build/plugins#publish-a-local-plugin-to-your-workspace). An admin can instead import this repository's marketplace from GitHub under **Admin → Plugins → Add → Import marketplace**, pinned to a release tag. See [plugin management](https://learn.chatgpt.com/docs/enterprise/plugin-management).
 
 **Codex:** run `codex plugin marketplace add Entuvo/prompting-wizard` and install **prompting-wizard**.
 
@@ -106,4 +127,6 @@ The OpenAI download differs from the tree in exact edits listed in `OPENAI_EDITS
 
 All three manifests share the course version in `prompting-wizard/VERSION.md`. Skill descriptions must stay within claude.ai's 200-character limit, and frontmatter within the Agent Skills fields. Never place learner cards or progress in the plugin tree. Current OpenAI submission rules do not accept plugins with lifecycle hooks or app references; keep the optional coaching hooks a separate install.
 
-Documentation checked 16 October 2026 (Claude plugins and Claude Code plugin reference; OpenAI Plugins build and submission guides).
+`install-chatgpt.sh` sits at the repository root and is not part of either download. Its `version=` line and the one-liners in `README.md` and this file must match `prompting-wizard/VERSION.md`; `tools/validate.py` fails otherwise. The script downloads `prompting-wizard-openai.zip` and `SHA256SUMS` from the release with that tag, so every release must attach both. `tools/test_install_chatgpt.py` covers it.
+
+Documentation checked 17 October 2026 (Claude plugins and Claude Code plugin reference; OpenAI Plugins build, submission and plugin management guides).

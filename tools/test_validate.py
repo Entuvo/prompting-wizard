@@ -1701,5 +1701,24 @@ class CommandLineTests(unittest.TestCase):
         self.assertEqual(self.run_validator().returncode, 0)
 
 
+class ChatGPTInstallerVersionTests(unittest.TestCase):
+    def test_installer_and_one_liners_must_pin_the_course_version(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            installer = root / "install-chatgpt.sh"
+            line = "curl https://raw.githubusercontent.com/Entuvo/prompting-wizard/v{}/install-chatgpt.sh | sh"
+            with mock.patch.object(validate, "ROOT", root):
+                installer.write_text("version=2.0.0\n", encoding="utf-8")
+                for doc in ("README.md", "NATIVE-PLUGINS.md"):
+                    (root / doc).write_text(line.format("2.0.0"), encoding="utf-8")
+                errors = []
+                validate.check_chatgpt_installer(installer, "2.0.0", errors)
+                self.assertEqual(errors, [])
+                (root / "README.md").write_text(line.format("1.9.9"), encoding="utf-8")
+                installer.write_text("version=1.9.9\n", encoding="utf-8")
+                validate.check_chatgpt_installer(installer, "2.0.0", errors)
+                self.assertEqual(len(errors), 2)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
