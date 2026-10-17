@@ -40,4 +40,4 @@ The plugin reads the current conversation, its bundled teaching references, and 
 
 ## Status and support
 
-Version 1.5.2. Everyday coaching has passed the device walkthrough in Claude on the web. Human learning effectiveness has not been validated. Report problems through [GitHub Issues](https://github.com/Entuvo/prompting-wizard/issues) using synthetic examples, never personal cards or transcripts. Maintained by Entuvo; MIT License.
+Version 1.5.3. Everyday coaching has passed the device walkthrough in Claude on the web. Human learning effectiveness has not been validated. Report problems through [GitHub Issues](https://github.com/Entuvo/prompting-wizard/issues) using synthetic examples, never personal cards or transcripts. Maintained by Entuvo; MIT License.

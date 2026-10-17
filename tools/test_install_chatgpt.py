@@ -1,0 +1,293 @@
+#!/usr/bin/env python3
+"""Tests for install-chatgpt.sh against a temporary HOME and a locally built OpenAI zip."""
+
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+from package_release import build_all
+
+ZIP = "prompting-wizard-openai.zip"
+ENTRY_PATH = "./.codex/plugins/prompting-wizard"
+SH = shutil.which("sh")
+
+
+class ChatGPTInstallerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.build = tempfile.TemporaryDirectory()
+        cls.dist = Path(cls.build.name) / "dist"
+        build_all(ROOT, cls.dist, validate=False)
+        digest = hashlib.sha256((cls.dist / ZIP).read_bytes()).hexdigest()
+        (cls.dist / "SHA256SUMS").write_text(f"{digest}  {ZIP}\n", encoding="utf-8")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.build.cleanup()
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.home = Path(tmp.name) / "home"
+        self.home.mkdir()
+        self.target = self.home / ".codex/plugins/prompting-wizard"
+        self.marketplace = self.home / ".agents/plugins/marketplace.json"
+
+    def run_installer(self, *args, env=None):
+        offline = (self.home / "no-release").as_uri()
+        return subprocess.run([SH, str(ROOT / "install-chatgpt.sh"), *args], text=True, capture_output=True,
+                              env={**os.environ, "HOME": str(self.home), "PW_RELEASE_URL": offline, **(env or {})})
+
+    def fake_bin(self, **scripts):
+        """A PATH dir that shadows commands with small sh scripts; {real} is the shadowed command's path."""
+        bin_dir = self.home.parent / "bin"
+        bin_dir.mkdir(exist_ok=True)
+        for name, body in scripts.items():
+            script = bin_dir / name
+            script.write_text(f"#!/bin/sh\n{body.format(real=shutil.which(name))}\n", encoding="utf-8")
+            script.chmod(0o755)
+        return {"PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}"}
+
+    def install(self, zip_path=None):
+        return self.run_installer("--zip", str(zip_path or self.dist / ZIP))
+
+    def install_with(self, env):
+        return self.run_installer("--zip", str(self.dist / ZIP), env=env)
+
+    def entries(self):
+        plugins = json.loads(self.marketplace.read_text(encoding="utf-8"))["plugins"]
+        return [p for p in plugins if p.get("name") == "prompting-wizard"]
+
+    def test_fresh_install_registers_plugin_and_rerun_keeps_one_entry(self):
+        for _ in range(2):
+            result = self.install()
+            self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads((self.target / "plugin.json").read_text())["name"], "prompting-wizard")
+        self.assertTrue((self.target / "skills/prompting-wizard/SKILL.md").is_file())
+        self.assertEqual([e["source"] for e in self.entries()], [{"source": "local", "path": ENTRY_PATH}])
+        self.assertIn("Plugins, then Personal", result.stdout)
+        self.assertEqual(list(self.marketplace.parent.glob("marketplace.json.bak-*")), [])
+
+    def test_installed_files_are_readable_and_marketplace_keeps_its_mode(self):
+        mode = lambda path: path.stat().st_mode & 0o777
+        self.assertEqual(self.install().returncode, 0)
+        self.assertEqual((mode(self.target), mode(self.target / "plugin.json"), mode(self.marketplace)),
+                         (0o755, 0o644, 0o644))
+        self.marketplace.chmod(0o640)
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": []}), encoding="utf-8")
+        self.assertEqual(self.install().returncode, 0)
+        self.assertEqual(len(self.entries()), 1)
+        self.assertEqual(mode(self.marketplace), 0o640)
+
+    def test_existing_marketplace_keeps_other_entries_and_fields(self):
+        other = {"name": "other", "source": {"source": "local", "path": "./x"}, "custom": [1, "é"]}
+        original = {"name": "mine", "interface": {"displayName": "Mine"}, "extra": True,
+                    "plugins": [other, {"name": "prompting-wizard", "source": "./old"}]}
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.write_text(json.dumps(original), encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        data = json.loads(self.marketplace.read_text(encoding="utf-8"))
+        self.assertEqual({k: v for k, v in data.items() if k != "plugins"},
+                         {k: v for k, v in original.items() if k != "plugins"})
+        self.assertEqual(data["plugins"][0], other)
+        self.assertEqual(data["plugins"][1]["source"]["path"], ENTRY_PATH)
+        self.assertEqual(len(data["plugins"]), 2)
+        backups = list(self.marketplace.parent.glob("marketplace.json.bak-*"))
+        self.assertEqual([json.loads(b.read_text()) for b in backups], [original])
+
+    def test_rerun_keeps_fields_added_to_our_entry(self):
+        self.marketplace.parent.mkdir(parents=True)
+        ours = {"name": "prompting-wizard", "source": "./old", "installedBy": "app", "interface": {"x": 1}}
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": [ours]}), encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        [entry] = self.entries()
+        self.assertEqual(entry["source"], {"source": "local", "path": ENTRY_PATH})
+        self.assertEqual((entry["installedBy"], entry["interface"]), ("app", {"x": 1}))
+
+    def test_invalid_marketplace_json_is_refused_without_writes(self):
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.write_text("{not json", encoding="utf-8")
+        result = self.install()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("not valid JSON", result.stderr)
+        self.assertEqual(self.marketplace.read_text(encoding="utf-8"), "{not json")
+        self.assertEqual(sorted(p.name for p in self.marketplace.parent.iterdir()), ["marketplace.json"])
+        self.assertFalse((self.home / ".codex").exists())
+
+    @unittest.skipIf(os.geteuid() == 0, "root ignores directory permissions")
+    def test_unwritable_marketplace_folder_changes_nothing(self):
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.parent.chmod(0o555)
+        self.addCleanup(self.marketplace.parent.chmod, 0o755)
+        result = self.install()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cannot write", result.stderr)
+        self.assertFalse((self.home / ".codex").exists())
+
+    def test_checksum_mismatch_is_refused(self):
+        bad = self.home / "dl"
+        bad.mkdir()
+        (bad / ZIP).write_bytes((self.dist / ZIP).read_bytes())
+        (bad / "SHA256SUMS").write_text(f"{'0' * 64}  {ZIP}\n", encoding="utf-8")
+        for result in (self.install(bad / ZIP), self.run_installer(env={"PW_RELEASE_URL": bad.as_uri()})):
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("checksum mismatch", result.stderr)
+        self.assertFalse(self.target.exists())
+        self.assertFalse(self.marketplace.exists())
+
+    def test_download_from_release_url_verifies_and_installs(self):
+        result = self.run_installer(env={"PW_RELEASE_URL": self.dist.as_uri()})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Checksum verified", result.stdout)
+        self.assertEqual(len(self.entries()), 1)
+
+    def test_matching_zip_in_downloads_is_used_instead_of_downloading(self):
+        release = self.home / "release"
+        release.mkdir()
+        (release / "SHA256SUMS").write_bytes((self.dist / "SHA256SUMS").read_bytes())
+        (self.home / "Downloads").mkdir()
+        (self.home / "Downloads" / ZIP).write_bytes((self.dist / ZIP).read_bytes())
+        result = self.run_installer(env={"PW_RELEASE_URL": release.as_uri()})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("matches the", result.stdout)
+        self.assertEqual(len(self.entries()), 1)
+
+    def test_other_zip_in_downloads_falls_back_to_pinned_download(self):
+        (self.home / "Downloads").mkdir()
+        (self.home / "Downloads" / ZIP).write_bytes(b"an older release")
+        result = self.run_installer(env={"PW_RELEASE_URL": self.dist.as_uri()})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("is not the", result.stdout)
+        self.assertIn("Checksum verified", result.stdout)
+        self.assertTrue((self.target / "plugin.json").is_file())
+
+    def test_leftover_temps_are_removed_and_three_backups_kept(self):
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": []}), encoding="utf-8")
+        old_backups = [self.marketplace.with_name(f"marketplace.json.bak-2000010100000{i}") for i in range(5)]
+        for backup in old_backups:
+            backup.write_text("{}", encoding="utf-8")
+        leftover_plan = self.marketplace.parent / ".marketplace.json.AbC123"
+        leftover_plan.write_text("{}", encoding="utf-8")
+        leftover_stage = self.target.parent / ".prompting-wizard.stage.AbC123"
+        leftover_stage.mkdir(parents=True)
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(leftover_plan.exists() or leftover_stage.exists())
+        backups = sorted(self.marketplace.parent.glob("marketplace.json.bak-*"))
+        self.assertEqual(backups[:2], old_backups[3:])
+        self.assertEqual(len(backups), 3)
+
+    def test_hangup_cleans_up_the_stage(self):
+        env = self.fake_bin(unzip='kill -HUP $PPID; exec {real} "$@"')
+        result = self.run_installer("--zip", str(self.dist / ZIP), env=env)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(list(self.target.parent.glob(".prompting-wizard.stage.*")), [])
+
+    def test_interrupt_during_swap_leaves_a_plugin_installed(self):
+        self.install()
+        env = self.fake_bin(mv='case "$1" in */prompting-wizard) kill -INT $PPID;; esac; exec {real} "$@"')
+        self.run_installer("--zip", str(self.dist / ZIP), env=env)
+        self.assertTrue((self.target / "plugin.json").is_file())
+
+    def assert_installed_but_not_registered(self, result):
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("not registered yet", result.stderr)
+        self.assertIn("xcode-select --install", result.stderr)
+        self.assertTrue((self.target / "plugin.json").is_file())
+        self.assertFalse(self.marketplace.exists())
+
+    def test_without_python3_prints_the_manual_entry(self):
+        bin_dir = self.home.parent / "nopython"
+        bin_dir.mkdir()
+        for tool in ("awk", "basename", "cat", "chmod", "cp", "cut", "date", "dirname", "find", "grep", "head",
+                     "mkdir", "mktemp", "mv", "rm", "shasum", "sha256sum", "uname", "unzip"):
+            if shutil.which(tool):
+                (bin_dir / tool).symlink_to(shutil.which(tool))
+        self.assert_installed_but_not_registered(self.install_with({"PATH": str(bin_dir)}))
+
+    @unittest.skipUnless(Path("/usr/bin/python3").exists(), "needs /usr/bin/python3")
+    def test_apple_python3_stub_without_developer_tools_is_not_run(self):
+        env = self.fake_bin(uname="echo Darwin", **{"xcode-select": "exit 2"})
+        env["PATH"] = env["PATH"].split(os.pathsep)[0] + os.pathsep + "/usr/bin:/bin"
+        self.assert_installed_but_not_registered(self.install_with(env))
+
+    def test_symlink_target_is_refused(self):
+        elsewhere = self.home / "elsewhere"
+        elsewhere.mkdir()
+        self.target.parent.mkdir(parents=True)
+        self.target.symlink_to(elsewhere)
+        result = self.install()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("is a symlink", result.stderr)
+        self.assertEqual(list(elsewhere.iterdir()), [])
+        self.assertTrue(self.target.is_symlink())
+
+    def test_reinstall_keeps_previous_copy(self):
+        self.install()
+        (self.target / "marker").write_text("old", encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((self.target / "marker").exists())
+        self.assertTrue((self.target.parent / ".prompting-wizard.previous/marker").is_file())
+        self.assertIn("Previous copy kept", result.stdout)
+
+    def test_install_after_uninstall_does_not_claim_a_previous_copy(self):
+        self.install()
+        self.run_installer("--uninstall")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("Previous copy kept", result.stdout)
+
+    def test_uninstall_without_marketplace_creates_nothing(self):
+        result = self.run_installer("--uninstall")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((self.home / ".agents").exists())
+
+    def test_uninstall_removes_folder_and_entry_only(self):
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": [{"name": "other"}]}), encoding="utf-8")
+        self.install()
+        result = self.run_installer("--uninstall")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.target.exists())
+        self.assertTrue((self.target.parent / ".prompting-wizard.previous/plugin.json").is_file())
+        self.assertEqual(json.loads(self.marketplace.read_text())["plugins"], [{"name": "other"}])
+
+    def test_wrong_zip_is_refused(self):
+        claude = self.home / "prompting-wizard-claude.zip"
+        claude.write_bytes((self.dist / claude.name).read_bytes())
+        for env, message in (({"PW_RELEASE_URL": self.dist.as_uri()}, "wrong zip"), ({}, "not the Prompting Wizard plugin")):
+            result = self.run_installer("--zip", str(claude), env=env)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(message, result.stderr)
+            self.assertFalse(self.target.exists())
+
+    def test_zip_without_sums_is_checked_against_the_release(self):
+        lone = self.home / "lone"
+        lone.mkdir()
+        (lone / ZIP).write_bytes((self.dist / "prompting-wizard-claude.zip").read_bytes())
+        result = self.run_installer("--zip", str(lone / ZIP), env={"PW_RELEASE_URL": self.dist.as_uri()})
+        self.assertIn("checksum mismatch", result.stderr)
+        self.assertFalse(self.target.exists())
+        (lone / ZIP).write_bytes((self.dist / ZIP).read_bytes())
+        result = self.run_installer("--zip", str(lone / ZIP), env={"PW_RELEASE_URL": self.dist.as_uri()})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Checksum verified", result.stdout)
+        result = self.run_installer("--zip", str(lone / ZIP))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("without a checksum check", result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -25,7 +25,9 @@ jobs:
       - name: Package tests
         run: python3 tools/test_package_release.py
       - name: Installer tests
-        run: python3 tools/test_install.py
+        run: |
+          python3 tools/test_install.py
+          python3 tools/test_install_chatgpt.py
       - name: Coaching storage tests
         run: python3 tools/test_coaching_store.py
       - name: Coaching event and CLI tests

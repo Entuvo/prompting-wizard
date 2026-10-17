@@ -265,6 +265,10 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
     elif codex_entry.get("version") != version:
         errors.append("Codex marketplace: version does not match VERSION.md")
 
+    installer = ROOT / "install-chatgpt.sh"
+    if installer.is_file():
+        check_chatgpt_installer(installer, version, errors)
+
     codex_plugin = ROOT / "plugins" / "prompting-wizard"
     if not (codex_plugin / ".codex-plugin" / "plugin.json").is_file():
         errors.append(
@@ -274,6 +278,18 @@ def check_distribution_metadata(version: str, errors: list[str]) -> None:
         errors.append(
             "Codex plugin: missing plugins/prompting-wizard/skills/prompting-wizard/SKILL.md"
         )
+
+
+def check_chatgpt_installer(installer: Path, version: str, errors: list[str]) -> None:
+    """The installer downloads from the release tagged with its own version, and the docs' one-liners
+    fetch the installer from that same tag."""
+    if re.findall(r"^version=(\S+)$", installer.read_text(encoding="utf-8"), re.M) != [version]:
+        errors.append("install-chatgpt.sh: version= line does not match VERSION.md")
+    for doc in ("README.md", "NATIVE-PLUGINS.md"):
+        text = (ROOT / doc).read_text(encoding="utf-8") if (ROOT / doc).is_file() else ""
+        tags = set(re.findall(r"prompting-wizard/v([\d.]+)/install-chatgpt\.sh", text))
+        if tags != {version}:
+            errors.append(f"{doc}: install-chatgpt.sh one-liner must pin v{version}")
 
 
 def _file_is_symlink(path: Path) -> bool:
