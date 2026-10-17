@@ -70,7 +70,7 @@ plugins = data.setdefault("plugins", [])
 ours = [i for i, p in enumerate(plugins) if isinstance(p, dict) and p.get("name") == entry["name"]]
 kept = [p for i, p in enumerate(plugins) if i not in ours]
 if mode == "install":
-    kept.insert(ours[0] if ours else len(kept), entry)
+    kept.insert(ours[0] if ours else len(kept), {**plugins[ours[0]], **entry} if ours else entry)
 data["plugins"] = kept
 
 text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"

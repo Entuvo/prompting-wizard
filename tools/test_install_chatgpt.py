@@ -4,6 +4,7 @@
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -16,6 +17,7 @@ from package_release import build_all
 
 ZIP = "prompting-wizard-openai.zip"
 ENTRY_PATH = "./.codex/plugins/prompting-wizard"
+SH = shutil.which("sh")
 
 
 class ChatGPTInstallerTests(unittest.TestCase):
@@ -40,8 +42,9 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.marketplace = self.home / ".agents/plugins/marketplace.json"
 
     def run_installer(self, *args, env=None):
-        return subprocess.run(["sh", str(ROOT / "install-chatgpt.sh"), *args], text=True, capture_output=True,
-                              env={**os.environ, "HOME": str(self.home), **(env or {})})
+        offline = (self.home / "no-release").as_uri()
+        return subprocess.run([SH, str(ROOT / "install-chatgpt.sh"), *args], text=True, capture_output=True,
+                              env={**os.environ, "HOME": str(self.home), "PW_RELEASE_URL": offline, **(env or {})})
 
     def install(self, zip_path=None):
         return self.run_installer("--zip", str(zip_path or self.dist / ZIP))
@@ -76,6 +79,16 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.assertEqual(len(data["plugins"]), 2)
         backups = list(self.marketplace.parent.glob("marketplace.json.bak-*"))
         self.assertEqual([json.loads(b.read_text()) for b in backups], [original])
+
+    def test_rerun_keeps_fields_added_to_our_entry(self):
+        self.marketplace.parent.mkdir(parents=True)
+        ours = {"name": "prompting-wizard", "source": "./old", "installedBy": "app", "interface": {"x": 1}}
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": [ours]}), encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        [entry] = self.entries()
+        self.assertEqual(entry["source"], {"source": "local", "path": ENTRY_PATH})
+        self.assertEqual((entry["installedBy"], entry["interface"]), ("app", {"x": 1}))
 
     def test_invalid_marketplace_json_is_refused_without_writes(self):
         self.marketplace.parent.mkdir(parents=True)
