@@ -46,6 +46,16 @@ class ChatGPTInstallerTests(unittest.TestCase):
         return subprocess.run([SH, str(ROOT / "install-chatgpt.sh"), *args], text=True, capture_output=True,
                               env={**os.environ, "HOME": str(self.home), "PW_RELEASE_URL": offline, **(env or {})})
 
+    def fake_bin(self, **scripts):
+        """A PATH dir that shadows commands with small sh scripts; {real} is the shadowed command's path."""
+        bin_dir = self.home.parent / "bin"
+        bin_dir.mkdir(exist_ok=True)
+        for name, body in scripts.items():
+            script = bin_dir / name
+            script.write_text(f"#!/bin/sh\n{body.format(real=shutil.which(name))}\n", encoding="utf-8")
+            script.chmod(0o755)
+        return {"PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}"}
+
     def install(self, zip_path=None):
         return self.run_installer("--zip", str(zip_path or self.dist / ZIP))
 
@@ -157,6 +167,29 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.assertIn("is not the", result.stdout)
         self.assertIn("Checksum verified", result.stdout)
         self.assertTrue((self.target / "plugin.json").is_file())
+
+    def test_leftover_temps_are_removed_and_three_backups_kept(self):
+        self.marketplace.parent.mkdir(parents=True)
+        self.marketplace.write_text(json.dumps({"name": "m", "plugins": []}), encoding="utf-8")
+        old_backups = [self.marketplace.with_name(f"marketplace.json.bak-2000010100000{i}") for i in range(5)]
+        for backup in old_backups:
+            backup.write_text("{}", encoding="utf-8")
+        leftover_plan = self.marketplace.parent / ".marketplace.json.AbC123"
+        leftover_plan.write_text("{}", encoding="utf-8")
+        leftover_stage = self.target.parent / ".prompting-wizard.stage.AbC123"
+        leftover_stage.mkdir(parents=True)
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(leftover_plan.exists() or leftover_stage.exists())
+        backups = sorted(self.marketplace.parent.glob("marketplace.json.bak-*"))
+        self.assertEqual(backups[:2], old_backups[3:])
+        self.assertEqual(len(backups), 3)
+
+    def test_hangup_cleans_up_the_stage(self):
+        env = self.fake_bin(unzip='kill -HUP $PPID; exec {real} "$@"')
+        result = self.run_installer("--zip", str(self.dist / ZIP), env=env)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(list(self.target.parent.glob(".prompting-wizard.stage.*")), [])
 
     def test_symlink_target_is_refused(self):
         elsewhere = self.home / "elsewhere"

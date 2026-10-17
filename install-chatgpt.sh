@@ -129,6 +129,11 @@ update_marketplace() {
         backup="$marketplace.bak-$(date +%Y%m%d%H%M%S)"
         cp -p "$marketplace" "$backup"
         echo "Backed up $marketplace to $backup"
+        set -- "$marketplace".bak-*
+        while [ "$#" -gt 3 ]; do
+            rm -f "$1"
+            shift
+        done
     fi
     mv -f "$planned" "$marketplace"
     echo "Updated $marketplace"
@@ -156,6 +161,8 @@ main() {
 
     [ ! -L "$target" ] || fail "$target is a symlink; remove it and run again"
     [ ! -L "$marketplace" ] || fail "$marketplace is a symlink; refusing to edit it"
+    rm -rf "$plugins_dir"/.prompting-wizard.stage.*
+    rm -f "$marketplace_dir"/.marketplace.json.??????
     have_python=yes
     command -v python3 >/dev/null 2>&1 || have_python=no
 
@@ -177,6 +184,7 @@ main() {
     work=$(mktemp -d)
     stage=
     trap 'rm -rf "$work"; [ -z "$stage" ] || rm -rf "$stage"' 0
+    trap 'exit 129' 1
     trap 'exit 130' 2
     trap 'exit 143' 15
 
