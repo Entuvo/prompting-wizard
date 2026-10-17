@@ -7,7 +7,7 @@
 
 set -eu
 
-version=1.5.2
+version=1.5.3
 zip_name=prompting-wizard-openai.zip
 release_url=${PW_RELEASE_URL:-https://github.com/Entuvo/prompting-wizard/releases/download/v$version}
 

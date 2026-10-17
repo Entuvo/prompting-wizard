@@ -1,6 +1,6 @@
 # Prompting Wizard plugin setup
 
-Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.2), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
+Prompting Wizard ships as **one plugin**, `prompting-wizard` (version 1.5.3), for Claude (app, Cowork, Claude Code) and for ChatGPT and Codex. It carries three skills: **learn** (everyday learning and the in-app export review), **prompting-wizard** (the optional 30-lesson course and `pw history`) and **pw** (commands). It also bundles the teaching guide, rubrics and an empty Learning Card.
 
 Everyday coaching has passed the walkthrough below in Claude on the web ([record](#walkthrough-record)). ChatGPT and the Claude desktop and phone apps have not been through it yet. It is not listed in any public directory. OpenAI's plugin directory rejected the 1.5.1 submission on 16 October 2026 (see [OpenAI directory review](#openai-directory-review)).
 
@@ -32,7 +32,7 @@ Confirm that the coach can read the bundled guide. If it cannot, use the [manual
 **Personal (ChatGPT desktop), macOS or Linux:** run this in Terminal.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Entuvo/prompting-wizard/v1.5.2/install-chatgpt.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Entuvo/prompting-wizard/v1.5.3/install-chatgpt.sh | sh
 ```
 
 The script is pinned to one release. It uses `~/Downloads/prompting-wizard-openai.zip` if that file matches the release checksum, and otherwise downloads the zip from that release. It stops if the checksum does not match. It then copies the plugin to `~/.codex/plugins/prompting-wizard/` and adds one entry to `~/.agents/plugins/marketplace.json`. Other entries in that file stay as they are, and the old file is backed up first. To install a zip you already have, run `sh install-chatgpt.sh --zip PATH`. To remove the plugin, run `sh install-chatgpt.sh --uninstall`. Then quit and reopen the ChatGPT desktop app, open **Plugins → Personal** and install **Prompting Wizard**.

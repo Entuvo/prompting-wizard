@@ -1,6 +1,6 @@
 # Prompting Wizard: everyday learning
 
-Course version: 1.5.2
+Course version: 1.5.3
 
 No interview required. Complete work, practise one useful change, reflect, and retain your card. This guide supplies rules; it does not install an app or run background tracking. Native surface compatibility and learning efficacy require separate evaluation.
 
