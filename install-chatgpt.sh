@@ -108,6 +108,10 @@ EOF
 
 update_marketplace() {
     action=$1
+    if [ "$action" = uninstall ] && [ ! -e "$marketplace" ]; then
+        echo "No marketplace to update: $marketplace"
+        return 0
+    fi
     mkdir -p "$marketplace_dir"
     planned=$(mktemp "$marketplace_dir/.marketplace.json.XXXXXX")
     status=0
@@ -225,9 +229,11 @@ main() {
     [ -z "$(find "$stage" -type l | head -n 1)" ] || fail "$zip_path contains symlinks; refusing to install it"
     chmod -R u+rwX,go=rX "$stage"
 
+    moved=no
     if [ -e "$target" ]; then
         rm -rf "$previous"
         mv "$target" "$previous"
+        moved=yes
     fi
     if ! mv "$stage" "$target"; then
         [ ! -d "$previous" ] || mv "$previous" "$target"
@@ -235,7 +241,7 @@ main() {
     fi
     stage=
     echo "Installed Prompting Wizard $version: $target"
-    [ ! -d "$previous" ] || echo "Previous copy kept at $previous"
+    [ "$moved" = no ] || echo "Previous copy kept at $previous"
 
     if [ "$have_python" = no ]; then
         print_manual_entry

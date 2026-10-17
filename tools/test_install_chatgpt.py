@@ -176,6 +176,19 @@ class ChatGPTInstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse((self.target / "marker").exists())
         self.assertTrue((self.target.parent / ".prompting-wizard.previous/marker").is_file())
+        self.assertIn("Previous copy kept", result.stdout)
+
+    def test_install_after_uninstall_does_not_claim_a_previous_copy(self):
+        self.install()
+        self.run_installer("--uninstall")
+        result = self.install()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("Previous copy kept", result.stdout)
+
+    def test_uninstall_without_marketplace_creates_nothing(self):
+        result = self.run_installer("--uninstall")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse((self.home / ".agents").exists())
 
     def test_uninstall_removes_folder_and_entry_only(self):
         self.marketplace.parent.mkdir(parents=True)
